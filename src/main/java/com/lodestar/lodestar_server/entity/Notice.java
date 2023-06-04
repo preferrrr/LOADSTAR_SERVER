@@ -15,18 +15,18 @@ public class Notice extends BaseEntity {
 
     //알림에는 여러 유저, 댓글, 게시글이 속하게 됨.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     //댓글이랑 게시글
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "VARCHAR(20) default 'comment'")
     private String kind;
 }

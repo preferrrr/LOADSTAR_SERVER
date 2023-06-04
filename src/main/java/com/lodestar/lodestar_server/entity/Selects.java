@@ -6,11 +6,11 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter
-@Table(name = "select")
-public class Select {
+@Table(name = "selects")
+public class Selects {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "select_id")
+    @Column(name = "selects_id")
     Long id;
 
     @OneToOne

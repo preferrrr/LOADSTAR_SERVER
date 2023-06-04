@@ -3,9 +3,6 @@ package com.lodestar.lodestar_server.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-
-import java.util.Date;
 
 @Entity
 @Getter @Setter
@@ -41,14 +38,14 @@ public class Career extends BaseEntity{
     @Column(name = "end_time")
     private String endTime;
 
-    @ColumnDefault("n")
+    @Column(columnDefinition = "VARCHAR(1) default 'n'")
     private String highlight;
 
     @OneToOne(mappedBy = "career")
-    private Explain explain;
+    private Explains explain;
 
     @OneToOne(mappedBy = "career")
-    private Select select;
+    private Selects select;
 
 
 

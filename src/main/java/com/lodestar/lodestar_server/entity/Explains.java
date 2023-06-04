@@ -7,10 +7,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Explain{
+@Table(name = "explains")
+public class Explains {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "explain_id")
+    @Column(name = "explainx_id")
     Long id;
 
     @OneToOne
@@ -18,5 +19,5 @@ public class Explain{
     Career career;
 
     @Column(nullable = false)
-    String explain;
+    String explained;
 }

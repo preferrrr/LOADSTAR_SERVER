@@ -5,19 +5,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter @Setter
-@Table(name = "select")
-public class Select {
+@Getter
+@Setter
+public class Explain{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "select_id")
+    @Column(name = "explain_id")
     Long id;
 
     @OneToOne
-    @JoinColumn(name = "career_id")
+    @JoinColumn(name = "career_id", nullable = false)
     Career career;
 
     @Column(nullable = false)
-    String selected;
-
+    String explain;
 }

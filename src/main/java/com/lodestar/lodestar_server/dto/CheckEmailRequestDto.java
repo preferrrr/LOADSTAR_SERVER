@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckMailRequestDto {
+public class CheckEmailRequestDto {
     String email;
 }

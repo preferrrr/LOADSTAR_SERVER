@@ -4,10 +4,10 @@ import com.lodestar.lodestar_server.dto.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.LoginResponseDto;
 import com.lodestar.lodestar_server.dto.SignUpRequestDto;
 import com.lodestar.lodestar_server.entity.User;
-import com.lodestar.lodestar_server.exception.DuplicateMailException;
+import com.lodestar.lodestar_server.exception.DuplicateEmailException;
 import com.lodestar.lodestar_server.exception.DuplicateUsernameException;
 import com.lodestar.lodestar_server.exception.LoginFailException;
-import com.lodestar.lodestar_server.exception.NotCheckMailException;
+import com.lodestar.lodestar_server.exception.NotCheckEmailException;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +53,10 @@ public class UserService {
             throw new DuplicateUsernameException(signUpRequestDto.getUsername());
         }
         if (duplicateEmail(signUpRequestDto.getEmail())) {
-            throw new DuplicateMailException(signUpRequestDto.getEmail());
+            throw new DuplicateEmailException(signUpRequestDto.getEmail());
         }
         if (!signUpRequestDto.isEmailCheck()) {
-            throw new NotCheckMailException(signUpRequestDto.getEmail());
+            throw new NotCheckEmailException(signUpRequestDto.getEmail());
         }
 
 

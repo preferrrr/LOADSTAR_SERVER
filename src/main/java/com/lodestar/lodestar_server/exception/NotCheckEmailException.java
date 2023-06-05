@@ -2,11 +2,11 @@ package com.lodestar.lodestar_server.exception;
 
 import lombok.Getter;
 
-public class NotCheckMailException extends RuntimeException{
+public class NotCheckEmailException extends RuntimeException{
     @Getter
     private final String NAME;
 
-    public NotCheckMailException(String msg) {
+    public NotCheckEmailException(String msg) {
         super(msg);
         NAME = "NotCheckEmailException";
     }

@@ -21,8 +21,8 @@ public class ExceptionHandler {
         return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({DuplicateMailException.class})
-    public ResponseEntity<?> handleDuplicateMailException(final DuplicateMailException e) {
+    @org.springframework.web.bind.annotation.ExceptionHandler({DuplicateEmailException.class})
+    public ResponseEntity<?> handleDuplicateEmailException(final DuplicateEmailException e) {
 
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
@@ -53,8 +53,8 @@ public class ExceptionHandler {
         return new ResponseEntity<>(exceptionMessage, HttpStatus.NO_CONTENT);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({SendMailFailException.class})
-    public ResponseEntity<?> handleSendMailFailException(final SendMailFailException e) {
+    @org.springframework.web.bind.annotation.ExceptionHandler({SendEmailFailException.class})
+    public ResponseEntity<?> handleSendEmailFailException(final SendEmailFailException e) {
 
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
@@ -63,8 +63,8 @@ public class ExceptionHandler {
         return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({NotCheckMailException.class})
-    public ResponseEntity<?> handleNotCheckMailException(final NotCheckMailException e) {
+    @org.springframework.web.bind.annotation.ExceptionHandler({NotCheckEmailException.class})
+    public ResponseEntity<?> handleNotCheckEmailException(final NotCheckEmailException e) {
 
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);

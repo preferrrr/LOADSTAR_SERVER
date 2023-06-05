@@ -1,9 +1,9 @@
 package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.entity.Mail;
-import com.lodestar.lodestar_server.exception.DuplicateMailException;
-import com.lodestar.lodestar_server.exception.SendMailFailException;
-import com.lodestar.lodestar_server.repository.MailRepository;
+import com.lodestar.lodestar_server.exception.DuplicateEmailException;
+import com.lodestar.lodestar_server.exception.SendEmailFailException;
+import com.lodestar.lodestar_server.repository.EmailRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
@@ -21,18 +21,18 @@ import java.util.Random;
 @Service
 @AllArgsConstructor
 @Transactional
-public class MailService {
+public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final JavaMailSender emailSender;
 
     private final UserRepository userRepository;
 
-    private final MailRepository mailRepository;
+    private final EmailRepository emailRepository;
 
     private MimeMessage createMessage(String to, String authCode) throws Exception {
         System.out.println("보내는 대상 : " + to);
         System.out.println("인증 코드 : " + authCode);
-        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
         message.setSubject("LODESTAR 인증 코드");//제목
@@ -82,23 +82,23 @@ public class MailService {
         return key.toString();
     }
 
-    public void sendMail(String to) throws Exception {
+    public void sendEmail(String to) throws Exception {
 
         if (duplicateEmail(to)) {
-            throw new DuplicateMailException(to);
+            throw new DuplicateEmailException(to);
         }
 
         String key = createKey();
         MimeMessage message = createMessage(to, key);
-        Mail mail = new Mail();
-        mail.setEmail(to);
-        mail.setAuthKey(key);
+        Mail email = new Mail();
+        email.setEmail(to);
+        email.setAuthKey(key);
 
         try {
-            mailSender.send(message);
-            mailRepository.save(mail);
+            emailSender.send(message);
+            emailRepository.save(email);
         } catch (MailException e) {
-            throw new SendMailFailException(to);
+            throw new SendEmailFailException(to);
         }
     }
 
@@ -109,7 +109,7 @@ public class MailService {
     /** 이메일로 테이블 조회해서 그 이메일에 대응되는 Key값과 비교*/
     public boolean checkKey(String email, String key) {
 
-        List<Mail> emails = mailRepository.findByEmail(email);
+        List<Mail> emails = emailRepository.findByEmail(email);
         Mail testEmail = emails.get(emails.size() - 1);
         String testKey = testEmail.getAuthKey();
 

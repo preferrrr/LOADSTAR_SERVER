@@ -1,32 +1,30 @@
 package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.CheckKeyResponseDto;
-import com.lodestar.lodestar_server.dto.CheckMailRequestDto;
-import com.lodestar.lodestar_server.dto.CheckMailResponseDto;
-import com.lodestar.lodestar_server.service.MailService;
+import com.lodestar.lodestar_server.dto.CheckEmailRequestDto;
+import com.lodestar.lodestar_server.dto.CheckEmailResponseDto;
+import com.lodestar.lodestar_server.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/mails")
+@RequestMapping("/emails")
 @AllArgsConstructor
-public class MailController {
+public class EmailController {
 
-    private final MailService mailService;
+    private final EmailService emailService;
 
     /**
      * 이메일 인증코드 전송, 중간에 중복체크도 함
-     * /mails/check-mail
+     * /emails/check-email
      * */
-    @PostMapping("/check-mail")
-    public ResponseEntity<?> checkMail(@RequestBody CheckMailRequestDto checkMailRequestDto) throws Exception {
+    @PostMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestBody CheckEmailRequestDto checkEmailRequestDto) throws Exception {
 
-        System.out.println("##################################################");
-        mailService.sendMail(checkMailRequestDto.getEmail());
-        CheckMailResponseDto responseDto = new CheckMailResponseDto("메일 전송이 완료되었습니다.");
+        emailService.sendEmail(checkEmailRequestDto.getEmail());
+        CheckEmailResponseDto responseDto = new CheckEmailResponseDto("메일 전송이 완료되었습니다.");
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -34,13 +32,13 @@ public class MailController {
 
     /**
      * 인증코드 확인
-     * /mails/check-key?mail= ?key=
+     * /emails/check-key?email= ?key=
      * */
     @GetMapping("/check-key")
-    public ResponseEntity<?> checkKey(@RequestParam("mail") String mail,
+    public ResponseEntity<?> checkKey(@RequestParam("email") String email,
                                       @RequestParam("key") String key) {
 
-        if (mailService.checkKey(mail, key)) {
+        if (emailService.checkKey(email, key)) {
             CheckKeyResponseDto responseDto = new CheckKeyResponseDto(true, "인증에 성공했습니다.");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }

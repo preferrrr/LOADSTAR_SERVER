@@ -2,11 +2,11 @@ package com.lodestar.lodestar_server.exception;
 
 import lombok.Getter;
 
-public class DuplicateMailException extends RuntimeException{
+public class DuplicateEmailException extends RuntimeException{
     @Getter
     private final String NAME;
 
-    public DuplicateMailException(String msg) {
+    public DuplicateEmailException(String msg) {
         super(msg);
         NAME = "DuplicateMailException";
     }

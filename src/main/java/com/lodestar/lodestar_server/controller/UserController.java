@@ -19,7 +19,7 @@ public class UserController {
      * /users/login
      * */
     @PostMapping("/login")
-    public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
 
         loginRequestDto.validateFieldsNotNull();
 

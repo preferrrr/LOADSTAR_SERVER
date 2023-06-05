@@ -64,6 +64,10 @@ public class UserController {
         }
     }
 
+    @GetMapping("/test2")
+    public String test2(@RequestParam("test") String test2) {
+        return test2;
+    }
 
 
 

@@ -18,13 +18,10 @@ public class UserController {
     /**로그인
      * /users/login
      * */
-    @GetMapping("/login")
-    public ResponseEntity<?> login(@RequestParam("username") String username,
-                                   @RequestParam("password") String password) {
+    @PostMapping("/login")
+    public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
 
-        LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setUsername(username);
-        loginRequestDto.setPassword(password);
+        loginRequestDto.validateFieldsNotNull();
 
         ResponseEntity response = userService.login(loginRequestDto);
 

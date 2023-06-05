@@ -1,6 +1,7 @@
 package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.CheckKeyResponseDto;
+import com.lodestar.lodestar_server.dto.CheckMailRequestDto;
 import com.lodestar.lodestar_server.dto.CheckMailResponseDto;
 import com.lodestar.lodestar_server.service.MailService;
 import lombok.AllArgsConstructor;
@@ -21,10 +22,10 @@ public class MailController {
      * /mails/check-mail
      * */
     @PostMapping("/check-mail")
-    public ResponseEntity<?> checkMail(@RequestParam("mail") String mail) throws Exception {
+    public ResponseEntity<?> checkMail(@RequestBody CheckMailRequestDto checkMailRequestDto) throws Exception {
 
         System.out.println("##################################################");
-        mailService.sendMail(mail);
+        mailService.sendMail(checkMailRequestDto.getEmail());
         CheckMailResponseDto responseDto = new CheckMailResponseDto("메일 전송이 완료되었습니다.");
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);

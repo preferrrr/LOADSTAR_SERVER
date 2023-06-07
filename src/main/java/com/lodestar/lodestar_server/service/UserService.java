@@ -1,13 +1,11 @@
 package com.lodestar.lodestar_server.service;
 
+import com.lodestar.lodestar_server.dto.FirstQuestionRequestDto;
 import com.lodestar.lodestar_server.dto.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.LoginResponseDto;
 import com.lodestar.lodestar_server.dto.SignUpRequestDto;
 import com.lodestar.lodestar_server.entity.User;
-import com.lodestar.lodestar_server.exception.DuplicateEmailException;
-import com.lodestar.lodestar_server.exception.DuplicateUsernameException;
-import com.lodestar.lodestar_server.exception.LoginFailException;
-import com.lodestar.lodestar_server.exception.NotCheckEmailException;
+import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -39,7 +38,7 @@ public class UserService {
     private static final int REFRESH = 1;
 
 
-    public void signUp(SignUpRequestDto signUpRequestDto) {
+    public User signUp(SignUpRequestDto signUpRequestDto) {
 
         //닉네임 중복확인, 이메일 인증 되었는지.
         //1. 닉네임 중복확인 (username status = true)
@@ -70,7 +69,7 @@ public class UserService {
         user.setRoles(roles);
         user.setRefreshTokenValue(null);
 
-        userRepository.save(user);
+        return userRepository.save(user);
 
     }
 
@@ -128,5 +127,21 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void firstQuestion(FirstQuestionRequestDto requestDto) {
+        Optional<User> findUser = userRepository.findById(requestDto.getUserId());
+        User user;
+        if (findUser.isPresent()) {
+            user = findUser.get();
+        } else {
+            throw new FirstQuestionFailException(String.valueOf(requestDto.getUserId()));
+        }
+
+        user.setFront_back(requestDto.getFrontBack());
+        user.setMajor(requestDto.getMajor());
+        user.setCurrent(requestDto.getCurrent());
+        user.setMonth(requestDto.getMonth());
+        user.setYear(requestDto.getYear());
+
+    }
 
 }

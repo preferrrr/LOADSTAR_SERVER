@@ -50,6 +50,12 @@ public class User extends BaseEntity implements UserDetails, Persistable<Long> {
     @Column(columnDefinition = "VARCHAR(1) default 'm'")
     private String current;
 
+    @Column(columnDefinition = "INT default 0")
+    private Integer year;
+
+    @Column(columnDefinition = "INT default 0")
+    private Integer month;
+
     @Column(name = "refresh_token_value")
     private String refreshTokenValue;
 

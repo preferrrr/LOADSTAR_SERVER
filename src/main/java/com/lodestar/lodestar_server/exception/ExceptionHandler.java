@@ -49,8 +49,7 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("비어있는 값입니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({SendEmailFailException.class})
@@ -70,6 +69,16 @@ public class ExceptionHandler {
         log.error(msg);
 
         ExceptionMessage exceptionMessage = new ExceptionMessage("메일 인증을 해주세요.");
+        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({FirstQuestionFailException.class})
+    public ResponseEntity<?> handleFirstQuestionFailException(final FirstQuestionFailException e) {
+
+        String msg = e.getNAME() + ": [userId = " + e.getMessage() + "]";
+        log.error(msg);
+
+        ExceptionMessage exceptionMessage = new ExceptionMessage("질문을 저장하지 못했습니다.");
         return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
     }
 

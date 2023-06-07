@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authR -> {
                     authR.requestMatchers("/users/**").permitAll();
-                    authR.requestMatchers("/mails/**").permitAll();
+                    authR.requestMatchers("/emails/**").permitAll();
                 })
                 .authorizeHttpRequests(authR -> {
                     authR.requestMatchers("/boards/**").hasAuthority("USER");

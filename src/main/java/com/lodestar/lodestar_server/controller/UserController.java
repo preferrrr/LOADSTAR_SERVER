@@ -1,6 +1,7 @@
 package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.*;
+import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,9 +37,9 @@ public class UserController {
 
         signUpRequestDto.validateFieldsNotNull();
 
-        userService.signUp(signUpRequestDto);
+        User user = userService.signUp(signUpRequestDto);
 
-        SignUpResponseDto responseDto = new SignUpResponseDto("회원가입에 성공했습니다.");
+        SignUpResponseDto responseDto = new SignUpResponseDto("회원가입에 성공했습니다.", user.getId());
 
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
@@ -62,6 +63,20 @@ public class UserController {
             responseDto.setMessage("사용 가능한 아이디입니다.");
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }
+    }
+
+    @PatchMapping("/first-question")
+    public ResponseEntity<?> firstQuestion(@RequestBody FirstQuestionRequestDto requestDto) {
+
+        requestDto.validateFieldsNotNull();
+
+        FirstQuestionResponseDto responseDto = new FirstQuestionResponseDto();
+
+        userService.firstQuestion(requestDto);
+
+        responseDto.setMessage("첫 번째 질문이 등록되었습니다.");
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @GetMapping("/test2")

@@ -17,9 +17,9 @@ public class LoginRequestDto {
 
 
     public void validateFieldsNotNull() {
-        if(username == null || username.isEmpty())
+        if(username == null || username.isEmpty() || username.isBlank())
             throw new InvalidRequestParameterException("Invalid userId");
-        if(password == null || password.isEmpty())
+        if(password == null || password.isEmpty() || username.isBlank())
             throw new InvalidRequestParameterException("Invalid password");
     }
 }

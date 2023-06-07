@@ -23,6 +23,8 @@ public class EmailController {
     @PostMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestBody CheckEmailRequestDto checkEmailRequestDto) throws Exception {
 
+        checkEmailRequestDto.validateFieldsNotNull();
+
         emailService.sendEmail(checkEmailRequestDto.getEmail());
         CheckEmailResponseDto responseDto = new CheckEmailResponseDto("메일 전송이 완료되었습니다.");
 

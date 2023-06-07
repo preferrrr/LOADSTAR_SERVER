@@ -7,9 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class SignUpResponseDto {
+@AllArgsConstructor
+public class FirstQuestionResponseDto {
     String message;
-    Long userId;
 }

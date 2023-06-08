@@ -2,7 +2,6 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.User;
-import com.lodestar.lodestar_server.service.EmailService;
 import com.lodestar.lodestar_server.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -84,12 +83,19 @@ public class UserController {
     @GetMapping("/find-id")
     public ResponseEntity<?> findId(@RequestParam("email") String email) {
         String username = userService.findId(email);
-        FindIdResponseDto responseDto = new FindIdResponseDto(username);
+        MessageResponseDto responseDto = new MessageResponseDto(username);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    @PatchMapping("/find-password")
+    public ResponseEntity<?> findPassword(@RequestBody FindPasswordRequestDto requestDto) {
 
+        requestDto.validateFieldsNotNull();
 
+        userService.changePassword(requestDto);
+        MessageResponseDto responseDto = new MessageResponseDto("비밀번호 변경에 성공했습니다.");
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
 
 
 

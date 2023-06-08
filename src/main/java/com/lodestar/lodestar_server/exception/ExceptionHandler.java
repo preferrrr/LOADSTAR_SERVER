@@ -101,4 +101,14 @@ public class ExceptionHandler {
         ExceptionMessage exceptionMessage = new ExceptionMessage("인증에 실패했습니다.");
         return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({ChangePwdFailException.class})
+    public ResponseEntity<?> handleChangePwdFailException(final ChangePwdFailException e) {
+
+        String msg = e.getNAME() + ": [userId = " + e.getMessage() + "]";
+        log.error(msg);
+
+        ExceptionMessage exceptionMessage = new ExceptionMessage("비밀번호 변경에 실패했습니다.");
+        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,9 +1,6 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.FirstQuestionRequestDto;
-import com.lodestar.lodestar_server.dto.LoginRequestDto;
-import com.lodestar.lodestar_server.dto.LoginResponseDto;
-import com.lodestar.lodestar_server.dto.SignUpRequestDto;
+import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
@@ -160,5 +157,19 @@ public class UserService {
 
             return result;
         }
+    }
+
+    public void changePassword(FindPasswordRequestDto requestDto) {
+        Optional<User> findUser = userRepository.findById(requestDto.getUserId());
+        User user;
+        if (findUser.isPresent()) {
+            user = findUser.get();
+        } else {
+            throw new ChangePwdFailException(String.valueOf(requestDto.getUserId()));
+        }
+        System.out.println(requestDto.getPassword());
+        String password = passwordEncoder.encode(requestDto.getPassword());
+        user.setPassword(password);
+
     }
 }

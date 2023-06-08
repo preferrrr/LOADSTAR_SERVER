@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindIdResponseDto {
+public class MessageResponseDto {
     private String message;
 }

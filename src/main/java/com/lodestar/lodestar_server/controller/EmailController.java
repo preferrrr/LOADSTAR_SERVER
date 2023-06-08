@@ -1,8 +1,6 @@
 package com.lodestar.lodestar_server.controller;
 
-import com.lodestar.lodestar_server.dto.CheckKeyResponseDto;
-import com.lodestar.lodestar_server.dto.CheckEmailRequestDto;
-import com.lodestar.lodestar_server.dto.CheckEmailResponseDto;
+import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,7 @@ public class EmailController {
 
         checkEmailRequestDto.validateFieldsNotNull();
 
-        emailService.sendEmail(checkEmailRequestDto.getEmail());
+        emailService.checkEmail(checkEmailRequestDto.getEmail());
         CheckEmailResponseDto responseDto = new CheckEmailResponseDto("메일 전송이 완료되었습니다.");
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
@@ -49,5 +47,6 @@ public class EmailController {
             return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
         }
     }
+
 
 }

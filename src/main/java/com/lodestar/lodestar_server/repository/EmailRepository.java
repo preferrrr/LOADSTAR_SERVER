@@ -9,4 +9,6 @@ public interface EmailRepository extends JpaRepository<Mail, Long> {
 
     List<Mail> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+
 }

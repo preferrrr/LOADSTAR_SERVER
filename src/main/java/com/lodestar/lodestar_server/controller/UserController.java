@@ -79,6 +79,13 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    @GetMapping("/find-id")
+    public ResponseEntity<?> findId(@RequestParam("email") String email) {
+        String username = userService.findId(email);
+        FindIdResponseDto responseDto = new FindIdResponseDto(username);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
     @GetMapping("/test2")
     public String test2(@RequestParam("test") String test2) {
         return test2;

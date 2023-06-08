@@ -84,10 +84,6 @@ public class EmailService {
 
     public void sendEmail(String to) throws Exception {
 
-        if (duplicateEmail(to)) {
-            throw new DuplicateEmailException(to);
-        }
-
         String key = createKey();
         MimeMessage message = createMessage(to, key);
         Mail email = new Mail();
@@ -102,21 +98,35 @@ public class EmailService {
         }
     }
 
+    /**
+     * 회원가입할 때 이메일 중복체크, 아니라면 이메일에 인증코드 보냄
+     */
+    public void checkEmail(String to) throws Exception {
+        if (duplicateEmail(to)) {
+            throw new DuplicateEmailException(to);
+        }
+
+        sendEmail(to);
+    }
+
+
     private boolean duplicateEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    /** 이메일로 테이블 조회해서 그 이메일에 대응되는 Key값과 비교*/
+
+    /**
+     * 이메일로 테이블 조회해서 그 이메일에 대응되는 Key값과 비교
+     */
     public boolean checkKey(String email, String key) {
 
         List<Mail> emails = emailRepository.findByEmail(email);
         Mail testEmail = emails.get(emails.size() - 1);
         String testKey = testEmail.getAuthKey();
 
-        if(key.equals(testKey) && validKeyTime(testEmail.getCreatedAt())) {
+        if (key.equals(testKey) && validKeyTime(testEmail.getCreatedAt())) {
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     //생성된 시간 + 3분보다 현재가 더 작아야함

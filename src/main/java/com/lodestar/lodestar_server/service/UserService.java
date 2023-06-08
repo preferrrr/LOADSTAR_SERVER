@@ -152,9 +152,9 @@ public class UserService {
             User user = userRepository.findByEmail(email);
             String username = user.getUsername();
 
-            String result = username.substring(0,2*username.length()/3-1);
+            String result = username.substring(0, 2 * username.length() / 3 - 1);
 
-            for(int i = 0;  i < username.length()/3; i++) {
+            for (int i = 0; i < username.length() / 3 + 1; i++) {
                 result += "*";
             }
 

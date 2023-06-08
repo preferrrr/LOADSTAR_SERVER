@@ -1,7 +1,11 @@
 package com.lodestar.lodestar_server.service;
 
+import com.lodestar.lodestar_server.dto.FindPasswordResponseDto;
 import com.lodestar.lodestar_server.entity.Mail;
+import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.exception.DuplicateEmailException;
+import com.lodestar.lodestar_server.exception.NotExistEmailException;
 import com.lodestar.lodestar_server.exception.SendEmailFailException;
 import com.lodestar.lodestar_server.repository.EmailRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
@@ -134,6 +138,29 @@ public class EmailService {
         LocalDateTime now = LocalDateTime.now();
 
         return now.isBefore(createdTime.plusMinutes(3)) && now.isAfter(createdTime);
+    }
+
+    public void findPwdSendEmail(String email) throws Exception{
+        if (!duplicateEmail(email)) {
+            throw new NotExistEmailException(email);
+        }
+
+        sendEmail(email);
+    }
+
+    public FindPasswordResponseDto findPwdCheckKey(String email, String key) {
+
+        boolean result = checkKey(email, key);
+
+        if(result) {
+            FindPasswordResponseDto responseDto = new FindPasswordResponseDto();
+            responseDto.setUserId(userRepository.findByEmail(email).getId());
+            responseDto.setResult(true);
+            responseDto.setMessage("인증에 성공했습니다.");
+            return responseDto;
+        } else {
+            throw new AuthFailException(email);
+        }
     }
 
 

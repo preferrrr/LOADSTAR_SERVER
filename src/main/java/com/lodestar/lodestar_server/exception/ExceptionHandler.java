@@ -91,4 +91,14 @@ public class ExceptionHandler {
         ExceptionMessage exceptionMessage = new ExceptionMessage("해당 이메일로 가입한 아이디가 없습니다.");
         return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({AuthFailException.class})
+    public ResponseEntity<?> handleAuthFailException(final AuthFailException e) {
+
+        String msg = e.getNAME() + ": [email = " + e.getMessage() + "]";
+        log.error(msg);
+
+        ExceptionMessage exceptionMessage = new ExceptionMessage("인증에 실패했습니다.");
+        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+    }
 }

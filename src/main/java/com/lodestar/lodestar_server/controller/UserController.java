@@ -2,6 +2,7 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.service.EmailService;
 import com.lodestar.lodestar_server.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
 
 
     /**로그인
@@ -86,10 +88,8 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/test2")
-    public String test2(@RequestParam("test") String test2) {
-        return test2;
-    }
+
+
 
 
 

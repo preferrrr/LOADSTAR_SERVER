@@ -149,13 +149,7 @@ public class UserService {
             User user = userRepository.findByEmail(email);
             String username = user.getUsername();
 
-            String result = username.substring(0, 2 * username.length() / 3 - 1);
-
-            for (int i = 0; i < username.length() / 3 + 1; i++) {
-                result += "*";
-            }
-
-            return result;
+            return encryptPassword(username);
         }
     }
 
@@ -171,5 +165,22 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
         user.setPassword(password);
 
+    }
+
+
+    private String encryptPassword(String username) {
+        int length = username.length();
+        int replaceLength = length / 3; // 문자열의 3분의 1 길이 계산
+
+        StringBuilder sb = new StringBuilder(username); // 변경 가능한 문자열로 변환
+
+        // 뒤에서 3분의 1 길이만큼 *로 대체
+        for (int i = Math.max(length - replaceLength, 0); i < length; i++) {
+            sb.setCharAt(i, '*');
+        }
+
+        String modifiedStr = sb.toString();
+
+        return modifiedStr;
     }
 }

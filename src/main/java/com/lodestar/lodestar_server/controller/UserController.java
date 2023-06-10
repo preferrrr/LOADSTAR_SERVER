@@ -71,7 +71,7 @@ public class UserController {
 
         requestDto.validateFieldsNotNull();
 
-        FirstQuestionResponseDto responseDto = new FirstQuestionResponseDto();
+        MessageResponseDto responseDto = new MessageResponseDto();
 
         userService.firstQuestion(requestDto);
 

@@ -24,7 +24,7 @@ public class EmailController {
         checkEmailRequestDto.validateFieldsNotNull();
 
         emailService.checkEmail(checkEmailRequestDto.getEmail());
-        CheckEmailResponseDto responseDto = new CheckEmailResponseDto("메일 전송이 완료되었습니다.");
+        MessageResponseDto responseDto = new MessageResponseDto("메일 전송이 완료되었습니다.");
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -59,7 +59,7 @@ public class EmailController {
 
         emailService.findPwdSendEmail(requestDto.getEmail());
 
-        CheckEmailResponseDto responseDto = new CheckEmailResponseDto("메일 전송이 완료되었습니다.");
+        MessageResponseDto responseDto = new MessageResponseDto("메일 전송이 완료되었습니다.");
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
 

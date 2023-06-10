@@ -2,7 +2,6 @@ package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.FindPasswordResponseDto;
 import com.lodestar.lodestar_server.entity.Mail;
-import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.exception.DuplicateEmailException;
 import com.lodestar.lodestar_server.exception.NotExistEmailException;
@@ -106,7 +105,7 @@ public class EmailService {
      * 회원가입할 때 이메일 중복체크, 아니라면 이메일에 인증코드 보냄
      */
     public void checkEmail(String to) throws Exception {
-        if (duplicateEmail(to)) {
+        if (existEmail(to)) {
             throw new DuplicateEmailException(to);
         }
 
@@ -114,7 +113,7 @@ public class EmailService {
     }
 
 
-    private boolean duplicateEmail(String email) {
+    private boolean existEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
@@ -141,7 +140,7 @@ public class EmailService {
     }
 
     public void findPwdSendEmail(String email) throws Exception{
-        if (!duplicateEmail(email)) {
+        if (!existEmail(email)) {
             throw new NotExistEmailException(email);
         }
 

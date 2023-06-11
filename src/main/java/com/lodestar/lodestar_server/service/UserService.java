@@ -73,7 +73,6 @@ public class UserService {
 
     public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
 
-
         if (!checkUsername(loginRequestDto.getUsername())
                 || !checkPassword(loginRequestDto.getUsername(), loginRequestDto.getPassword()))
             throw new LoginFailException(loginRequestDto.getUsername() + ", " + loginRequestDto.getPassword());
@@ -81,9 +80,9 @@ public class UserService {
         User user = userRepository.findByUsername(loginRequestDto.getUsername());
         String[] Tokens = createTokens(user, user.getRoles());
 
-        LoginResponseDto loginResponseDto = new LoginResponseDto(user.getId(), Tokens[0]);
+        LoginResponseDto loginResponseDto = new LoginResponseDto(user.getId(), "로그인에 성공했습니다.");
         HttpHeaders headers = new HttpHeaders();
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", Tokens[1])
+        ResponseCookie cookie = ResponseCookie.from("X-REFRESH-TOKEN", Tokens[1])
                 .maxAge(14 * 24 * 60 * 60)
                 .path("/")
                 .secure(true)
@@ -91,6 +90,7 @@ public class UserService {
                 .httpOnly(true)
                 .build();
         headers.add(HttpHeaders.COOKIE, cookie.toString());
+        headers.set("X-ACCESS-TOKEN", Tokens[0]);
         return new ResponseEntity<>(loginResponseDto, headers, HttpStatus.OK);
     }
 
@@ -115,7 +115,7 @@ public class UserService {
         String accessToken = jwtProvider.createJwtAccessToken(user.getId(), roles);
         String refreshTokenValue = UUID.randomUUID().toString().replace("-", "");
         saveRefreshTokenValue(user, refreshTokenValue);
-        String refreshToken = jwtProvider.createJwtRefreshToken(refreshTokenValue);
+        String refreshToken = jwtProvider.createJwtRefreshToken(user.getId(), refreshTokenValue);
         return new String[]{accessToken, refreshToken};
     }
 

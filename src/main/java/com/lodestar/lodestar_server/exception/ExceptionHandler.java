@@ -111,4 +111,14 @@ public class ExceptionHandler {
         ExceptionMessage exceptionMessage = new ExceptionMessage("비밀번호 변경에 실패했습니다.");
         return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({InvalidTokenException.class})
+    public ResponseEntity<?> handleInvalidTokenException(final InvalidTokenException e) {
+
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
+        log.error(msg);
+
+        ExceptionMessage exceptionMessage = new ExceptionMessage("잘못된 접근입니다.");
+        return new ResponseEntity<>(exceptionMessage, HttpStatus.FORBIDDEN);
+    }
 }

@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setHeader("X-ACCESS-TOKEN", jwtProvider.refreshToken(tokens[1]));
             Authentication authentication = jwtProvider.getAuthentication(tokens[1]);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            // 리프레시 토큰도 유효하다면 권한 줘서 인증 상태 유지되도록 함.
         }
         filterChain.doFilter(request, response);
     }

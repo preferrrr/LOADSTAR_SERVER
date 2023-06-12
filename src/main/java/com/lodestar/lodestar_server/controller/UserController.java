@@ -52,18 +52,13 @@ public class UserController {
     @GetMapping("/duplicated-username")
     public ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
 
-        boolean result = userService.checkUsername(username);
+        userService.dupCheckUsername(username);
         CheckUsernameResponseDto responseDto = new CheckUsernameResponseDto();
 
-        if (result) {
-            responseDto.setCheck(false);
-            responseDto.setMessage("이미 존재하는 아이디입니다.");
-            return new ResponseEntity<>(responseDto, HttpStatus.CONFLICT);
-        } else {
-            responseDto.setCheck(true);
-            responseDto.setMessage("사용 가능한 아이디입니다.");
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
-        }
+        responseDto.setCheck(true);
+        responseDto.setMessage("사용 가능한 아이디입니다.");
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+
     }
 
     @PatchMapping("/first-question")

@@ -121,4 +121,15 @@ public class ExceptionHandler {
         ExceptionMessage exceptionMessage = new ExceptionMessage("잘못된 접근입니다.");
         return new ResponseEntity<>(exceptionMessage, HttpStatus.FORBIDDEN);
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({ExistUsernameException.class})
+    public ResponseEntity<?> handleExistUsernameException(final ExistUsernameException e) {
+
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
+        log.error(msg);
+
+        ExceptionMessage exceptionMessage = new ExceptionMessage("이미 존재하는 아이디입니다.");
+        return new ResponseEntity<>(exceptionMessage, HttpStatus.CONFLICT);
+    }
+
 }

@@ -94,6 +94,13 @@ public class UserService {
         return new ResponseEntity<>(loginResponseDto, headers, HttpStatus.OK);
     }
 
+    public void dupCheckUsername(String username) {
+        boolean result = checkUsername(username);
+        if(result) {
+            throw new ExistUsernameException(username);
+        }
+    }
+
     public boolean checkUsername(String username) {
         return userRepository.existsByUsername(username);
     }

@@ -190,4 +190,20 @@ public class UserService {
 
         return modifiedStr;
     }
+
+    public MyPageResponseDto myPage(Long userId) {
+        Optional<User> findUser = userRepository.findById(userId);
+
+        if(findUser.isEmpty()) {
+            throw new AuthFailException(String.valueOf(userId));
+        } else {
+            User user = findUser.get();
+            MyPageResponseDto responseDto = new MyPageResponseDto();
+            responseDto.setEmail(user.getEmail());
+            responseDto.setUsername(user.getUsername());
+
+            return responseDto;
+        }
+
+    }
 }

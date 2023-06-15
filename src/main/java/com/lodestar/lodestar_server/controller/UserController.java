@@ -2,10 +2,13 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.exception.AuthFailException;
+import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+    private final JwtProvider jwtProvider;
 
 
 
@@ -90,6 +95,14 @@ public class UserController {
         userService.changePassword(requestDto);
         MessageResponseDto responseDto = new MessageResponseDto("비밀번호 변경에 성공했습니다.");
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/mypage/{userId}")
+    public ResponseEntity<?> mypage(@PathVariable Long userId) {
+
+
+        return new ResponseEntity<>(userService.myPage(userId),HttpStatus.OK);
+
     }
 
 

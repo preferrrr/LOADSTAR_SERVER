@@ -16,5 +16,5 @@ public class MyPageResponseDto {
 
     private String username;
     private String email;
-    private ArrayList<String> boards;
+    private ArrayList<MyBoardDto> boards;
 }

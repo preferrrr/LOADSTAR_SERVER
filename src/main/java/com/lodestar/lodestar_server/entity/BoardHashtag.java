@@ -18,7 +18,7 @@ public class BoardHashtag {
     String hashtagName;
 
     @JoinColumn(name = "board_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     Board board;
 
 

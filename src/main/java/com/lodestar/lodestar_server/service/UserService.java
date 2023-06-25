@@ -202,10 +202,13 @@ public class UserService {
 
         List<Board> boards = boardRepository.findByUserId(user.getId());
 
-        ArrayList<String> boardsTitle = new ArrayList<>();
+        ArrayList<MyBoardDto> boardsTitle = new ArrayList<>();
 
         for(int i = 0; i < boards.size(); i++) {
-            boardsTitle.add(boards.get(i).getTitle());
+            MyBoardDto board = new MyBoardDto();
+            board.setTitle(boards.get(i).getTitle());
+            board.setBoardId(boards.get(i).getId());
+            boardsTitle.add(board);
         }
 
         responseDto.setBoards(boardsTitle);

@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -44,9 +45,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authR -> {
                     authR.requestMatchers("/users/**").permitAll();
                     authR.requestMatchers("/emails/**").permitAll();
-                })
-                .authorizeHttpRequests(authR -> {
-                    authR.requestMatchers("/boards/**").hasAuthority("USER");
+                    authR.requestMatchers("/boards/new").hasAuthority("USER");
+                    authR.requestMatchers("/boards/main").permitAll();
+
+
                 })
                 //.headers((header) -> header.cacheControl(CacheControl.maxAge(60, Ti)).disable())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
@@ -54,6 +56,7 @@ public class SecurityConfig {
         return http.build();
 
     }
+
 
 
     @Bean

@@ -1,5 +1,6 @@
 package com.lodestar.lodestar_server.service;
 
+import com.lodestar.lodestar_server.dto.BoardPagingDto;
 import com.lodestar.lodestar_server.dto.CreateBoardDto;
 import com.lodestar.lodestar_server.dto.SaveBoardDto;
 import com.lodestar.lodestar_server.entity.Board;
@@ -10,9 +11,13 @@ import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.HashtagRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +56,36 @@ public class BoardService {
 
     }
 
-    public Long findAllBoard() {
-        return boardRepository.findAllBoard().get(0).getId();
+    public List<BoardPagingDto> main(Pageable pageable, int page) {
+        pageable = PageRequest.of(page,4);
+
+        Page<Board> boards = boardRepository.findAll(pageable);
+        List<BoardPagingDto> list = new ArrayList<>();
+
+        for (Board board : boards) {
+            BoardPagingDto dto = new BoardPagingDto();
+            dto.setBoardId(board.getId());
+            dto.setTitle(board.getTitle());
+            dto.setQna(board.getQna());
+            dto.setCareerImage(board.getCareerImage());
+            List<String> hashtagNames = new ArrayList<>();
+
+            for (BoardHashtag hashtag : board.getHashtag()) {
+                hashtagNames.add(hashtag.getHashtagName());
+            }
+
+            dto.setHashtags(hashtagNames);
+
+            System.out.println(board.getHashtag());
+            list.add(dto);
+        }
+
+        for(int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i).getTitle());
+        }
+        return list;
     }
+
+
+
 }

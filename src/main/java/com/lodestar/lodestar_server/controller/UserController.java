@@ -94,9 +94,12 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+
+    
     //TODO: 속도 개선 필요
     @GetMapping("/mypage/{userId}")
     public ResponseEntity<?> mypage(@PathVariable Long userId) {
+
 
 
         return new ResponseEntity<>(userService.myPage(userId),HttpStatus.OK);

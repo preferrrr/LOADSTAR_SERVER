@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class MyPageResponseDto {
 
     private String username;
     private String email;
+    private ArrayList<String> boards;
 }

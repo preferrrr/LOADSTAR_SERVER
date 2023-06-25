@@ -1,9 +1,11 @@
 package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.*;
+import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
+import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
@@ -192,18 +195,22 @@ public class UserService {
     }
 
     public MyPageResponseDto myPage(Long userId) {
-        Optional<User> findUser = userRepository.findById(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new AuthFailException(String.valueOf(userId)));
+        MyPageResponseDto responseDto = new MyPageResponseDto();
+        responseDto.setEmail(user.getEmail());
+        responseDto.setUsername(user.getUsername());
 
-        if(findUser.isEmpty()) {
-            throw new AuthFailException(String.valueOf(userId));
-        } else {
-            User user = findUser.get();
-            MyPageResponseDto responseDto = new MyPageResponseDto();
-            responseDto.setEmail(user.getEmail());
-            responseDto.setUsername(user.getUsername());
+        List<Board> boards = boardRepository.findByUserId(user.getId());
 
-            return responseDto;
+        ArrayList<String> boardsTitle = new ArrayList<>();
+
+        for(int i = 0; i < boards.size(); i++) {
+            boardsTitle.add(boards.get(i).getTitle());
         }
+
+        responseDto.setBoards(boardsTitle);
+
+        return responseDto;
 
     }
 }

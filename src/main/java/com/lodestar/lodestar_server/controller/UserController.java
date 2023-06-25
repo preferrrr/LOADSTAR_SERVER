@@ -18,9 +18,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private final JwtProvider jwtProvider;
-
-
 
     /**로그인
      * /users/login
@@ -97,6 +94,7 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    //TODO: 속도 개선 필요
     @GetMapping("/mypage/{userId}")
     public ResponseEntity<?> mypage(@PathVariable Long userId) {
 

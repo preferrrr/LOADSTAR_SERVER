@@ -26,10 +26,11 @@ import java.util.Optional;
 @Slf4j
 public class JwtProvider {
 
+
     @Value("${jwt.secret}")
     private String secretKey;
     //private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L;   // 30분
-    private final long ACCESS_TOKEN_VALID_TIME = 30 * 1000L;   // 30분
+    private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L;   // 30분
     private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 14 * 1000L;   // 2주
 
     private final CustomUserDetailsService userDetailsService;
@@ -78,8 +79,8 @@ public class JwtProvider {
 
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserId(token));
-        System.out.println("this.getId() : " + this.getUserId(token));
-        System.out.println("userDetails.getAuth : " + userDetails.getAuthorities().toString());
+        //System.out.println("this.getId() : " + this.getUserId(token));
+        //System.out.println("userDetails.getAuth : " + userDetails.getAuthorities().toString());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

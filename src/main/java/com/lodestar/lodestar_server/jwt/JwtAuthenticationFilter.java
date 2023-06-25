@@ -19,6 +19,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String[] tokens = jwtProvider.resolveToken(request);
 
+        //TODO: 토큰 인증, 인가 방식 다시 해야함.
         int accessTokenValid = jwtProvider.isAccessTokenValid(tokens[0]);
         //1 : access 토큰 유효
         //2 : access 토큰 만료
@@ -26,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (tokens[0] != null && accessTokenValid == 1) {
             Authentication authentication = jwtProvider.getAuthentication(tokens[0]);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println(authentication.toString());
+            //System.out.println(authentication.toString());
         } else if(accessTokenValid == 2) { // 엑세스 토큰이 만료됐으면 header에 다시 실어서 보내줌
             //access이 만료됐으면
             //refresh 토큰 유효한지 확인

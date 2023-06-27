@@ -32,9 +32,6 @@ public class Board extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(name = "QnA", columnDefinition = "VARCHAR(1) default 'y'")
-    private String qna;
-
     //해시태그는 조회 기능에만 쓰임.
     //delim = '#'으로 구분할 예정
     //그럼 조회할 때 join보다는 성능이 좋을거같음.

@@ -16,7 +16,5 @@ public class BoardPagingDto {
     private Long boardId;
     private String title;
     private List<String> hashtags;
-    private String content;
-    private String qna;
     private String careerImage;
 }

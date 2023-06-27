@@ -47,8 +47,7 @@ public class SecurityConfig {
                     authR.requestMatchers("/emails/**").permitAll();
                     authR.requestMatchers("/boards/new").hasAuthority("USER");
                     authR.requestMatchers("/boards/main").permitAll();
-
-
+                    authR.requestMatchers("/boards/new2").permitAll();
                 })
                 //.headers((header) -> header.cacheControl(CacheControl.maxAge(60, Ti)).disable())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);

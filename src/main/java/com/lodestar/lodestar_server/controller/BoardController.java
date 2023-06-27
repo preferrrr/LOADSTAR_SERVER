@@ -2,12 +2,11 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.BoardPagingDto;
 import com.lodestar.lodestar_server.dto.CreateBoardDto;
-import com.lodestar.lodestar_server.dto.SaveBoardDto;
-import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.service.BoardService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +20,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    /**게시글 작성*/
     @PostMapping("/new")
     public ResponseEntity<?> saveBoard(@RequestBody CreateBoardDto createBoardDto) {
 
@@ -30,12 +30,31 @@ public class BoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    /**메인페이지 게시글 조회*/
     @GetMapping(value = "/main")
-    public ResponseEntity<?> main(Pageable pageable,
-                                  @RequestParam(name = "page", defaultValue = "0") int page) {
-        List<BoardPagingDto> response= boardService.main(pageable, page);
+    public ResponseEntity<?> getBoard(@PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                  @RequestParam("hashtags") String[] hashtags) {
+
+        List<BoardPagingDto> response= boardService.getBoards(pageable, hashtags);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+
+
+
+
+
+
+    @PostMapping("/new2")
+    public ResponseEntity<?> saveBoard100(@RequestBody CreateBoardDto createBoardDto) {
+
+        createBoardDto.validateFieldsNotNull();
+        boardService.saveBoard100(createBoardDto);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

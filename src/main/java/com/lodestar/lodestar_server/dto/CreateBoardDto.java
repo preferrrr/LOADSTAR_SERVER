@@ -18,7 +18,6 @@ public class CreateBoardDto {
     private String title;
     private String content;
     private String showGraph;
-    private String qna;
     private List<String> hashtags = new ArrayList<>();
 
     public void validateFieldsNotNull() {
@@ -30,7 +29,5 @@ public class CreateBoardDto {
             throw new InvalidRequestParameterException("Invalid content");
         if(showGraph == null || showGraph.isEmpty() || showGraph.isBlank())
             throw new InvalidRequestParameterException("Invalid showGraph");
-        if(qna == null || qna.isEmpty() || qna.isBlank())
-            throw new InvalidRequestParameterException("Invalid qna");
     }
 }

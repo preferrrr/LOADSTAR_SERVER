@@ -45,8 +45,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authR -> {
                     authR.requestMatchers("/users/**").permitAll();
                     authR.requestMatchers("/emails/**").permitAll();
-                    authR.requestMatchers("/boards/new").hasAuthority("USER");
+
                     authR.requestMatchers("/boards/main").permitAll();
+                    authR.requestMatchers("/boards/new").hasAuthority("USER");
+                    authR.requestMatchers("/boards/{boardId}").hasAuthority("USER");
+
                     authR.requestMatchers("/boards/new2").permitAll();
                 })
                 //.headers((header) -> header.cacheControl(CacheControl.maxAge(60, Ti)).disable())

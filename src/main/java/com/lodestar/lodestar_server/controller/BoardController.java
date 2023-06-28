@@ -2,6 +2,7 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.BoardPagingDto;
 import com.lodestar.lodestar_server.dto.CreateBoardDto;
+import com.lodestar.lodestar_server.dto.GetBoardResponseDto;
 import com.lodestar.lodestar_server.service.BoardService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +34,20 @@ public class BoardController {
 
     /**메인페이지 게시글 조회*/
     @GetMapping(value = "/main")
-    public ResponseEntity<?> getBoard(@PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<?> getBoardList(@PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                   @RequestParam("hashtags") String[] hashtags) {
 
-        List<BoardPagingDto> response= boardService.getBoards(pageable, hashtags);
+        List<BoardPagingDto> response= boardService.getBoardList(pageable, hashtags);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{boardId}")
+    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId) {
+
+        GetBoardResponseDto responseDto = boardService.getBoard(boardId);
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
 

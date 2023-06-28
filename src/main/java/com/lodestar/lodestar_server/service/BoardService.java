@@ -2,8 +2,11 @@ package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.BoardPagingDto;
 import com.lodestar.lodestar_server.dto.CreateBoardDto;
+import com.lodestar.lodestar_server.dto.GetBoardResponseDto;
+import com.lodestar.lodestar_server.dto.GetCommentResponseDto;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.BoardHashtag;
+import com.lodestar.lodestar_server.entity.Comment;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.repository.BoardRepository;
@@ -85,7 +88,7 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public List<BoardPagingDto> getBoards(Pageable pageable, String[] hashtags) {
+    public List<BoardPagingDto> getBoardList(Pageable pageable, String[] hashtags) {
 
         List<Board> boards = new ArrayList<>();
         List<BoardPagingDto> result = new ArrayList<>();
@@ -141,6 +144,46 @@ public class BoardService {
 
         return result;
     }
+
+
+    public GetBoardResponseDto getBoard(Long boardId) {
+        Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+
+        GetBoardResponseDto response = new GetBoardResponseDto();
+
+        response.setBoardId(findBoard.getId());
+        response.setTitle(findBoard.getTitle());
+        response.setContent(findBoard.getContent());
+        response.setCreatedAt(findBoard.getCreatedAt());
+        response.setModifiedAt(findBoard.getModifiedAt());
+        response.setUserId(findBoard.getUser().getId());
+        response.setCareerImage(findBoard.getCareerImage());
+
+        List<BoardHashtag> hashtagList = findBoard.getHashtag();
+        List<String> hashtags = new ArrayList<>();
+        for (BoardHashtag hashtag : hashtagList) {
+            hashtags.add(hashtag.getHashtagName());
+        }
+        response.setHashtags(hashtags);
+
+        List<Comment> commentList = findBoard.getComments();
+        List<GetCommentResponseDto> comments = new ArrayList<>();
+        for(Comment comment : commentList) {
+            GetCommentResponseDto commentDto = new GetCommentResponseDto();
+
+            commentDto.setCommentId(comment.getId());
+            commentDto.setCommentContent(comment.getContent());
+            commentDto.setUserId(comment.getUser().getId());
+            commentDto.setCreatedAt(comment.getCreatedAt());
+            commentDto.setModifiedAt(comment.getModifiedAt());
+
+            comments.add(commentDto);
+        }
+        response.setComments(comments);
+
+        return response;
+    }
+
 
 
 

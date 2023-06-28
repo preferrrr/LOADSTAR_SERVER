@@ -35,4 +35,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             countQuery = "select count(b.board_id) from board b join board_hashtag h on b.board_id = h.board_id")
     Page<Long> findBoardIdByHashtags(Pageable pageable, @Param("hashtags") List<String> hashtags);
 
+
+    @Query("select b from Board b " +
+            "left join b.hashtag h " +
+            "left join fetch b.comments c " +
+            "where b.id = :boardId")
+    Optional<Board> findByPathBoardId(@Param("boardId") Long boardId);
+
 }

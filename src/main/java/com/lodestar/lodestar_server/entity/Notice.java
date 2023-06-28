@@ -20,7 +20,7 @@ public class Notice extends BaseEntity {
 
     //댓글이랑 게시글
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", nullable = false)
+    @JoinColumn(name = "comment_id", nullable = false, unique = true)
     private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,4 +29,6 @@ public class Notice extends BaseEntity {
 
     @Column(columnDefinition = "VARCHAR(20) default 'comment'")
     private String kind;
+
+
 }

@@ -36,10 +36,16 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Long> findBoardIdByHashtags(Pageable pageable, @Param("hashtags") List<String> hashtags);
 
 
-    @Query("select b from Board b " +
-            "left join b.hashtag h " +
-            "left join fetch b.comments c " +
+    //TODO: distinct하지 않으면 중복돼서 조회됨. 예를들어 hathtag가 2개면 comment가 2쌍으로 중복됨.결과 수 만큼 나옴.이유 체크
+    //FetchJoin에서 생기는 문제. 카테시안 곱이 발생하여 중복이 발생함
+    //M*N으로 모든 경우의 수를 출력하게 됨 => distinct 또는 Set 자료구조 사용해서 해결
+    //연관관계를 미리 함께 가져오는 만큼 중복을 제거해야함
+    //TODO: comment에 fetch를 추가하면 Comment의 Notice 엔티티까지 같이 조회하게 되어서 댓글 갯수만큼 Notice를 더 조회하게 됨
+    //그래서 comment는 fetch join하지 않고 쿼리 한번만 보내도록 함. 연관관계를 eager로 해주면 다른 로직에서 필요없는 댓글이 조회되므로 여기서 타협...
+    @Query("select distinct b from Board b " +
+            "left join fetch b.hashtag " +
+            "left join b.comments " +
             "where b.id = :boardId")
-    Optional<Board> findByPathBoardId(@Param("boardId") Long boardId);
+    Board findByPathBoardId(@Param("boardId") Long boardId);
 
 }

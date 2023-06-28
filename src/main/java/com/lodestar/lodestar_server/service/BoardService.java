@@ -13,6 +13,7 @@ import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.HashtagRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
@@ -146,8 +148,9 @@ public class BoardService {
     }
 
 
+    @Transactional(readOnly = true)
     public GetBoardResponseDto getBoard(Long boardId) {
-        Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+        Board findBoard = boardRepository.findByPathBoardId(boardId);
 
         GetBoardResponseDto response = new GetBoardResponseDto();
 
@@ -168,6 +171,7 @@ public class BoardService {
 
         List<Comment> commentList = findBoard.getComments();
         List<GetCommentResponseDto> comments = new ArrayList<>();
+
         for(Comment comment : commentList) {
             GetCommentResponseDto commentDto = new GetCommentResponseDto();
 
@@ -179,6 +183,7 @@ public class BoardService {
 
             comments.add(commentDto);
         }
+
         response.setComments(comments);
 
         return response;

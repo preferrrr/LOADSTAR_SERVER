@@ -51,8 +51,9 @@ public class SecurityConfig {
                     authR.requestMatchers("/boards/{boardId}").hasAuthority("USER");
 
                     authR.requestMatchers("/boards/new2").permitAll();
+
+                    authR.requestMatchers("/comments/**").hasAuthority("USER");
                 })
-                //.headers((header) -> header.cacheControl(CacheControl.maxAge(60, Ti)).disable())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

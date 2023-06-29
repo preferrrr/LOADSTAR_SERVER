@@ -17,4 +17,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Long> findBoardIdByUserId(@Param("userId") Long userId);
 
     boolean existsByBoardAndUser(Board board, User user);
+
+    void deleteByBoardAndUser(Board board, User user);
+
+
 }

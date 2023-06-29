@@ -53,6 +53,8 @@ public class SecurityConfig {
                     authR.requestMatchers("/boards/new2").permitAll();
 
                     authR.requestMatchers("/comments/**").hasAuthority("USER");
+
+                    authR.requestMatchers("/bookmarks/**").hasAuthority("USER");
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 

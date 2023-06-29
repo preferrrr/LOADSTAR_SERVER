@@ -202,6 +202,17 @@ public class BoardService {
     }
 
 
+    public void deleteBoard(Long userId, Long boardId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+
+        if(board.getUser().getId() != userId) {
+            throw new AuthFailException(board.getUser().getId() + " != " + userId);
+        }
+
+        boardRepository.deleteById(boardId);
+
+    }
+
 
 
 
@@ -233,32 +244,5 @@ public class BoardService {
             hashtagRepository.saveAll(hashtags);
         }
     }
-
-
-
-    //
-//    @Transactional(readOnly = true)
-//    public List<BoardPagingDto> main(Pageable pageable) {
-//
-//        Page<Board> boards = boardRepository.findAll(pageable);
-//        List<BoardPagingDto> list = new ArrayList<>();
-//
-//        for (Board board : boards) {
-//            BoardPagingDto dto = new BoardPagingDto();
-//            dto.setBoardId(board.getId());
-//            dto.setTitle(board.getTitle());
-//            dto.setCareerImage(board.getCareerImage());
-//            List<String> hashtagNames = new ArrayList<>();
-//
-//            for (BoardHashtag hashtag : board.getHashtag()) {
-//                hashtagNames.add(hashtag.getHashtagName());
-//            }
-//            dto.setHashtags(hashtagNames);
-//
-//            list.add(dto);
-//        }
-//
-//        return list;
-//    }
 
 }

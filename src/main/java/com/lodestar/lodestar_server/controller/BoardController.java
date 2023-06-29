@@ -43,12 +43,21 @@ public class BoardController {
     }
 
     @GetMapping(value = "/{userId}/{boardId}")
-    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId, @PathVariable("userId") Long userId) {
+    public ResponseEntity<?> getBoard(@PathVariable("userId") Long userId, @PathVariable("boardId") Long boardId) {
 
         GetBoardResponseDto responseDto = boardService.getBoard(userId, boardId);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/{userId}/{boardId}")
+    public ResponseEntity<?> deleteBoard(@PathVariable("userId") Long userId, @PathVariable("boardId") Long boardId) {
+
+        boardService.deleteBoard(userId, boardId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 
 

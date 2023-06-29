@@ -15,6 +15,7 @@ import java.util.List;
 public class GetBoardResponseDto {
     private Long boardId;
     private Long userId;
+    private String username;
     private String title;
     private String content;
     private String careerImage;

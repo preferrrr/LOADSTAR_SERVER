@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class GetCommentResponseDto {
     private Long commentId;
     private Long userId;
+    private String username;
     private String commentContent;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

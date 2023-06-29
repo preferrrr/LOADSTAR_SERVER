@@ -160,6 +160,7 @@ public class BoardService {
         response.setCreatedAt(findBoard.getCreatedAt());
         response.setModifiedAt(findBoard.getModifiedAt());
         response.setUserId(findBoard.getUser().getId());
+        response.setUsername(findBoard.getUser().getUsername());
         response.setCareerImage(findBoard.getCareerImage());
 
         List<BoardHashtag> hashtagList = findBoard.getHashtag();
@@ -176,6 +177,7 @@ public class BoardService {
             GetCommentResponseDto commentDto = new GetCommentResponseDto();
 
             commentDto.setCommentId(comment.getId());
+            commentDto.setUsername(comment.getUser().getUsername());
             commentDto.setCommentContent(comment.getContent());
             commentDto.setUserId(comment.getUser().getId());
             commentDto.setCreatedAt(comment.getCreatedAt());

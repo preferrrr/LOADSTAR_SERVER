@@ -161,11 +161,17 @@ public class BoardService {
         response.setContent(findBoard.getContent());
         response.setCreatedAt(findBoard.getCreatedAt());
         response.setModifiedAt(findBoard.getModifiedAt());
+
         User user = userRepository.findById(findBoard.getUser().getId()).orElseThrow(() -> new AuthFailException(String.valueOf(userId)));
-        response.setUserId(userId);
+        response.setUserId(user.getId());
         response.setUsername(user.getUsername());
+
+
         response.setCareerImage(findBoard.getCareerImage());
-        response.setBookmark(bookmarkRepository.existsByBoardAndUser(findBoard,user));
+
+        User bookmarkUser = userRepository.getReferenceById(userId);
+        boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,bookmarkUser);
+        response.setBookmark(bookmark);
 
         List<BoardHashtag> hashtagList = findBoard.getHashtag();
         List<String> hashtags = new ArrayList<>();

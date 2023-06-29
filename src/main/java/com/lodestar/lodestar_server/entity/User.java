@@ -73,6 +73,9 @@ public class User extends BaseEntity implements UserDetails, Persistable<Long> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Notice> notices = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Bookmark> bookmarks = new ArrayList<>();
+
     @Override
     public String getUsername() {
         return username;

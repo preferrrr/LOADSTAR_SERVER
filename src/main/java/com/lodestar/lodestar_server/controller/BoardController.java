@@ -42,10 +42,10 @@ public class BoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{boardId}")
-    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId) {
+    @GetMapping(value = "/{userId}/{boardId}")
+    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId, @PathVariable("userId") Long userId) {
 
-        GetBoardResponseDto responseDto = boardService.getBoard(boardId);
+        GetBoardResponseDto responseDto = boardService.getBoard(userId, boardId);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }

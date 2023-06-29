@@ -19,6 +19,7 @@ public class GetBoardResponseDto {
     private String title;
     private String content;
     private String careerImage;
+    private boolean bookmark;
 
     private List<String> hashtags;
     private List<GetCommentResponseDto> comments;

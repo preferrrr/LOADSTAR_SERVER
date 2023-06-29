@@ -48,4 +48,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "where b.id = :boardId")
     Board findByPathBoardId(@Param("boardId") Long boardId);
 
+
+
+    List<Board> findBoardsByIdIn(@Param("userId") List<Long> userId);
+
 }

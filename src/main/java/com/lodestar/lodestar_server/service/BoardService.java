@@ -10,6 +10,7 @@ import com.lodestar.lodestar_server.entity.Comment;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.repository.BoardRepository;
+import com.lodestar.lodestar_server.repository.BookmarkRepository;
 import com.lodestar.lodestar_server.repository.HashtagRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final HashtagRepository hashtagRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public void saveBoard(CreateBoardDto createBoardDto) {
 
@@ -149,7 +151,7 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public GetBoardResponseDto getBoard(Long boardId) {
+    public GetBoardResponseDto getBoard(Long userId, Long boardId) {
         Board findBoard = boardRepository.findByPathBoardId(boardId);
 
         GetBoardResponseDto response = new GetBoardResponseDto();
@@ -159,9 +161,11 @@ public class BoardService {
         response.setContent(findBoard.getContent());
         response.setCreatedAt(findBoard.getCreatedAt());
         response.setModifiedAt(findBoard.getModifiedAt());
-        response.setUserId(findBoard.getUser().getId());
-        response.setUsername(findBoard.getUser().getUsername());
+        User user = userRepository.findById(findBoard.getUser().getId()).orElseThrow(() -> new AuthFailException(String.valueOf(userId)));
+        response.setUserId(userId);
+        response.setUsername(user.getUsername());
         response.setCareerImage(findBoard.getCareerImage());
+        response.setBookmark(bookmarkRepository.existsByBoardAndUser(findBoard,user));
 
         List<BoardHashtag> hashtagList = findBoard.getHashtag();
         List<String> hashtags = new ArrayList<>();

@@ -6,6 +6,7 @@ import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.repository.BoardRepository;
+import com.lodestar.lodestar_server.repository.BookmarkRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class UserService {
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final BookmarkRepository bookmarkRepository;
 
     private static final int ACCESS = 0;
 
@@ -200,18 +202,30 @@ public class UserService {
         responseDto.setEmail(user.getEmail());
         responseDto.setUsername(user.getUsername());
 
-        List<Board> boards = boardRepository.findByUserId(user.getId());
+        List<Board> myBoards = boardRepository.findByUserId(user.getId());
+        ArrayList<MyBoardDto> myBoardDtos = new ArrayList<>();
 
-        ArrayList<MyBoardDto> boardsTitle = new ArrayList<>();
-
-        for(int i = 0; i < boards.size(); i++) {
+        for(int i = 0; i < myBoards.size(); i++) {
             MyBoardDto board = new MyBoardDto();
-            board.setTitle(boards.get(i).getTitle());
-            board.setBoardId(boards.get(i).getId());
-            boardsTitle.add(board);
+            board.setTitle(myBoards.get(i).getTitle());
+            board.setBoardId(myBoards.get(i).getId());
+            myBoardDtos.add(board);
         }
+        responseDto.setBoards(myBoardDtos);
 
-        responseDto.setBoards(boardsTitle);
+
+        List<Long> bookmarkBoardIds = bookmarkRepository.findBoardIdByUserId(user.getId());
+        List<Board> bookmarkBoards = boardRepository.findBoardsByIdIn(bookmarkBoardIds);
+        ArrayList<BookmarkDto> bookmarkDtos = new ArrayList<>();
+
+        for(int i = 0; i < bookmarkBoards.size(); i++) {
+            BookmarkDto board = new BookmarkDto();
+            board.setTitle(bookmarkBoards.get(i).getTitle());
+            board.setBoardId(bookmarkBoards.get(i).getId());
+            bookmarkDtos.add(board);
+        }
+        responseDto.setBookmarks(bookmarkDtos);
+
 
         return responseDto;
 

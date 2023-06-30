@@ -77,6 +77,7 @@ public class JwtProvider {
         return tokens;
     }
 
+    //TODO: 이걸로 권한얻는데, jwt를 사용하니까 db를 조회하지 않고 권한이 부여될 수 있도록 수정 해야함. (@AuthenticationPrincipal)
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserId(token));
         //System.out.println("this.getId() : " + this.getUserId(token));

@@ -14,15 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateBoardDto {
-    private Long userId;
     private String title;
     private String content;
     private String showGraph;
     private List<String> hashtags = new ArrayList<>();
 
     public void validateFieldsNotNull() {
-        if(userId == null)
-            throw new InvalidRequestParameterException("Invalid userId");
         if(title == null || title.isEmpty() || title.isBlank())
             throw new InvalidRequestParameterException("Invalid title");
         if(content == null || content.isEmpty() || content.isBlank())

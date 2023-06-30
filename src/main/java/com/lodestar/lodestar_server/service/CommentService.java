@@ -24,10 +24,9 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
 
-    public void createComment(CreateCommentDto createCommentDto) {
+    public void createComment(User user, CreateCommentDto createCommentDto) {
         Comment comment = new Comment();
 
-        User user = userRepository.getReferenceById(createCommentDto.getUserId());
         Board board= boardRepository.getReferenceById(createCommentDto.getBoardId());
 
         comment.setUser(user);

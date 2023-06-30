@@ -11,12 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SaveBookmarkDto {
-    private Long userId;
     private Long boardId;
 
     public void validateFieldsNotNull() {
-        if(userId == null)
-            throw new InvalidRequestParameterException("Invalid userId");
         if(boardId == null)
             throw new InvalidRequestParameterException("Invalid boardId");
     }

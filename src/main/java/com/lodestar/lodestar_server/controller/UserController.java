@@ -8,6 +8,7 @@ import com.lodestar.lodestar_server.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +64,9 @@ public class UserController {
 
     }
 
+    /**초반 질문 등록
+     * /users/first-question
+     * */
     @PatchMapping("/first-question")
     public ResponseEntity<?> firstQuestion(@RequestBody FirstQuestionRequestDto requestDto) {
 
@@ -77,6 +81,10 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    /**
+     * 아이디 찾기
+     * /users/find-id
+     * */
     @GetMapping("/find-id")
     public ResponseEntity<?> findId(@RequestParam("email") String email) {
         String username = userService.findId(email);
@@ -84,6 +92,10 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    /**
+     * 비밀번호 찾기 인증 후 변경
+     * /users/find-password
+     * */
     @PatchMapping("/find-password")
     public ResponseEntity<?> findPassword(@RequestBody FindPasswordRequestDto requestDto) {
 
@@ -95,10 +107,10 @@ public class UserController {
     }
 
 
-    @GetMapping("/mypage/{userId}")
-    public ResponseEntity<?> mypage(@PathVariable Long userId) {
+    @GetMapping("/my-page")
+    public ResponseEntity<?> myPage(@AuthenticationPrincipal User user) {
 
-        MyPageResponseDto responseDto = userService.myPage(userId);
+        MyPageResponseDto responseDto = userService.myPage(user);
 
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
 

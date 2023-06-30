@@ -48,7 +48,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "where b.id = :boardId")
     Board findByPathBoardId(@Param("boardId") Long boardId);
 
-    List<Board> findBoardsByIdIn(@Param("userId") List<Long> userId);
+
+    @Query(value = "select * from board b where b.board_id in (select m.board_id from bookmark m where m.user_id = :userId)",
+        nativeQuery = true)
+    List<Board> findBoardsByIdIn(@Param("userId") Long userId);
 
     void deleteById(Long boardId);
 }

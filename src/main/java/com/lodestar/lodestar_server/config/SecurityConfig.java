@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,17 +44,24 @@ public class SecurityConfig {
                 .cors((cors) -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authR -> {
+
+                    //User
+                    authR.requestMatchers("/users/my-page").hasAuthority("USER");
                     authR.requestMatchers("/users/**").permitAll();
+
+                    //Email
                     authR.requestMatchers("/emails/**").permitAll();
 
-                    authR.requestMatchers("/boards/main").permitAll();
-                    authR.requestMatchers("/boards/new").hasAuthority("USER");
-                    authR.requestMatchers("/boards/{userId}/{boardId}").permitAll();
-
+                    //Board
+                    authR.requestMatchers(HttpMethod.GET,"/boards").permitAll(); //메인페이지 게시글목록 조회
+                    authR.requestMatchers(HttpMethod.POST, "boards").hasAuthority("USER"); //작성
+                    authR.requestMatchers("/boards/{boardId}").hasAuthority("USER"); //get, patch, delete (조회,수정,삭제)
                     authR.requestMatchers("/boards/new2").permitAll();
 
+                    //Comment
                     authR.requestMatchers("/comments/**").hasAuthority("USER");
 
+                    //Bookmarks
                     authR.requestMatchers("/bookmarks/**").hasAuthority("USER");
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);

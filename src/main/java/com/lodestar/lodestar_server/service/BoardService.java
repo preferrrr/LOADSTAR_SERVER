@@ -35,10 +35,9 @@ public class BoardService {
     private final HashtagRepository hashtagRepository;
     private final BookmarkRepository bookmarkRepository;
 
-    public void saveBoard(CreateBoardDto createBoardDto) {
+    public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
         Board board = new Board();
-        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(() -> new AuthFailException(String.valueOf(createBoardDto.getUserId())));
 
         board.setUser(user);
         board.setTitle(createBoardDto.getTitle());
@@ -49,6 +48,8 @@ public class BoardService {
         List<BoardHashtag> hashtags = new ArrayList<>();
         List<String> hashtagNames = createBoardDto.getHashtags();
 
+        //TODO: 해시태그의 개수만큼 insert 쿼리가 생성됨 => bulk query로 해결 가능
+        // 근데 Id의 전략을 identity를 사용했기 때문에 jpa에서는 bulk query 사용 불가 => jdbc template 사용해서 해결 가능.
         for (int i = 0; i < hashtagNames.size(); i++) {
             BoardHashtag hashtag = new BoardHashtag();
             hashtag.setBoard(board);
@@ -56,36 +57,46 @@ public class BoardService {
             hashtags.add(hashtag);
         }
 
-        BoardHashtag current = new BoardHashtag();
-        current.setBoard(board);
-        if (user.getCurrent().equals("y")) {
-            current.setHashtagName("현직자");
-        } else if (user.getCurrent().equals("n")) {
-            current.setHashtagName("비현직자");
+
+        String current = user.getCurrent();
+        if(current.equals("y") || current.equals("n")) {
+            BoardHashtag hashtag = new BoardHashtag();
+            hashtag.setBoard(board);
+            if (current.equals("y"))
+                hashtag.setHashtagName("현직자");
+            else
+                hashtag.setHashtagName("비현직자");
+
+            hashtags.add(hashtag);
         }
-        hashtags.add(current);
 
-        BoardHashtag major = new BoardHashtag();
-        major.setBoard(board);
-        if (user.getCurrent().equals("y")) {
-            major.setHashtagName("전공자");
-        } else if (user.getCurrent().equals("n")) {
-            major.setHashtagName("비전공자");
+
+        String major = user.getMajor();
+        if(major.equals("y") || major.equals("n")) {
+            BoardHashtag hashtag = new BoardHashtag();
+            hashtag.setBoard(board);
+            if (major.equals("y"))
+                hashtag.setHashtagName("전공자");
+            else
+                hashtag.setHashtagName("비전공자");
+
+            hashtags.add(hashtag);
         }
-        hashtags.add(major);
 
-        BoardHashtag frontBack = new BoardHashtag();
-        frontBack.setBoard(board);
-        if (user.getCurrent().equals("y")) {
-            frontBack.setHashtagName("front");
-        } else if (user.getCurrent().equals("n")) {
-            frontBack.setHashtagName("back");
+        String frontBack = user.getFront_back();
+        if(frontBack.equals("y") || frontBack.equals("n")) {
+            BoardHashtag hashtag = new BoardHashtag();
+            hashtag.setBoard(board);
+            if (frontBack.equals("y"))
+                hashtag.setHashtagName("front");
+            else
+                hashtag.setHashtagName("back");
+
+            hashtags.add(hashtag);
         }
-        hashtags.add(frontBack);
 
-
+        board.setHashtag(hashtags);
         boardRepository.save(board);
-        hashtagRepository.saveAll(hashtags);
 
     }
 
@@ -124,8 +135,6 @@ public class BoardService {
                 boardIds.add(id);
             }
 
-            System.out.println(boardIds);
-
             boards = boardRepository.findBoardsWhereInBoardIds(boardIds);
 
         }
@@ -151,7 +160,8 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public GetBoardResponseDto getBoard(Long userId, Long boardId) {
+    public GetBoardResponseDto getBoard(User user, Long boardId) {
+
         Board findBoard = boardRepository.findByPathBoardId(boardId);
 
         GetBoardResponseDto response = new GetBoardResponseDto();
@@ -162,14 +172,13 @@ public class BoardService {
         response.setCreatedAt(findBoard.getCreatedAt());
         response.setModifiedAt(findBoard.getModifiedAt());
 
-        User user = userRepository.findById(findBoard.getUser().getId()).orElseThrow(() -> new AuthFailException(String.valueOf(userId)));
         response.setUserId(user.getId());
         response.setUsername(user.getUsername());
 
 
         response.setCareerImage(findBoard.getCareerImage());
 
-        User bookmarkUser = userRepository.getReferenceById(userId);
+        User bookmarkUser = userRepository.getReferenceById(user.getId());
         boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,bookmarkUser);
         response.setBookmark(bookmark);
 
@@ -202,11 +211,11 @@ public class BoardService {
     }
 
 
-    public void deleteBoard(Long userId, Long boardId) {
+    public void deleteBoard(User user, Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
 
-        if(board.getUser().getId() != userId) {
-            throw new AuthFailException(board.getUser().getId() + " != " + userId);
+        if(board.getUser().getId() != user.getId()) {
+            throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
         }
 
         boardRepository.deleteById(boardId);
@@ -214,35 +223,31 @@ public class BoardService {
     }
 
 
-
-
-
-
-    public void saveBoard100(CreateBoardDto createBoardDto) {
-        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(() -> new AuthFailException(String.valueOf(createBoardDto.getUserId())));
-
-        for (int j = 0; j < 100; j++) {
-            Board board = new Board();
-
-            board.setUser(user);
-            board.setTitle("test " + j);
-            board.setContent(createBoardDto.getContent());
-            //TODO: 커리어 이미지 y이면 이미지 저장, 아니면 n으로
-            board.setCareerImage(createBoardDto.getShowGraph());
-
-            List<BoardHashtag> hashtags = new ArrayList<>();
-            List<String> hashtagNames = createBoardDto.getHashtags();
-
-            for (int i = 0; i < hashtagNames.size(); i++) {
-                BoardHashtag hashtag = new BoardHashtag();
-                hashtag.setBoard(board);
-                hashtag.setHashtagName(hashtagNames.get(i));
-                hashtags.add(hashtag);
-            }
-
-            boardRepository.save(board);
-            hashtagRepository.saveAll(hashtags);
-        }
-    }
+//    public void saveBoard100(CreateBoardDto createBoardDto) {
+//        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(() -> new AuthFailException(String.valueOf(createBoardDto.getUserId())));
+//
+//        for (int j = 0; j < 100; j++) {
+//            Board board = new Board();
+//
+//            board.setUser(user);
+//            board.setTitle("test " + j);
+//            board.setContent(createBoardDto.getContent());
+//            //TODO: 커리어 이미지 y이면 이미지 저장, 아니면 n으로
+//            board.setCareerImage(createBoardDto.getShowGraph());
+//
+//            List<BoardHashtag> hashtags = new ArrayList<>();
+//            List<String> hashtagNames = createBoardDto.getHashtags();
+//
+//            for (int i = 0; i < hashtagNames.size(); i++) {
+//                BoardHashtag hashtag = new BoardHashtag();
+//                hashtag.setBoard(board);
+//                hashtag.setHashtagName(hashtagNames.get(i));
+//                hashtags.add(hashtag);
+//            }
+//
+//            boardRepository.save(board);
+//            hashtagRepository.saveAll(hashtags);
+//        }
+//    }
 
 }

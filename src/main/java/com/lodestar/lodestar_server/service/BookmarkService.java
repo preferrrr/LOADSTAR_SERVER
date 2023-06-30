@@ -22,19 +22,17 @@ public class BookmarkService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
 
-    public void saveBookmark(SaveBookmarkDto saveBookmarkDto) {
+    public void saveBookmark(User user, SaveBookmarkDto saveBookmarkDto) {
         Bookmark bookmark = new Bookmark();
 
         Board board = boardRepository.getReferenceById(saveBookmarkDto.getBoardId());
-        User user = userRepository.getReferenceById(saveBookmarkDto.getUserId());
         bookmark.setBoard(board);
         bookmark.setUser(user);
 
         bookmarkRepository.save(bookmark);
     }
 
-    public void deleteBookmark(Long userId, Long boardId) {
-        User user = userRepository.getReferenceById(userId);
+    public void deleteBookmark(User user, Long boardId) {
         Board board = boardRepository.getReferenceById(boardId);
 
         bookmarkRepository.deleteByBoardAndUser(board, user);

@@ -196,8 +196,7 @@ public class UserService {
         return modifiedStr;
     }
 
-    public MyPageResponseDto myPage(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AuthFailException(String.valueOf(userId)));
+    public MyPageResponseDto myPage(User user) {
         MyPageResponseDto responseDto = new MyPageResponseDto();
         responseDto.setEmail(user.getEmail());
         responseDto.setUsername(user.getUsername());
@@ -213,9 +212,7 @@ public class UserService {
         }
         responseDto.setBoards(myBoardDtos);
 
-
-        List<Long> bookmarkBoardIds = bookmarkRepository.findBoardIdByUserId(user.getId());
-        List<Board> bookmarkBoards = boardRepository.findBoardsByIdIn(bookmarkBoardIds);
+        List<Board> bookmarkBoards = boardRepository.findBoardsByIdIn(user.getId());
         ArrayList<BookmarkDto> bookmarkDtos = new ArrayList<>();
 
         for(int i = 0; i < bookmarkBoards.size(); i++) {

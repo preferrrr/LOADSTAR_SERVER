@@ -13,7 +13,6 @@ import lombok.Setter;
 public class CreateCommentDto {
 
     private Long boardId;
-    private Long userId;
     private String content;
 
     public void validateFieldsNotNull() {
@@ -21,7 +20,5 @@ public class CreateCommentDto {
             throw new InvalidRequestParameterException("Invalid content");
         if(boardId == null)
             throw new InvalidRequestParameterException("Invalid boardId");
-        if(userId == null)
-            throw new InvalidRequestParameterException("Invalid userId");
     }
 }

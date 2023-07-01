@@ -172,8 +172,9 @@ public class BoardService {
         response.setCreatedAt(findBoard.getCreatedAt());
         response.setModifiedAt(findBoard.getModifiedAt());
 
-        response.setUserId(user.getId());
-        response.setUsername(user.getUsername());
+        User findUser = userRepository.findById(findBoard.getUser().getId()).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+        response.setUserId(findUser.getId());
+        response.setUsername(findUser.getUsername());
 
 
         response.setCareerImage(findBoard.getCareerImage());

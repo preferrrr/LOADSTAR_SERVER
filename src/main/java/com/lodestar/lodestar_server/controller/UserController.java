@@ -69,7 +69,7 @@ public class UserController {
      * */
     @PatchMapping("/first-question")
     public ResponseEntity<?> firstQuestion(@RequestBody FirstQuestionRequestDto requestDto) {
-
+        //TODO: 이거도 AuthenticationPrincipal 사용하도록.
         requestDto.validateFieldsNotNull();
 
         MessageResponseDto responseDto = new MessageResponseDto();
@@ -106,6 +106,11 @@ public class UserController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+
+    /**
+     * 마이페이지
+     * /users/my-page
+     * */
 
     @GetMapping("/my-page")
     public ResponseEntity<?> myPage(@AuthenticationPrincipal User user) {

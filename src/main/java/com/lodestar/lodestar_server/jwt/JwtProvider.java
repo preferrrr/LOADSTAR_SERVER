@@ -30,7 +30,7 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secretKey;
     //private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L;   // 30분
-    private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L;   // 30분
+    private final long ACCESS_TOKEN_VALID_TIME =  2 * 30 * 60 * 1000L;   // 30분
     private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 14 * 1000L;   // 2주
 
     private final CustomUserDetailsService userDetailsService;
@@ -80,8 +80,7 @@ public class JwtProvider {
     //TODO: 이걸로 권한얻는데, jwt를 사용하니까 db를 조회하지 않고 권한이 부여될 수 있도록 수정 해야함. (@AuthenticationPrincipal)
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserId(token));
-        //System.out.println("this.getId() : " + this.getUserId(token));
-        //System.out.println("userDetails.getAuth : " + userDetails.getAuthorities().toString());
+
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

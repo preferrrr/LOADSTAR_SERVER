@@ -1,17 +1,14 @@
 package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.CreateCommentDto;
+import com.lodestar.lodestar_server.dto.ModifyCommentDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.CommentService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/comments")
@@ -20,6 +17,10 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    /**
+     * 댓글 작성
+     * /comments
+     */
     @PostMapping("")
     public ResponseEntity<?> saveComment(@AuthenticationPrincipal User user, @RequestBody CreateCommentDto createCommentDto) {
 
@@ -30,6 +31,24 @@ public class CommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //TODO: 댓글 삭제, 수정
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal User user, @PathVariable("commentId") Long commentId) {
+
+        commentService.deleteComment(user, commentId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<?> modifyComment(@AuthenticationPrincipal User user, @PathVariable("commentId") Long commentId,
+                                           @RequestBody ModifyCommentDto modifyCommentDto) {
+
+        modifyCommentDto.validateFieldsNotNull();
+
+        commentService.modifyComment(user, commentId, modifyCommentDto);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     //TODO: 내가 쓴 댓글 조회
 }

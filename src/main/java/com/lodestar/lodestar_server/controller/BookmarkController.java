@@ -18,6 +18,9 @@ public class BookmarkController {
 
     //북마크 등록
 
+    /**북마크 등록
+     * /bookmarks
+     * */
     @PostMapping("")
     public ResponseEntity<?> saveBookmark(@AuthenticationPrincipal User user, @RequestBody SaveBookmarkDto saveBookmarkDto) {
         saveBookmarkDto.validateFieldsNotNull();
@@ -26,6 +29,10 @@ public class BookmarkController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 북마크 삭제
+     * /bookmarks
+     * */
     @DeleteMapping("/{boardId}")
     public ResponseEntity<?> deleteBookmark(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId) {
 

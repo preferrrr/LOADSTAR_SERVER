@@ -1,6 +1,7 @@
 package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.CareerDtos;
+import com.lodestar.lodestar_server.dto.GetCareerDtos;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.CareerService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,10 @@ public class CareerController {
     private final CareerService careerService;
 
     @PostMapping("")
-    public ResponseEntity<?> saveCareer(@AuthenticationPrincipal User user, @RequestBody CareerDtos careerRequestDto) {
+    public ResponseEntity<?> saveCareer(@AuthenticationPrincipal User user,
+                                        @RequestBody CareerDtos careerDtos) {
 
-        careerService.saveCareer(user, careerRequestDto);
+        careerService.saveCareer(user, careerDtos);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -26,8 +28,17 @@ public class CareerController {
     @GetMapping("")
     public ResponseEntity<?> getCareer(@AuthenticationPrincipal User user) {
 
-        CareerDtos dtos = careerService.getCareer(user);
+        GetCareerDtos dtos = careerService.getCareer(user);
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+    @PatchMapping("")
+    public ResponseEntity<?> modifyCareer(@AuthenticationPrincipal User user,
+                                          @RequestBody CareerDtos careerDtos) {
+
+        careerService.modifyCareer(user, careerDtos);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

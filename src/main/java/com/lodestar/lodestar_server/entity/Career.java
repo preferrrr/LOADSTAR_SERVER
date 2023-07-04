@@ -26,6 +26,7 @@ public class Career extends BaseEntity{
     private Long y1;
     private Long y2;
 
+    @Column(unique = true)
     private String rangeName;
 
 

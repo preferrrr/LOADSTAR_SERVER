@@ -1,7 +1,7 @@
 package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.CareerDto;
-import com.lodestar.lodestar_server.dto.CreateCareerRequestDto;
+import com.lodestar.lodestar_server.dto.CareerDtos;
 import com.lodestar.lodestar_server.entity.Career;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.repository.CareerRepository;
@@ -19,7 +19,7 @@ public class CareerService {
 
     private final CareerRepository careerRepository;
 
-    public void saveCareer(User user, CreateCareerRequestDto careerRequestDto) {
+    public void saveCareer(User user, CareerDtos careerRequestDto) {
 
         List<Career> careerList = new ArrayList<>();
 
@@ -35,6 +35,31 @@ public class CareerService {
         }
 
         careerRepository.saveAll(careerList);
+
+    }
+
+    public CareerDtos getCareer(User user) {
+
+        CareerDtos dtos = new CareerDtos();
+        dtos.setArr(new ArrayList<>());
+
+        List<Career> careers = careerRepository.findCareersByUser(user);
+
+        for(Career career: careers) {
+            CareerDto dto = new CareerDto();
+
+            dto.setX(career.getX());
+
+            List<Long> ys = new ArrayList<>();
+            ys.add(career.getY1());
+            ys.add(career.getY2());
+            dto.setY(ys);
+
+            dto.setRangeName(career.getRangeName());
+            dtos.getArr().add(dto);
+        }
+
+        return dtos;
 
     }
 }

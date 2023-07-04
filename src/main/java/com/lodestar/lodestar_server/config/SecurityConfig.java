@@ -66,7 +66,7 @@ public class SecurityConfig {
                     authR.requestMatchers("/bookmarks/**").hasAuthority("USER");
 
                     //Careers
-                    authR.requestMatchers(("/careers")).hasAuthority("USER");
+                    authR.requestMatchers("/careers").hasAuthority("USER");
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 

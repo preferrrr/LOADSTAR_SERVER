@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCareerRequestDto {
+public class CareerDtos {
 
     private List<CareerDto> arr;
 

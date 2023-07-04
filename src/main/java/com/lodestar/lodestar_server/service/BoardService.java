@@ -1,10 +1,7 @@
 package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.*;
-import com.lodestar.lodestar_server.entity.Board;
-import com.lodestar.lodestar_server.entity.BoardHashtag;
-import com.lodestar.lodestar_server.entity.Comment;
-import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.entity.*;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.BookmarkRepository;
@@ -30,8 +27,8 @@ import java.util.List;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final HashtagRepository hashtagRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final CareerService careerService;
 
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
@@ -170,10 +167,15 @@ public class BoardService {
         response.setCreatedAt(findBoard.getCreatedAt());
         response.setModifiedAt(findBoard.getModifiedAt());
 
+
+        //게시글을 작성한 유저
         User findUser = userRepository.findById(findBoard.getUser().getId()).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
         response.setUserId(findUser.getId());
         response.setUsername(findUser.getUsername());
 
+
+        List<CareerDto> careerList = careerService.getCareer(findUser);
+        response.setArr(careerList);
 
         response.setCareerImage(findBoard.getCareerImage());
 

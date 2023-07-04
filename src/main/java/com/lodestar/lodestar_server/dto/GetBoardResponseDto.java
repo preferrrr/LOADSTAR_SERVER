@@ -21,6 +21,8 @@ public class GetBoardResponseDto {
     private String careerImage;
     private boolean bookmark;
 
+    private List<CareerDto> arr;
+
     private List<String> hashtags;
     private List<GetCommentResponseDto> comments;
 

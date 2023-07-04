@@ -3,10 +3,12 @@ package com.lodestar.lodestar_server.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter @Setter
 @Table(name = "career")
+@DynamicInsert
 public class Career extends BaseEntity{
 
     @Id
@@ -18,34 +20,14 @@ public class Career extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-    //enum 타입으로 한다면 추후에 질문을 추가할 때 확장성 측면에서 문제가 됨.
-    //@Enumerated(EnumType.STRING)
-    //Kind kind;
-    private String kind;
-    //PROGRAMMING, CS, ALGORITHM, PROJECT, BOOTCAMP,
-    //ACTIVITY, LICENSE, LANGUAGE
 
+    private String x;
 
+    private Long y1;
+    private Long y2;
 
-    @Column(name = "kind_number")
-    private Integer kindNumber;
+    private String rangeName;
 
-    // 공부했던것은 시작일과 종료일을 년과 월만 받을거니까, 0000-00 문자열로 받아서
-    // Service에서 비즈니스 로직으로 처리해줌.
-    @Column(name = "start_time")
-    private String startTime;
-
-    @Column(name = "end_time")
-    private String endTime;
-
-    @Column(columnDefinition = "VARCHAR(1) default 'n'")
-    private String highlight;
-
-    @OneToOne(mappedBy = "career")
-    private Explains explain;
-
-    @OneToOne(mappedBy = "career")
-    private Selects select;
 
 
 

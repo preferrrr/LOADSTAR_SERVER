@@ -1,9 +1,6 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.BoardPagingDto;
-import com.lodestar.lodestar_server.dto.CreateBoardDto;
-import com.lodestar.lodestar_server.dto.GetBoardResponseDto;
-import com.lodestar.lodestar_server.dto.GetCommentResponseDto;
+import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.BoardHashtag;
 import com.lodestar.lodestar_server.entity.Comment;
@@ -21,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,6 +219,16 @@ public class BoardService {
 
         boardRepository.deleteById(boardId);
 
+    }
+
+
+
+    private final ImageService imageService;
+    public String imageTest(TestDto testDto, MultipartFile file) throws Exception {
+
+        imageService.saveImage(file);
+
+        return testDto.getData();
     }
 
 

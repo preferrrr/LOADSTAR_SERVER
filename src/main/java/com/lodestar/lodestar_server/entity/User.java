@@ -38,24 +38,6 @@ public class User extends BaseEntity implements UserDetails, Persistable<Long> {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
-    //전공자 = y, 비전공자 = n, 선택안함 = m
-    @Column(columnDefinition = "VARCHAR(1) default 'm'")
-    private String major;
-
-    //프론트엔드 백엔드. front = y, back = n, 선택안함 = m
-    @Column(columnDefinition = "VARCHAR(1) default 'm'")
-    private String front_back;
-
-    //현직자 = y, 현직 아니면 n, 선택안함 = m
-    @Column(columnDefinition = "VARCHAR(1) default 'm'")
-    private String current;
-
-    @Column(columnDefinition = "INT default 0")
-    private Integer year;
-
-    @Column(columnDefinition = "INT default 0")
-    private Integer month;
-
     @Column(name = "refresh_token_value")
     private String refreshTokenValue;
 

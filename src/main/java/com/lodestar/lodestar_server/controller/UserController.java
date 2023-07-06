@@ -64,22 +64,6 @@ public class UserController {
 
     }
 
-    /**초반 질문 등록
-     * /users/first-question
-     * */
-    @PatchMapping("/first-question")
-    public ResponseEntity<?> firstQuestion(@RequestBody FirstQuestionRequestDto requestDto) {
-        //TODO: 이거도 AuthenticationPrincipal 사용하도록.
-        requestDto.validateFieldsNotNull();
-
-        MessageResponseDto responseDto = new MessageResponseDto();
-
-        userService.firstQuestion(requestDto);
-
-        responseDto.setMessage("첫 번째 질문이 등록되었습니다.");
-
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
-    }
 
     /**
      * 아이디 찾기

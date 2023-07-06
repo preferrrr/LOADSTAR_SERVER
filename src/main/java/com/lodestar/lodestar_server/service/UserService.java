@@ -136,22 +136,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void firstQuestion(FirstQuestionRequestDto requestDto) {
-        Optional<User> findUser = userRepository.findById(requestDto.getUserId());
-        User user;
-        if (findUser.isPresent()) {
-            user = findUser.get();
-        } else {
-            throw new FirstQuestionFailException(String.valueOf(requestDto.getUserId()));
-        }
-
-        user.setFront_back(requestDto.getFrontBack());
-        user.setMajor(requestDto.getMajor());
-        user.setCurrent(requestDto.getCurrent());
-        user.setMonth(requestDto.getMonth());
-        user.setYear(requestDto.getYear());
-
-    }
 
 
     public String findId(String email) {

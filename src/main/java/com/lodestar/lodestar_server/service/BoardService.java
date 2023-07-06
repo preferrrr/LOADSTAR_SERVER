@@ -53,45 +53,8 @@ public class BoardService {
             hashtags.add(hashtag);
         }
 
-
-        String current = user.getCurrent();
-        if(current.equals("y") || current.equals("n")) {
-            BoardHashtag hashtag = new BoardHashtag();
-            hashtag.setBoard(board);
-            if (current.equals("y"))
-                hashtag.setHashtagName("현직자");
-            else
-                hashtag.setHashtagName("비현직자");
-
-            hashtags.add(hashtag);
-        }
-
-
-        String major = user.getMajor();
-        if(major.equals("y") || major.equals("n")) {
-            BoardHashtag hashtag = new BoardHashtag();
-            hashtag.setBoard(board);
-            if (major.equals("y"))
-                hashtag.setHashtagName("전공자");
-            else
-                hashtag.setHashtagName("비전공자");
-
-            hashtags.add(hashtag);
-        }
-
-        String frontBack = user.getFront_back();
-        if(frontBack.equals("y") || frontBack.equals("n")) {
-            BoardHashtag hashtag = new BoardHashtag();
-            hashtag.setBoard(board);
-            if (frontBack.equals("y"))
-                hashtag.setHashtagName("front");
-            else
-                hashtag.setHashtagName("back");
-
-            hashtags.add(hashtag);
-        }
-
         board.setHashtag(hashtags);
+
         boardRepository.save(board);
 
     }

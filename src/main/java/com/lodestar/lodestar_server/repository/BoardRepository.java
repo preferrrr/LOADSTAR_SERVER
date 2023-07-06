@@ -21,8 +21,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAll(Pageable pageable);
 
 
-    @Query("select b from Board b " +
-            "join fetch b.hashtag h " +
+    @Query("select distinct b from Board b " +
+            "join b.hashtag h " +
+            "join fetch Career c on b.user = c.user " +
             "where b.id in :boardIds " +
             "order by b.createdAt desc")
     List<Board> findBoardsWhereInBoardIds(@Param("boardIds") List<Long> boardIds);

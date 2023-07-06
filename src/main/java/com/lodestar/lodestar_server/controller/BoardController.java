@@ -87,7 +87,6 @@ public class BoardController {
                                          @RequestBody ModifyBoardDto modifyBoardDto) {
 
         modifyBoardDto.validateFieldsNotNull();
-
         boardService.modifyBoard(user, boardId, modifyBoardDto);
 
         return new ResponseEntity<>(HttpStatus.OK);

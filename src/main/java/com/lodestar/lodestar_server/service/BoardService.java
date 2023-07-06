@@ -111,6 +111,18 @@ public class BoardService {
             }
             dto.setHashtags(hashtagNames);
 
+            List<CareerDto> careerDtos = new ArrayList<>();
+            for(Career career : board.getUser().getCareers()) {
+                CareerDto careerDto = new CareerDto();
+                careerDto.setX(career.getX());
+                careerDto.setY(new ArrayList<>());
+                careerDto.getY().add(career.getY1());
+                careerDto.getY().add(career.getY2());
+                careerDto.setRangeName(career.getRangeName());
+                careerDtos.add(careerDto);
+            }
+            dto.setArr(careerDtos);
+
             result.add(dto);
         }
 

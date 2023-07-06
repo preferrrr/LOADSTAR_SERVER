@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 public class CareerController {
     private final CareerService careerService;
 
+    /**
+     * 커리어 등록(그래프 그리기)
+     * /careers
+     * */
     @PostMapping("")
     public ResponseEntity<?> saveCareer(@AuthenticationPrincipal User user,
                                         @RequestBody CareerDtos careerDtos) {
@@ -24,6 +28,10 @@ public class CareerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 커리어 조회 (그래프조회)
+     * /careers
+     * */
     @GetMapping("")
     public ResponseEntity<?> getCareer(@AuthenticationPrincipal User user) {
 
@@ -33,6 +41,10 @@ public class CareerController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
+    /**
+     * 커리어 수정 (그래프 수정)
+     * /careers
+     * */
     @PatchMapping("")
     public ResponseEntity<?> modifyCareer(@AuthenticationPrincipal User user,
                                           @RequestBody CareerDtos careerDtos) {

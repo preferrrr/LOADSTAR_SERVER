@@ -78,6 +78,21 @@ public class BoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 게시글 수정
+     * /boards/{boardId}
+     * */
+    @PatchMapping(value = "/{boardId}")
+    public ResponseEntity<?> modifyBoard(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId,
+                                         @RequestBody ModifyBoardDto modifyBoardDto) {
+
+        modifyBoardDto.validateFieldsNotNull();
+
+        boardService.modifyBoard(user, boardId, modifyBoardDto);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @PostMapping(value = "/image")
     public ResponseEntity<?> imageTest(@RequestPart(value = "file", required = false)MultipartFile file,

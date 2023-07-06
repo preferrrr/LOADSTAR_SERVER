@@ -223,6 +223,18 @@ public class BoardService {
 
     }
 
+    public void modifyBoard(User user, Long boardId, ModifyBoardDto modifyBoardDto) {
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+
+        if(board.getUser().getId() != user.getId()) {
+            throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
+        }
+
+        board.setTitle(modifyBoardDto.getTitle());
+        board.setContent(modifyBoardDto.getContent());
+
+    }
+
 
 
     private final ImageService imageService;

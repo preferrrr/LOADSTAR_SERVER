@@ -29,6 +29,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
     private final CareerService careerService;
+    private final HashtagRepository hashtagRepository;
 
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
@@ -232,6 +233,36 @@ public class BoardService {
 
         board.setTitle(modifyBoardDto.getTitle());
         board.setContent(modifyBoardDto.getContent());
+
+
+        List<BoardHashtag> savedHashtags = board.getHashtag();
+        List<String> savedHashtagNames = new ArrayList<>();
+        for(int i = 0 ; i < savedHashtags.size(); i++) {
+            savedHashtagNames.add(savedHashtags.get(i).getHashtagName());
+        }
+
+        List<String> requestHashtagNames = modifyBoardDto.getHashtags();
+
+        List<BoardHashtag> addHashtags = new ArrayList<>();
+        for(int i = 0 ; i < requestHashtagNames.size(); i++) {
+            if(!savedHashtagNames.contains(requestHashtagNames.get(i))) {
+                BoardHashtag hashtag = new BoardHashtag();
+                hashtag.setBoard(board);
+                hashtag.setHashtagName(requestHashtagNames.get(i));
+
+                addHashtags.add(hashtag);
+            }
+        }
+
+        List<BoardHashtag> deleteHashtags = new ArrayList<>();
+        for(BoardHashtag hashtag : savedHashtags) {
+            if(!requestHashtagNames.contains(hashtag.getHashtagName()))
+                deleteHashtags.add(hashtag);
+        }
+
+
+        hashtagRepository.saveAll(addHashtags);
+        hashtagRepository.deleteAllInBatch(deleteHashtags);
 
     }
 

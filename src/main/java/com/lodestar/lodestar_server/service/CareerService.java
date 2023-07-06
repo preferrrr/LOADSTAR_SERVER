@@ -102,7 +102,7 @@ public class CareerService {
         }
 
         careerRepository.saveAll(addCareers);
-        careerRepository.deleteAll(deleteCareers);
+        careerRepository.deleteAllInBatch(deleteCareers);
 
 
     }

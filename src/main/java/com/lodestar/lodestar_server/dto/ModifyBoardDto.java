@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +16,7 @@ public class ModifyBoardDto {
 
     private String title;
     private String content;
+    private List<String> hashtags;
 
     public void validateFieldsNotNull() {
         if(title == null || title.isEmpty() || title.isBlank())

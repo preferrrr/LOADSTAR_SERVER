@@ -1,9 +1,13 @@
 package com.lodestar.lodestar_server.entity;
 
+import com.lodestar.lodestar_server.dto.CareerDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -30,6 +34,17 @@ public class Career extends BaseEntity{
     private String rangeName;
 
 
+    public CareerDto createDto() {
+        CareerDto dto = new CareerDto();
+        dto.setX(this.x);
+        List<Long> y = new ArrayList<>();
+        y.add(this.y1);
+        y.add(this.y2);
+        dto.setY(y);
+        dto.setRangeName(this.rangeName);
+
+        return dto;
+    }
 
 
 }

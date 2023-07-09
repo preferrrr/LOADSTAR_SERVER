@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class CommentService {
 
-    private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
 

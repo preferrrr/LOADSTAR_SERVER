@@ -44,8 +44,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     //TODO: comment에 fetch를 추가하면 Comment의 Notice 엔티티까지 같이 조회하게 되어서 댓글 갯수만큼 Notice를 더 조회하게 됨
     //그래서 comment는 fetch join하지 않고 쿼리 한번만 보내도록 함. 연관관계를 eager로 해주면 다른 로직에서 필요없는 댓글이 조회되므로 여기서 타협...
     @Query("select distinct b from Board b " +
-            "left join fetch b.hashtag " +
-            "left join b.comments " +
+            "left join fetch b.hashtag h " +
+            "left join b.comments c " +
             "where b.id = :boardId")
     Board findByPathBoardId(@Param("boardId") Long boardId);
 

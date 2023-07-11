@@ -12,14 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -79,18 +78,27 @@ public class JwtProvider {
 
     //TODO: 이걸로 권한얻는데, jwt를 사용하니까 db를 조회하지 않고 권한이 부여될 수 있도록 수정 해야함. (@AuthenticationPrincipal)
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserId(token));
+        User user = new User();
+        String userId = getUserId(token);
+        user.setId(Long.parseLong(userId));
+        user.setRoles(getRoles(token));
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        List<GrantedAuthority> authorities = user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+        return new UsernamePasswordAuthenticationToken(user, token, authorities);
     }
 
     public String getUserId(String token) {
-        return getClaimsFromJwtToken(token).getBody().getSubject();
+        return getClaimsFromJwt(token).getBody().getSubject();
+    }
+
+    public List<String> getRoles(String token) {
+        return (ArrayList<String>) getClaimsFromJwt(token).getBody().get("roles");
     }
 
     public int isAccessTokenValid(String access) {
         try {
-            Jws<Claims> claims = getClaimsFromJwtToken(access);
+            Jws<Claims> claims = getClaimsFromJwt(access);
             return 1;
         } catch (ExpiredJwtException e) {
             return 2;
@@ -102,7 +110,7 @@ public class JwtProvider {
 
     public String refreshToken(String refresh) {
         try {
-            Jws<Claims> claims = getClaimsFromJwtToken(refresh);
+            Jws<Claims> claims = getClaimsFromJwt(refresh);
             Long userId = Long.parseLong(claims.getBody().getSubject());
             String value = String.valueOf(claims.getBody().get("value"));
             Optional<User> findUser = userRepository.findById(userId);
@@ -127,7 +135,7 @@ public class JwtProvider {
         }
     }
 
-    public Jws<Claims> getClaimsFromJwtToken(String jwtToken) throws JwtException {
+    public Jws<Claims> getClaimsFromJwt(String jwtToken) throws JwtException {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
     }
 

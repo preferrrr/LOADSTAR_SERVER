@@ -24,13 +24,7 @@ public class CareerService {
         List<Career> careerList = new ArrayList<>();
 
         for(CareerDto dto : careerRequestDto.getArr()) {
-            Career career = new Career();
-            career.setUser(user);
-            career.setX(dto.getX());
-            career.setY1(dto.getY().get(0));
-            career.setY2(dto.getY().get(1));
-            career.setRangeName(dto.getRangeName());
-
+            Career career = Career.createCareer(user, dto);
             careerList.add(career);
         }
 
@@ -45,18 +39,7 @@ public class CareerService {
         List<Career> careers = careerRepository.findCareersByUser(user);
 
         for(Career career: careers) {
-            CareerDto dto = new CareerDto();
-
-            dto.setX(career.getX());
-
-            List<Long> ys = new ArrayList<>();
-            ys.add(career.getY1());
-            ys.add(career.getY2());
-            dto.setY(ys);
-
-            dto.setRangeName(career.getRangeName());
-
-            careerDtos.add(dto);
+            careerDtos.add(career.createDto());
         }
 
         return careerDtos;
@@ -75,16 +58,9 @@ public class CareerService {
 
         List<Career> addCareers = new ArrayList<>();
 
-
-
         for(CareerDto careerDto : careerDtos.getArr()) { //추가된 커리어를 저장하기 위함
             if(!rangeNames1.contains(careerDto.getRangeName())) {
-                Career career = new Career();
-                career.setX(careerDto.getX());
-                career.setUser(user);
-                career.setY1(careerDto.getY().get(0));
-                career.setY2(careerDto.getY().get(1));
-                career.setRangeName(careerDto.getRangeName());
+                Career career = Career.createCareer(user, careerDto);
                 addCareers.add(career);
             }
         }
@@ -103,7 +79,6 @@ public class CareerService {
 
         careerRepository.saveAll(addCareers);
         careerRepository.deleteAllInBatch(deleteCareers);
-
 
     }
 }

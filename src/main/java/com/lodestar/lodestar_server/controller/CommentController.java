@@ -31,6 +31,10 @@ public class CommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 댓글 삭제
+     * /comments/{commentId}
+     * */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> deleteComment(@AuthenticationPrincipal User user, @PathVariable("commentId") Long commentId) {
 
@@ -39,6 +43,10 @@ public class CommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 댓글 수정
+     * /comments/{commentId}
+     * */
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<?> modifyComment(@AuthenticationPrincipal User user, @PathVariable("commentId") Long commentId,

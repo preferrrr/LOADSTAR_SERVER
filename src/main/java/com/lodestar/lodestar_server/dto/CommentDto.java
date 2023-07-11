@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetCommentResponseDto {
+public class CommentDto {
     private Long commentId;
     private Long userId;
     private String username;

@@ -3,10 +3,7 @@ package com.lodestar.lodestar_server.service;
 import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.*;
 import com.lodestar.lodestar_server.exception.AuthFailException;
-import com.lodestar.lodestar_server.repository.BoardRepository;
-import com.lodestar.lodestar_server.repository.BookmarkRepository;
-import com.lodestar.lodestar_server.repository.HashtagRepository;
-import com.lodestar.lodestar_server.repository.UserRepository;
+import com.lodestar.lodestar_server.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,8 +25,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final CareerService careerService;
     private final HashtagRepository hashtagRepository;
+    private final CommentRepository commentRepository;
 
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
@@ -138,17 +135,24 @@ public class BoardService {
         response.setModifiedAt(findBoard.getModifiedAt());
 
 
-        //게시글을 작성한 유저
-        User findUser = userRepository.findById(findBoard.getUser().getId()).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+        //TODO: 그래프를 그리기 위한 Career를,
+        // 게시글을 작성한 유저를 조회할 때 fetch join으로 같이 가져와서 쿼리 횟수 1번 줄임
+        User findUser = userRepository.findByIdWithCareers(findBoard.getUser().getId());
+
         response.setUserId(findUser.getId());
         response.setUsername(findUser.getUsername());
 
+        List<Career> careerList = findUser.getCareers();
+        List<CareerDto> dtoList = new ArrayList<>();
+        for(Career career : careerList) {
+            dtoList.add(career.createDto());
+        }
+        response.setArr(dtoList);
 
-        List<CareerDto> careerList = careerService.getCareer(findUser);
-        response.setArr(careerList);
 
         response.setCareerImage(findBoard.getCareerImage());
 
+        //현재 로그인한 유저,유저가 이 게시글을 북마크로 동록했는지 안 했는지 체크 (쿼리)
         User bookmarkUser = userRepository.getReferenceById(user.getId());
         boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,bookmarkUser);
         response.setBookmark(bookmark);
@@ -160,23 +164,16 @@ public class BoardService {
         }
         response.setHashtags(hashtags);
 
-        List<Comment> commentList = findBoard.getComments();
-        List<GetCommentResponseDto> comments = new ArrayList<>();
+        //TODO: 댓글 쓴 유저 같이 조회 => commentRepository에서 jpql로 N+1 해결
+        //쿼리 5번.
+        List<Comment> commentList = commentRepository.findByBoardIdWithUserInfo(findBoard.getId());
+        List<CommentDto> comments = new ArrayList<>();
 
         for(Comment comment : commentList) {
-            GetCommentResponseDto commentDto = new GetCommentResponseDto();
-
-            commentDto.setCommentId(comment.getId());
-            commentDto.setUsername(comment.getUser().getUsername());
-            commentDto.setCommentContent(comment.getContent());
-            commentDto.setUserId(comment.getUser().getId());
-            commentDto.setCreatedAt(comment.getCreatedAt());
-            commentDto.setModifiedAt(comment.getModifiedAt());
-
-            comments.add(commentDto);
+            comments.add(comment.createDto());
         }
-
         response.setComments(comments);
+
 
         return response;
     }

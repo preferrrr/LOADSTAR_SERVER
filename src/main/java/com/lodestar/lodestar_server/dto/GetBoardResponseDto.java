@@ -24,7 +24,7 @@ public class GetBoardResponseDto {
     private List<CareerDto> arr;
 
     private List<String> hashtags;
-    private List<GetCommentResponseDto> comments;
+    private List<CommentDto> comments;
 
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

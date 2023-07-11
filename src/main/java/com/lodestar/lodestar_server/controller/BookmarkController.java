@@ -16,8 +16,6 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    //북마크 등록
-
     /**북마크 등록
      * /bookmarks
      * */

@@ -65,6 +65,10 @@ public class EmailController {
 
     }
 
+    /**
+     * 비밀번호 찾기 이메일 인증코드 확인
+     * /emails/find-password/check-key
+     * */
     @GetMapping("/find-password/check-key")
     public ResponseEntity<?> findPwdCheckKey(@RequestParam("email") String email,
                                              @RequestParam("key") String key) {

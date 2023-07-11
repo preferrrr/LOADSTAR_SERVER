@@ -35,7 +35,7 @@ public class User extends BaseEntity implements UserDetails, Persistable<Long> {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> roles = new ArrayList<>();
 
     @Column(name = "refresh_token_value")

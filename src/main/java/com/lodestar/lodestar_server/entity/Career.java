@@ -46,5 +46,16 @@ public class Career extends BaseEntity{
         return dto;
     }
 
+    public static Career createCareer(User user, CareerDto careerDto) {
+        Career career = new Career();
+        career.user = user;
+        career.x = careerDto.getX();
+        career.y1= careerDto.getY().get(0);
+        career.y2 = careerDto.getY().get(1);
+        career.rangeName = careerDto.getRangeName();
+
+        return career;
+    }
+
 
 }

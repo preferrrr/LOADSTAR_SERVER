@@ -98,8 +98,8 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [email = " + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("인증에 실패했습니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        ExceptionMessage exceptionMessage = new ExceptionMessage("권한이 없습니다.");
+        return new ResponseEntity<>(exceptionMessage, HttpStatus.FORBIDDEN);
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({ChangePwdFailException.class})

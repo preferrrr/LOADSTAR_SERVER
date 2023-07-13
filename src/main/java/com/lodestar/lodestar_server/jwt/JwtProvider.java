@@ -82,10 +82,7 @@ public class JwtProvider {
         String userId = getUserId(token);
         user.setId(Long.parseLong(userId));
         user.setRoles(getRoles(token));
-
-        List<GrantedAuthority> authorities = user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-
-        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 
     public String getUserId(String token) {

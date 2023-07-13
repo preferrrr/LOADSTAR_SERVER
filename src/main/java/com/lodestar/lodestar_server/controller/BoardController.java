@@ -42,6 +42,7 @@ public class BoardController {
     @PostMapping("")
     public ResponseEntity<?> saveBoard(@AuthenticationPrincipal User user, @RequestBody CreateBoardDto createBoardDto) {
 
+        System.out.println("controller, userId: " + user.getId());
         createBoardDto.validateFieldsNotNull();
         boardService.saveBoard(user, createBoardDto);
 

@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -180,7 +181,8 @@ public class UserService {
         return modifiedStr;
     }
 
-    public MyPageResponseDto myPage(User user) {
+    public MyPageResponseDto myPage(User authUser) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new AuthFailException(String.valueOf(authUser.getId())));
         MyPageResponseDto responseDto = new MyPageResponseDto();
         responseDto.setEmail(user.getEmail());
         responseDto.setUsername(user.getUsername());

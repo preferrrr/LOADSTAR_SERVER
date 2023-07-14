@@ -121,5 +121,4 @@ public class BoardController {
 //        return new ResponseEntity<>(HttpStatus.OK);
 //    }
 
-    //git test
 }

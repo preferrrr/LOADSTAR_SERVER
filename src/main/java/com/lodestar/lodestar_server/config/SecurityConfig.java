@@ -67,6 +67,9 @@ public class SecurityConfig {
 
                     //Careers
                     authR.requestMatchers("/careers").hasAuthority("USER");
+
+                    authR.requestMatchers("/swagger-ui/**").permitAll();
+                    authR.requestMatchers("/api-docs/**").permitAll();
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 

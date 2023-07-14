@@ -36,7 +36,6 @@ public class BoardService {
         board.setTitle(createBoardDto.getTitle());
         board.setContent(createBoardDto.getContent());
         //TODO: 커리어 이미지 y이면 이미지 저장, 아니면 n으로
-        board.setCareerImage(createBoardDto.getShowGraph());
 
         List<BoardHashtag> hashtags = new ArrayList<>();
         List<String> hashtagNames = createBoardDto.getHashtags();
@@ -100,7 +99,6 @@ public class BoardService {
             BoardPagingDto dto = new BoardPagingDto();
             dto.setBoardId(board.getId());
             dto.setTitle(board.getTitle());
-            dto.setCareerImage(board.getCareerImage());
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
@@ -150,7 +148,6 @@ public class BoardService {
         response.setArr(dtoList);
 
 
-        response.setCareerImage(findBoard.getCareerImage());
 
         //현재 로그인한 유저,유저가 이 게시글을 북마크로 동록했는지 안 했는지 체크 (쿼리)
         User bookmarkUser = userRepository.getReferenceById(user.getId());
@@ -241,33 +238,5 @@ public class BoardService {
 
         return testDto.getData();
     }
-
-
-//    public void saveBoard100(CreateBoardDto createBoardDto) {
-//        User user = userRepository.findById(createBoardDto.getUserId()).orElseThrow(() -> new AuthFailException(String.valueOf(createBoardDto.getUserId())));
-//
-//        for (int j = 0; j < 100; j++) {
-//            Board board = new Board();
-//
-//            board.setUser(user);
-//            board.setTitle("test " + j);
-//            board.setContent(createBoardDto.getContent());
-//            //TODO: 커리어 이미지 y이면 이미지 저장, 아니면 n으로
-//            board.setCareerImage(createBoardDto.getShowGraph());
-//
-//            List<BoardHashtag> hashtags = new ArrayList<>();
-//            List<String> hashtagNames = createBoardDto.getHashtags();
-//
-//            for (int i = 0; i < hashtagNames.size(); i++) {
-//                BoardHashtag hashtag = new BoardHashtag();
-//                hashtag.setBoard(board);
-//                hashtag.setHashtagName(hashtagNames.get(i));
-//                hashtags.add(hashtag);
-//            }
-//
-//            boardRepository.save(board);
-//            hashtagRepository.saveAll(hashtags);
-//        }
-//    }
 
 }

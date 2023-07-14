@@ -23,9 +23,6 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "career_image")
-    private String careerImage;
-
     @Column(nullable = false)
     private String title;
 

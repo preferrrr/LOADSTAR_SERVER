@@ -41,13 +41,14 @@ public class SecurityConfig {
                 .cors((cors) -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement((sessionManagement) -> {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-                    sessionManagement.sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId);
+                    //sessionManagement.sessionFixation().changeSessionId();
+                    sessionManagement.sessionFixation().none(); //보안을 위해 세션id 바뀌도록
                 })
                 .authorizeHttpRequests(authR -> {
 
                     //User
-                    authR.requestMatchers("/users/my-page").hasAuthority("USER");
                     authR.requestMatchers("/users/**").permitAll();
+                    authR.requestMatchers("/users/my-page").hasAuthority("USER");
 
                     //Email
                     authR.requestMatchers("/emails/**").permitAll();
@@ -70,7 +71,9 @@ public class SecurityConfig {
 
                     authR.requestMatchers("/swagger-ui/**").permitAll();
                     authR.requestMatchers("/api-docs/**").permitAll();
-                });
+                })
+                .addFilterBefore(new UserAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        ;
 
         return http.build();
 

@@ -97,9 +97,9 @@ public class UserController {
      * */
 
     @GetMapping("/my-page")
-    public ResponseEntity<?> myPage(HttpSession httpSession) {
+    public ResponseEntity<?> myPage(@AuthenticationPrincipal User user) {
 
-        MyPageResponseDto responseDto = userService.myPage(httpSession);
+        MyPageResponseDto responseDto = userService.myPage(user);
 
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
 

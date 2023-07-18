@@ -85,10 +85,16 @@ public class UserService {
         User user = userRepository.findByUsername(loginRequestDto.getUsername());
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(user.getId(), "로그인에 성공했습니다.");
-        HttpHeaders headers = new HttpHeaders();
+
+        List<String> roleList = user.getRoles();;
         httpSession.setAttribute("id",String.valueOf(user.getId()));
-        //System.out.println(httpSession.getAttribute("id"));
-        return new ResponseEntity<>(loginResponseDto, headers, HttpStatus.OK);
+        httpSession.setAttribute("roles", roleList);
+
+        //System.out.println("roles: " + httpSession.getAttribute("roles").toString());
+
+
+
+        return new ResponseEntity<>(loginResponseDto, HttpStatus.OK);
     }
 
     public void dupCheckUsername(String username) {
@@ -136,7 +142,6 @@ public class UserService {
         } else {
             throw new ChangePwdFailException(String.valueOf(requestDto.getUserId()));
         }
-        System.out.println(requestDto.getPassword());
         String password = passwordEncoder.encode(requestDto.getPassword());
         user.setPassword(password);
 
@@ -159,8 +164,8 @@ public class UserService {
         return modifiedStr;
     }
 
-    public MyPageResponseDto myPage(HttpSession httpSession) {
-        User user = userRepository.findById(Long.parseLong((String) httpSession.getAttribute("id"))).orElseThrow(() -> new AuthFailException(String.valueOf("test")));
+    public MyPageResponseDto myPage(User authUser) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new AuthFailException(String.valueOf("test")));
         MyPageResponseDto responseDto = new MyPageResponseDto();
         responseDto.setEmail(user.getEmail());
         responseDto.setUsername(user.getUsername());

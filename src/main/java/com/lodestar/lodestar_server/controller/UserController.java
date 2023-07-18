@@ -2,14 +2,13 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.User;
-import com.lodestar.lodestar_server.exception.AuthFailException;
-import com.lodestar.lodestar_server.jwt.JwtProvider;
+
 import com.lodestar.lodestar_server.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,11 +23,12 @@ public class UserController {
      * /users/login
      * */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto,
+                                   HttpSession httpSession) {
 
         loginRequestDto.validateFieldsNotNull();
 
-        ResponseEntity response = userService.login(loginRequestDto);
+        ResponseEntity response = userService.login(httpSession, loginRequestDto);
 
         return response;
     }
@@ -97,9 +97,9 @@ public class UserController {
      * */
 
     @GetMapping("/my-page")
-    public ResponseEntity<?> myPage(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> myPage(HttpSession httpSession) {
 
-        MyPageResponseDto responseDto = userService.myPage(user);
+        MyPageResponseDto responseDto = userService.myPage(httpSession);
 
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
 

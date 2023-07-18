@@ -1,7 +1,5 @@
 package com.lodestar.lodestar_server.config;
 
-import com.lodestar.lodestar_server.jwt.JwtAuthenticationFilter;
-import com.lodestar.lodestar_server.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,8 +27,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtProvider jwtProvider;
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -42,7 +39,10 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf((csrf) -> csrf.disable())
                 .cors((cors) -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement((sessionManagement) -> {
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+                    sessionManagement.sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::changeSessionId);
+                })
                 .authorizeHttpRequests(authR -> {
 
                     //User
@@ -53,7 +53,7 @@ public class SecurityConfig {
                     authR.requestMatchers("/emails/**").permitAll();
 
                     //Board
-                    authR.requestMatchers(HttpMethod.GET,"/boards").permitAll(); //메인페이지 게시글목록 조회
+                    authR.requestMatchers(HttpMethod.GET, "/boards").permitAll(); //메인페이지 게시글목록 조회
                     authR.requestMatchers(HttpMethod.POST, "/boards").hasAuthority("USER"); //작성
                     authR.requestMatchers("/boards/{boardId}").hasAuthority("USER"); //get, patch, delete (조회,수정,삭제)
                     authR.requestMatchers("/boards/new2").permitAll();
@@ -70,13 +70,11 @@ public class SecurityConfig {
 
                     authR.requestMatchers("/swagger-ui/**").permitAll();
                     authR.requestMatchers("/api-docs/**").permitAll();
-                })
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                });
 
         return http.build();
 
     }
-
 
 
     @Bean

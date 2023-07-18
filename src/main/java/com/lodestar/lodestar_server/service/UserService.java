@@ -4,10 +4,10 @@ import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
-import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.BookmarkRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +33,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
     private final BookmarkRepository bookmarkRepository;
 
     private static final int ACCESS = 0;
@@ -77,26 +76,18 @@ public class UserService {
     }
 
 
-    public ResponseEntity<?> login(LoginRequestDto loginRequestDto) {
+    public ResponseEntity<?> login(HttpSession httpSession, LoginRequestDto loginRequestDto) {
 
         if (!checkUsername(loginRequestDto.getUsername())
                 || !checkPassword(loginRequestDto.getUsername(), loginRequestDto.getPassword()))
             throw new LoginFailException(loginRequestDto.getUsername() + ", " + loginRequestDto.getPassword());
 
         User user = userRepository.findByUsername(loginRequestDto.getUsername());
-        String[] Tokens = createTokens(user, user.getRoles());
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(user.getId(), "로그인에 성공했습니다.");
         HttpHeaders headers = new HttpHeaders();
-        ResponseCookie cookie = ResponseCookie.from("X-REFRESH-TOKEN", Tokens[1])
-                .maxAge(14 * 24 * 60 * 60)
-                .path("/")
-                .secure(true)
-                .sameSite("None")
-                .httpOnly(true)
-                .build();
-        headers.add(HttpHeaders.COOKIE, cookie.toString());
-        headers.set("X-ACCESS-TOKEN", Tokens[0]);
+        httpSession.setAttribute("id",String.valueOf(user.getId()));
+        //System.out.println(httpSession.getAttribute("id"));
         return new ResponseEntity<>(loginResponseDto, headers, HttpStatus.OK);
     }
 
@@ -122,19 +113,6 @@ public class UserService {
 
     private boolean duplicateEmail(String email) {
         return userRepository.existsByEmail(email);
-    }
-
-    private String[] createTokens(User user, List<String> roles) {
-        String accessToken = jwtProvider.createJwtAccessToken(user.getId(), roles);
-        String refreshTokenValue = UUID.randomUUID().toString().replace("-", "");
-        saveRefreshTokenValue(user, refreshTokenValue);
-        String refreshToken = jwtProvider.createJwtRefreshToken(user.getId(), refreshTokenValue);
-        return new String[]{accessToken, refreshToken};
-    }
-
-    private void saveRefreshTokenValue(User user, String refreshToken) {
-        user.setRefreshTokenValue(refreshToken);
-        userRepository.save(user);
     }
 
 
@@ -181,8 +159,8 @@ public class UserService {
         return modifiedStr;
     }
 
-    public MyPageResponseDto myPage(User authUser) {
-        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new AuthFailException(String.valueOf(authUser.getId())));
+    public MyPageResponseDto myPage(HttpSession httpSession) {
+        User user = userRepository.findById(Long.parseLong((String) httpSession.getAttribute("id"))).orElseThrow(() -> new AuthFailException(String.valueOf("test")));
         MyPageResponseDto responseDto = new MyPageResponseDto();
         responseDto.setEmail(user.getEmail());
         responseDto.setUsername(user.getUsername());

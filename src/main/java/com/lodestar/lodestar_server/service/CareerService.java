@@ -1,7 +1,7 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.CareerDto;
-import com.lodestar.lodestar_server.dto.CareerDtos;
+import com.lodestar.lodestar_server.dto.response.CareerDto;
+import com.lodestar.lodestar_server.dto.response.CareerDtos;
 import com.lodestar.lodestar_server.entity.Career;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.repository.CareerRepository;

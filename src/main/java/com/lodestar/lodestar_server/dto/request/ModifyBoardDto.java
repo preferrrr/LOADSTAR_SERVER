@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.request;
 
 import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import io.swagger.v3.oas.annotations.media.Schema;

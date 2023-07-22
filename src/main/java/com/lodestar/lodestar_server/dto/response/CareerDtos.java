@@ -1,5 +1,6 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.response;
 
+import com.lodestar.lodestar_server.dto.response.CareerDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

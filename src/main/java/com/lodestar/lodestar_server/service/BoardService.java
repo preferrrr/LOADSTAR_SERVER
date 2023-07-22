@@ -1,6 +1,12 @@
 package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.*;
+import com.lodestar.lodestar_server.dto.request.CreateBoardDto;
+import com.lodestar.lodestar_server.dto.request.ModifyBoardDto;
+import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
+import com.lodestar.lodestar_server.dto.response.CareerDto;
+import com.lodestar.lodestar_server.dto.response.CommentDto;
+import com.lodestar.lodestar_server.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.entity.*;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.repository.*;

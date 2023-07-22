@@ -1,7 +1,7 @@
 package com.lodestar.lodestar_server.controller;
 
-import com.lodestar.lodestar_server.dto.CreateCommentDto;
-import com.lodestar.lodestar_server.dto.ModifyCommentDto;
+import com.lodestar.lodestar_server.dto.request.CreateCommentDto;
+import com.lodestar.lodestar_server.dto.request.ModifyCommentDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.CommentService;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.SaveBookmarkDto;
+import com.lodestar.lodestar_server.dto.request.SaveBookmarkDto;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.Bookmark;
 import com.lodestar.lodestar_server.entity.User;

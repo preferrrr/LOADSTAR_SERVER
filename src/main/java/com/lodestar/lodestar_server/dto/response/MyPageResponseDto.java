@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

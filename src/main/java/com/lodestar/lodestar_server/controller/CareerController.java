@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.controller;
 
-import com.lodestar.lodestar_server.dto.CareerDtos;
+import com.lodestar.lodestar_server.dto.response.CareerDtos;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.CareerService;
 import lombok.RequiredArgsConstructor;

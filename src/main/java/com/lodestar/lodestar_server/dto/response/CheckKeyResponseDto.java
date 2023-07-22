@@ -1,14 +1,14 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageResponseDto {
-    private String message;
+public class CheckKeyResponseDto {
+    boolean result;
+    String message;
 }

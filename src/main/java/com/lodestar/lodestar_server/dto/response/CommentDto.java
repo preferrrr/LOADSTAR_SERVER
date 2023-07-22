@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

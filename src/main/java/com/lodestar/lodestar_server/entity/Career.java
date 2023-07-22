@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.entity;
 
-import com.lodestar.lodestar_server.dto.CareerDto;
+import com.lodestar.lodestar_server.dto.response.CareerDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.controller;
 
-import com.lodestar.lodestar_server.dto.SaveBookmarkDto;
+import com.lodestar.lodestar_server.dto.request.SaveBookmarkDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.BookmarkService;
 import lombok.RequiredArgsConstructor;

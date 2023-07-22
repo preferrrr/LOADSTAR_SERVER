@@ -1,6 +1,12 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.*;
+import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
+import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
+import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
+import com.lodestar.lodestar_server.dto.response.BookmarkDto;
+import com.lodestar.lodestar_server.dto.response.LoginResponseDto;
+import com.lodestar.lodestar_server.dto.response.MyBoardDto;
+import com.lodestar.lodestar_server.dto.response.MyPageResponseDto;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
@@ -10,19 +16,15 @@ import com.lodestar.lodestar_server.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Service

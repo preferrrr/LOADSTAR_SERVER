@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUpResponseDto {
+public class CheckUsernameResponseDto {
+    boolean check;
     String message;
-    Long userId;
 }

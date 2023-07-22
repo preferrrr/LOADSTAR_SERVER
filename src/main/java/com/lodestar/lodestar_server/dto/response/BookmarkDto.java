@@ -1,14 +1,15 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDto {
-    Long userId;
-    String message;
+@Getter
+@Setter
+public class BookmarkDto {
+    private String title;
+    private Long boardId;
 }

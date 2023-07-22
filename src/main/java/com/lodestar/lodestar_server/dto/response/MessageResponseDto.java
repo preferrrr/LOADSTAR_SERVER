@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.dto;
+package com.lodestar.lodestar_server.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindPasswordResponseDto {
-    private boolean result;
+public class MessageResponseDto {
     private String message;
-    private Long userId;
 }

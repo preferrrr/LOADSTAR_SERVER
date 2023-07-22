@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.entity;
 
-import com.lodestar.lodestar_server.dto.CommentDto;
+import com.lodestar.lodestar_server.dto.response.CommentDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

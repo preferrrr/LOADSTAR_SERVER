@@ -1,6 +1,9 @@
 package com.lodestar.lodestar_server.controller;
 
-import com.lodestar.lodestar_server.dto.*;
+import com.lodestar.lodestar_server.dto.request.CheckEmailRequestDto;
+import com.lodestar.lodestar_server.dto.response.CheckKeyResponseDto;
+import com.lodestar.lodestar_server.dto.response.FindPasswordResponseDto;
+import com.lodestar.lodestar_server.dto.response.MessageResponseDto;
 import com.lodestar.lodestar_server.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

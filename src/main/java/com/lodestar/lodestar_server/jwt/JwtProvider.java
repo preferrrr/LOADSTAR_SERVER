@@ -12,13 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -40,7 +37,7 @@ public class JwtProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createJwtAccessToken(Long userId, List<String> roles) {
+    public String createAccessToken(Long userId, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
         claims.put("roles", roles);
         Date now = new Date();
@@ -54,7 +51,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String createJwtRefreshToken(Long userId, String value) {
+    public String createRefreshToken(Long userId, String value) {
         Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
         claims.put("value", value);
         Date now = new Date();
@@ -121,7 +118,7 @@ public class JwtProvider {
                 throw new InvalidTokenException(String.valueOf(userId));
 
             }
-            String accessToken = createJwtAccessToken(userId, user.getRoles());
+            String accessToken = createAccessToken(userId, user.getRoles());
             return accessToken;
 
         } catch (ExpiredJwtException e) {

@@ -6,7 +6,6 @@ import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.repository.BoardRepository;
-import com.lodestar.lodestar_server.repository.BookmarkRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +32,6 @@ public class UserService {
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final BookmarkRepository bookmarkRepository;
-
     private static final int ACCESS = 0;
 
     private static final int REFRESH = 1;
@@ -125,10 +121,10 @@ public class UserService {
     }
 
     private String[] createTokens(User user, List<String> roles) {
-        String accessToken = jwtProvider.createJwtAccessToken(user.getId(), roles);
+        String accessToken = jwtProvider.createAccessToken(user.getId(), roles);
         String refreshTokenValue = UUID.randomUUID().toString().replace("-", "");
         saveRefreshTokenValue(user, refreshTokenValue);
-        String refreshToken = jwtProvider.createJwtRefreshToken(user.getId(), refreshTokenValue);
+        String refreshToken = jwtProvider.createRefreshToken(user.getId(), refreshTokenValue);
         return new String[]{accessToken, refreshToken};
     }
 
@@ -212,5 +208,25 @@ public class UserService {
 
         return responseDto;
 
+    }
+
+    public HttpHeaders reissueToken(String refreshToken) {
+
+        Long userId = Long.parseLong(jwtProvider.getUserId(refreshToken));
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new AuthFailException(String.valueOf(userId)));
+
+        String value = String.valueOf(jwtProvider.getClaimsFromJwt(refreshToken).getBody().get("value"));
+        if(!user.getRefreshTokenValue().equals(value)) {
+            throw new AuthFailException(String.valueOf(userId));
+        }
+
+        String accessToken = jwtProvider.createAccessToken(userId, user.getRoles());
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.set("X-ACCESS-TOKEN", accessToken);
+
+        return headers;
     }
 }

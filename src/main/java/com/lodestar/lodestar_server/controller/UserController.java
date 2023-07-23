@@ -6,6 +6,7 @@ import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
 import com.lodestar.lodestar_server.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -103,6 +104,16 @@ public class UserController {
 
         return new ResponseEntity<>(responseDto,HttpStatus.OK);
 
+    }
+
+    /**access token 재발급
+     * /users/token*/
+    @GetMapping("/token")
+    public ResponseEntity<?> reissueToken(@RequestHeader(value = "X-REFRESH-TOKEN") String refreshToken) {
+
+        HttpHeaders headers = userService.reissueToken(refreshToken);
+
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 
 

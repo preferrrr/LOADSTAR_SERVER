@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select distinct u from User u " +
             "left join fetch u.careers c " +
             "where u.id = :id")
-    User findByIdWithCareers(@Param("id") Long id);
+    Optional<User> findByIdWithCareers(@Param("id") Long id);
 
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);

@@ -63,27 +63,14 @@ public class EmailService {
     }
 
     public static String createKey() {
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
         Random rnd = new Random();
 
-        for (int i = 0; i < 8; i++) { // 인증코드 8자리
-            int index = rnd.nextInt(3); // 0~2 까지 랜덤
-
-            switch (index) {
-                case 0:
-                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
-                    //  a~z  (ex. 1+97=98 => (char)98 = 'b')
-                    break;
-                case 1:
-                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
-                    //  A~Z
-                    break;
-                case 2:
-                    key.append((rnd.nextInt(10)));
-                    // 0~9
-                    break;
-            }
+        for (int i = 0; i < 6; i++) { // 인증코드 6자리
+            key.append((char) ((int) (rnd.nextInt(10)) + 48));
+            // 0~9 (ex. 1+48=49 => (char)49 = '1')
         }
+
         return key.toString();
     }
 
@@ -157,7 +144,6 @@ public class EmailService {
             FindPasswordResponseDto responseDto = new FindPasswordResponseDto();
             responseDto.setUserId(userRepository.findByEmail(email).getId());
             responseDto.setResult(true);
-            responseDto.setMessage("인증에 성공했습니다.");
             return responseDto;
         } else {
             throw new AuthFailException(email);

@@ -20,7 +20,6 @@ public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
 
     public void saveBookmark(User user, SaveBookmarkDto saveBookmarkDto) {
         Bookmark bookmark = new Bookmark();

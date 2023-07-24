@@ -7,6 +7,7 @@ import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.Comment;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.AuthFailException;
+import com.lodestar.lodestar_server.exception.NotFoundException;
 import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,17 +39,17 @@ public class CommentService {
 
     public void deleteComment(User user, Long commentId) {
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new AuthFailException("commentId: " + commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("[delete comment] commentId: " + commentId));
 
         if(comment.getUser().getId() != user.getId())
-            throw new AuthFailException(String.valueOf(commentId));
+            throw new AuthFailException("delete comment : " + commentId);
 
         commentRepository.deleteById(commentId);
 
     }
 
     public void modifyComment(User user, Long commentId, ModifyCommentDto modifyCommentDto) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new AuthFailException("commentId: " + commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("[modify comment] commentId: " + commentId));
 
         if(comment.getUser().getId() != user.getId())
             throw new AuthFailException("modify Comment Id: " + commentId);

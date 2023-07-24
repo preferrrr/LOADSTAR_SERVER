@@ -16,9 +16,8 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("이미 존재하는 아이디입니다.");
 
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.CONFLICT); /**409*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({DuplicateEmailException.class})
@@ -27,9 +26,7 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("이미 존재하는 이메일입니다.");
-
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.CONFLICT); /**409*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({LoginFailException.class})
@@ -38,9 +35,7 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("아이디 혹은 비밀번호가 틀렸습니다.");
-
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST); /**400*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({InvalidRequestParameterException.class})
@@ -58,8 +53,7 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("메일 전송에 실패했습니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); /**500,메일 전송 실패 서버 에러로 간주*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({NotCheckEmailException.class})
@@ -68,18 +62,7 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("메일 인증을 해주세요.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
-    }
-
-    @org.springframework.web.bind.annotation.ExceptionHandler({FirstQuestionFailException.class})
-    public ResponseEntity<?> handleFirstQuestionFailException(final FirstQuestionFailException e) {
-
-        String msg = e.getNAME() + ": [userId = " + e.getMessage() + "]";
-        log.error(msg);
-
-        ExceptionMessage exceptionMessage = new ExceptionMessage("질문을 저장하지 못했습니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST); /**400 */
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({NotExistEmailException.class})
@@ -88,28 +71,25 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [email = " + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("해당 이메일로 가입한 아이디가 없습니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);/**400, 해당 이메일로 가입한 유저 없음.*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({AuthFailException.class})
     public ResponseEntity<?> handleAuthFailException(final AuthFailException e) {
 
-        String msg = e.getNAME() + ": [email = " + e.getMessage() + "]";
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("권한이 없습니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN); /**403, 권한 없음.*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({ChangePwdFailException.class})
     public ResponseEntity<?> handleChangePwdFailException(final ChangePwdFailException e) {
 
-        String msg = e.getNAME() + ": [userId = " + e.getMessage() + "]";
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("비밀번호 변경에 실패했습니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);/**400 */
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({InvalidTokenException.class})
@@ -118,8 +98,7 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("잘못된 접근입니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); /**401, 토큰을 보내지 않았거나, 만료, 유효하지 않음.*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({ExistUsernameException.class})
@@ -128,8 +107,16 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        ExceptionMessage exceptionMessage = new ExceptionMessage("이미 존재하는 아이디입니다.");
-        return new ResponseEntity<>(exceptionMessage, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(HttpStatus.CONFLICT); /**409, 중복된 아이디 존재.*/
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({NotFoundException.class})
+    public ResponseEntity<?> handleExistUsernameException(final NotFoundException e) {
+
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
+        log.error(msg);
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND); /**404, db 조회 실패.*/
     }
 
 }

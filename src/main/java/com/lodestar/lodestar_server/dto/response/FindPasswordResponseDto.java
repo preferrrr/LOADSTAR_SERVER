@@ -11,6 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FindPasswordResponseDto {
     private boolean result;
-    private String message;
     private Long userId;
 }

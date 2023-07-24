@@ -47,7 +47,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "left join fetch b.hashtag h " +
             "left join b.comments c " +
             "where b.id = :boardId")
-    Board findByPathBoardId(@Param("boardId") Long boardId);
+    Optional<Board> findByPathBoardId(@Param("boardId") Long boardId);
 
 
     @Query(value = "select * from board b where b.board_id in (select m.board_id from bookmark m where m.user_id = :userId)",

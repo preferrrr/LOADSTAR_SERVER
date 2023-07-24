@@ -9,6 +9,7 @@ import com.lodestar.lodestar_server.dto.response.CommentDto;
 import com.lodestar.lodestar_server.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.entity.*;
 import com.lodestar.lodestar_server.exception.AuthFailException;
+import com.lodestar.lodestar_server.exception.NotFoundException;
 import com.lodestar.lodestar_server.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -128,7 +129,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public GetBoardResponseDto getBoard(User user, Long boardId) {
 
-        Board findBoard = boardRepository.findByPathBoardId(boardId);
+        Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
 
         GetBoardResponseDto response = new GetBoardResponseDto();
 
@@ -141,7 +142,7 @@ public class BoardService {
 
         //TODO: 그래프를 그리기 위한 Career를,
         // 게시글을 작성한 유저를 조회할 때 fetch join으로 같이 가져와서 쿼리 횟수 1번 줄임
-        User findUser = userRepository.findByIdWithCareers(findBoard.getUser().getId());
+        User findUser = userRepository.findByIdWithCareers(findBoard.getUser().getId()).orElseThrow(()->new NotFoundException("[get board] userId : " + findBoard.getUser().getId()));
 
         response.setUserId(findUser.getId());
         response.setUsername(findUser.getUsername());
@@ -183,7 +184,7 @@ public class BoardService {
 
 
     public void deleteBoard(User user, Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NotFoundException("[delete board] boardId : " + boardId));
 
         if(board.getUser().getId() != user.getId()) {
             throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
@@ -194,7 +195,7 @@ public class BoardService {
     }
 
     public void modifyBoard(User user, Long boardId, ModifyBoardDto modifyBoardDto) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new AuthFailException(String.valueOf(boardId)));
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NotFoundException("[modify board] boardId : " + boardId));
 
         if(board.getUser().getId() != user.getId()) {
             throw new AuthFailException(board.getUser().getId() + " != " + user.getId());

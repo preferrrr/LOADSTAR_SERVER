@@ -3,10 +3,8 @@ package com.lodestar.lodestar_server.controller;
 import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
-import com.lodestar.lodestar_server.dto.response.CheckUsernameResponseDto;
 import com.lodestar.lodestar_server.dto.response.MessageResponseDto;
 import com.lodestar.lodestar_server.dto.response.MyPageResponseDto;
-import com.lodestar.lodestar_server.dto.response.SignUpResponseDto;
 import com.lodestar.lodestar_server.entity.User;
 
 import com.lodestar.lodestar_server.service.UserService;
@@ -47,11 +45,9 @@ public class UserController {
 
         signUpRequestDto.validateFieldsNotNull();
 
-        User user = userService.signUp(signUpRequestDto);
+        userService.signUp(signUpRequestDto);
 
-        SignUpResponseDto responseDto = new SignUpResponseDto("회원가입에 성공했습니다.", user.getId());
-
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**
@@ -62,12 +58,8 @@ public class UserController {
     public ResponseEntity<?> checkUsername(@RequestParam("username") String username) {
 
         userService.dupCheckUsername(username);
-        CheckUsernameResponseDto responseDto = new CheckUsernameResponseDto();
 
-        responseDto.setCheck(true);
-        responseDto.setMessage("사용 가능한 아이디입니다.");
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
-
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -92,8 +84,8 @@ public class UserController {
         requestDto.validateFieldsNotNull();
 
         userService.changePassword(requestDto);
-        MessageResponseDto responseDto = new MessageResponseDto("비밀번호 변경에 성공했습니다.");
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

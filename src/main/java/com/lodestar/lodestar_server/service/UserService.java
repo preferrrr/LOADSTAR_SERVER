@@ -4,7 +4,6 @@ import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.dto.response.BookmarkDto;
-import com.lodestar.lodestar_server.dto.response.LoginResponseDto;
 import com.lodestar.lodestar_server.dto.response.MyBoardDto;
 import com.lodestar.lodestar_server.dto.response.MyPageResponseDto;
 import com.lodestar.lodestar_server.entity.Board;
@@ -35,14 +34,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final PasswordEncoder passwordEncoder;
-    private final BookmarkRepository bookmarkRepository;
 
-    private static final int ACCESS = 0;
-
-    private static final int REFRESH = 1;
-
-
-    public User signUp(SignUpRequestDto signUpRequestDto) {
+    public void signUp(SignUpRequestDto signUpRequestDto) {
 
         //닉네임 중복확인, 이메일 인증 되었는지.
         //1. 닉네임 중복확인 (username status = true)
@@ -73,7 +66,7 @@ public class UserService {
         user.setRoles(roles);
         user.setRefreshTokenValue(null);
 
-        return userRepository.save(user);
+        userRepository.save(user);
 
     }
 
@@ -86,17 +79,11 @@ public class UserService {
 
         User user = userRepository.findByUsername(loginRequestDto.getUsername());
 
-        LoginResponseDto loginResponseDto = new LoginResponseDto(user.getId(), "로그인에 성공했습니다.");
-
         List<String> roleList = user.getRoles();;
         httpSession.setAttribute("id",String.valueOf(user.getId()));
         httpSession.setAttribute("roles", roleList);
 
-        //System.out.println("roles: " + httpSession.getAttribute("roles").toString());
-
-
-
-        return new ResponseEntity<>(loginResponseDto, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public void dupCheckUsername(String username) {
@@ -167,7 +154,7 @@ public class UserService {
     }
 
     public MyPageResponseDto myPage(User authUser) {
-        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new AuthFailException(String.valueOf("test")));
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new AuthFailException(String.valueOf("[mypage] userId : " + authUser.getId())));
         MyPageResponseDto responseDto = new MyPageResponseDto();
         responseDto.setEmail(user.getEmail());
         responseDto.setUsername(user.getUsername());

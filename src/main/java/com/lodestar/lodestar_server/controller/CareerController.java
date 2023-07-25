@@ -23,6 +23,8 @@ public class CareerController {
     public ResponseEntity<?> saveCareer(@AuthenticationPrincipal User user,
                                         @RequestBody CareerDtos careerDtos) {
 
+        careerDtos.validateFieldsNotNull();
+
         careerService.saveCareer(user, careerDtos);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -48,6 +50,8 @@ public class CareerController {
     @PatchMapping("")
     public ResponseEntity<?> modifyCareer(@AuthenticationPrincipal User user,
                                           @RequestBody CareerDtos careerDtos) {
+
+        careerDtos.validateFieldsNotNull();
 
         careerService.modifyCareer(user, careerDtos);
 

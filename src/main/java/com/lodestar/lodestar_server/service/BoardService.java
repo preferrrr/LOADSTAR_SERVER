@@ -42,7 +42,6 @@ public class BoardService {
         board.setUser(user);
         board.setTitle(createBoardDto.getTitle());
         board.setContent(createBoardDto.getContent());
-        //TODO: 커리어 이미지 y이면 이미지 저장, 아니면 n으로
 
         List<BoardHashtag> hashtags = new ArrayList<>();
         List<String> hashtagNames = createBoardDto.getHashtags();

@@ -59,9 +59,8 @@ public class EmailController {
 
         emailService.findPwdSendEmail(requestDto.getEmail());
 
-        MessageResponseDto responseDto = new MessageResponseDto("메일 전송이 완료되었습니다.");
 
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
 
     }
 

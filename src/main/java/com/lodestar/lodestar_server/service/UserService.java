@@ -4,6 +4,7 @@ import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.dto.response.BookmarkDto;
+import com.lodestar.lodestar_server.dto.response.LoginResponseDto;
 import com.lodestar.lodestar_server.dto.response.MyBoardDto;
 import com.lodestar.lodestar_server.dto.response.MyPageResponseDto;
 import com.lodestar.lodestar_server.entity.Board;
@@ -83,7 +84,9 @@ public class UserService {
         httpSession.setAttribute("id",String.valueOf(user.getId()));
         httpSession.setAttribute("roles", roleList);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        LoginResponseDto responseDto = new LoginResponseDto();
+        responseDto.setUserId(user.getId());
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     public void dupCheckUsername(String username) {

@@ -112,11 +112,11 @@ public class EmailService {
      */
     public boolean checkKey(String email, String key) {
 
-        List<Mail> emails = emailRepository.findByEmail(email);
-        Mail testEmail = emails.get(emails.size() - 1);
-        String testKey = testEmail.getAuthKey();
+        Mail emails = emailRepository.findFirstByEmailOrderByCreatedAtDesc(email);
 
-        if (key.equals(testKey) && validKeyTime(testEmail.getCreatedAt())) {
+        String testKey = emails.getAuthKey();
+
+        if (key.equals(testKey) && validKeyTime(emails.getCreatedAt())) {
             return true;
         } else return false;
     }

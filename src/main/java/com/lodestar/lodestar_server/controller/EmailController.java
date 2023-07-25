@@ -27,9 +27,8 @@ public class EmailController {
         checkEmailRequestDto.validateFieldsNotNull();
 
         emailService.checkEmail(checkEmailRequestDto.getEmail());
-        MessageResponseDto responseDto = new MessageResponseDto("메일 전송이 완료되었습니다.");
 
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -42,11 +41,9 @@ public class EmailController {
                                       @RequestParam("key") String key) {
 
         if (emailService.checkKey(email, key)) {
-            CheckKeyResponseDto responseDto = new CheckKeyResponseDto(true, "인증에 성공했습니다.");
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            CheckKeyResponseDto responseDto = new CheckKeyResponseDto(false, "인증에 실패했습니다.");
-            return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

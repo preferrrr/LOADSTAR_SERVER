@@ -11,4 +11,6 @@ public interface EmailRepository extends JpaRepository<Mail, Long> {
 
     boolean existsByEmail(String email);
 
+    Mail findFirstByEmailOrderByCreatedAtDesc(String email);
+
 }

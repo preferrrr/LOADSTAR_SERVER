@@ -37,56 +37,24 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 </br>
 
 
-## 🔗Stacks
-
-### Frontend <br>
-<div display = "flex">
-<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white">
-<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=white">
-<img src="https://img.shields.io/badge/react_router-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white">
-<img src="https://img.shields.io/badge/react_apexcharts-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white">
-<img src="https://img.shields.io/badge/redux-764ABC?style=for-the-badge&logo=redux&logoColor=white">
-</div>
-
-### Backend <br>
-<div display = "flex">
-<img src="https://img.shields.io/badge/java-337AB7?style=for-the-badge&logo=java&logoColor=white">
-<img src="https://img.shields.io/badge/spring_boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-<img src="https://img.shields.io/badge/spring_security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">
-<img src="https://img.shields.io/badge/spring_data_jpa-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
-</div>
-
-
-### Development Environment  <br>
-<div display = "flex">
-<img src="https://img.shields.io/badge/visual_studio_code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white">
-<img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white">
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
-<img src="https://img.shields.io/badge/intellij-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
-<img src="https://img.shields.io/badge/aws_ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
- <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white">
-</div>
+## 🔗Backend - Spring
+- IntelliJ IDE
+- Springboot 3.1.0
+- Spring Data JPA
+- Spring Security
+- Swagger
+- MySql
+- AWS EC2
+- NGINX
+- Redis
 
 
 </br>
 
+## :link: Rest API 명세서
+* [LOADSTAR API 문서](https://docs.google.com/spreadsheets/d/1zNMbE5-97dbYUMXMaAt4ehp7-XVktkDqHnT658MP_u4/edit?pli=1#gid=0)
 
-## 🔗개발 환경 세팅
-### Frontend <br>
-```bash
-cd frontend
-npm install
-npm start
-```
-### Backend <br>
-```bash
-cd frontend
-npm install
-npm start
-```
 
-</br>
 
 ## 🔗Team
 <div align="center" >

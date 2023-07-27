@@ -131,32 +131,5 @@ public class BoardController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//
-//    @PostMapping(value = "/image")
-//    public ResponseEntity<?> imageTest(@RequestPart(value = "file", required = false)MultipartFile file,
-//                                       @RequestPart(value = "data") TestDto testDto) throws Exception {
-//
-//
-//        //게시글 작성.
-//        if (file.isEmpty()) {
-//            //상품 등록시 첫 번쨰 이미지가 없다면 에러 메시지와 함께 상품 등록 페이지로 전환
-//            //상품의 첫 번째 이미지는 메인 페이지에서 보ㅕ줄 상품 이미지로 사용하기 위해서 필수 값으로 지정
-//        }
-//
-//        return new ResponseEntity<>(boardService.imageTest(testDto, file), HttpStatus.OK);
-//
-//    }
-
-
-
-//
-//    @PostMapping("/new2")
-//    public ResponseEntity<?> saveBoard100(@RequestBody CreateBoardDto createBoardDto) {
-//
-//        createBoardDto.validateFieldsNotNull();
-//        boardService.saveBoard100(createBoardDto);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 
 }

@@ -1,10 +1,12 @@
 package com.lodestar.lodestar_server.controller;
 
-import com.lodestar.lodestar_server.dto.request.CheckEmailRequestDto;
-import com.lodestar.lodestar_server.dto.response.CheckKeyResponseDto;
+import com.lodestar.lodestar_server.dto.request.EmailRequestDto;
 import com.lodestar.lodestar_server.dto.response.FindPasswordResponseDto;
-import com.lodestar.lodestar_server.dto.response.MessageResponseDto;
 import com.lodestar.lodestar_server.service.EmailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,18 @@ public class EmailController {
      * /emails/check-email
      */
     @PostMapping("/check-email")
-    public ResponseEntity<?> checkEmail(@RequestBody CheckEmailRequestDto checkEmailRequestDto) throws Exception {
+    @Operation(summary = "이메일 인증코드 전송", description = "해당 메일로 가입한 유저가 있는지 중복체크도 함.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "204", description = "body null 존재"),
+            @ApiResponse(responseCode = "409", description = "해당 메일로 가입한 유저 존재"),
+            @ApiResponse(responseCode = "500", description = "메일 전송 실패")
+    })
+    public ResponseEntity<?> checkEmail(@RequestBody EmailRequestDto emailRequestDto) throws Exception {
 
-        checkEmailRequestDto.validateFieldsNotNull();
+        emailRequestDto.validateFieldsNotNull();
 
-        emailService.checkEmail(checkEmailRequestDto.getEmail());
+        emailService.checkEmail(emailRequestDto.getEmail());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -37,8 +46,13 @@ public class EmailController {
      * /emails/check-key?email= ?key=
      */
     @GetMapping("/check-key")
-    public ResponseEntity<?> checkKey(@RequestParam("email") String email,
-                                      @RequestParam("key") String key) {
+    @Operation(summary = "인증코드 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "인증 실패")
+    })
+    public ResponseEntity<?> checkKey(@Schema(name = "이메일") @RequestParam("email") String email,
+                                      @Schema(name = "인증코드") @RequestParam("key") String key) {
 
         if (emailService.checkKey(email, key)) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -53,7 +67,14 @@ public class EmailController {
      */
 
     @PostMapping("/find-password/send-email")
-    public ResponseEntity<?> findPwdSendEmail(@RequestBody CheckEmailRequestDto requestDto) throws Exception {
+    @Operation(summary = "비밀번호 찾기 이메일 인증코드 전송")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "204", description = "body null 존재"),
+            @ApiResponse(responseCode = "400", description = "해당 메일로 가입한 유저 없음"),
+            @ApiResponse(responseCode = "500", description = "메일 전송 실패")
+    })
+    public ResponseEntity<?> findPwdSendEmail(@RequestBody EmailRequestDto requestDto) throws Exception {
 
         requestDto.validateFieldsNotNull();
 
@@ -69,8 +90,14 @@ public class EmailController {
      * /emails/find-password/check-key
      * */
     @GetMapping("/find-password/check-key")
-    public ResponseEntity<?> findPwdCheckKey(@RequestParam("email") String email,
-                                             @RequestParam("key") String key) {
+    @PostMapping("/find-password/send-email")
+    @Operation(summary = "비밀번호 찾기 인증코드 확인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "인증 실패")
+    })//TODO: 비밀번호 찾기 => 이메일로 임시 비밀번호 전송으로 바꿔야함.
+    public ResponseEntity<?> findPwdCheckKey(@Schema(name = "이메일") @RequestParam("email") String email,
+                                             @Schema(name = "인증코드") @RequestParam("key") String key) {
 
         FindPasswordResponseDto responseDto = emailService.findPwdCheckKey(email, key);
 

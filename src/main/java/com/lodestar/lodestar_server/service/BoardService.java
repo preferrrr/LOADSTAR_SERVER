@@ -1,6 +1,5 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.*;
 import com.lodestar.lodestar_server.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.dto.request.ModifyBoardDto;
 import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
@@ -236,13 +235,5 @@ public class BoardService {
     }
 
 
-
-    private final ImageService imageService;
-    public String imageTest(TestDto testDto, MultipartFile file) throws Exception {
-
-        imageService.saveImage(file);
-
-        return testDto.getData();
-    }
 
 }

@@ -3,6 +3,10 @@ package com.lodestar.lodestar_server.controller;
 import com.lodestar.lodestar_server.dto.request.SaveBookmarkDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.BookmarkService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +24,11 @@ public class BookmarkController {
      * /bookmarks
      * */
     @PostMapping("")
+    @Operation(summary = "북마크 등록")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "204", description = "body null 존재"),
+    })
     public ResponseEntity<?> saveBookmark(@AuthenticationPrincipal User user, @RequestBody SaveBookmarkDto saveBookmarkDto) {
         saveBookmarkDto.validateFieldsNotNull();
         bookmarkService.saveBookmark(user, saveBookmarkDto);
@@ -32,7 +41,12 @@ public class BookmarkController {
      * /bookmarks
      * */
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<?> deleteBookmark(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId) {
+    @Operation(summary = "북마크 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+    })
+    public ResponseEntity<?> deleteBookmark(@AuthenticationPrincipal User user,
+                                            @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
         bookmarkService.deleteBookmark(user, boardId);
 

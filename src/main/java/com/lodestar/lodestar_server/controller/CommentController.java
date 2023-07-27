@@ -4,6 +4,10 @@ import com.lodestar.lodestar_server.dto.request.CreateCommentDto;
 import com.lodestar.lodestar_server.dto.request.ModifyCommentDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +26,13 @@ public class CommentController {
      * /comments
      */
     @PostMapping("")
-    public ResponseEntity<?> saveComment(@AuthenticationPrincipal User user, @RequestBody CreateCommentDto createCommentDto) {
+    @Operation(summary = "댓글 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "204", description = "body null 존재"),
+    })
+    public ResponseEntity<?> saveComment(@AuthenticationPrincipal User user,
+                                         @RequestBody CreateCommentDto createCommentDto) {
 
         createCommentDto.validateFieldsNotNull();
 
@@ -36,7 +46,13 @@ public class CommentController {
      * /comments/{commentId}
      * */
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal User user, @PathVariable("commentId") Long commentId) {
+    @Operation(summary = "댓글 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "403", description = "권한 없음")
+    })
+    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal User user,
+                                           @Schema(name = "댓글 id") @PathVariable("commentId") Long commentId) {
 
         commentService.deleteComment(user, commentId);
 
@@ -49,7 +65,14 @@ public class CommentController {
      * */
 
     @PatchMapping("/{commentId}")
-    public ResponseEntity<?> modifyComment(@AuthenticationPrincipal User user, @PathVariable("commentId") Long commentId,
+    @Operation(summary = "댓글 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "204", description = "body null 존재"),
+            @ApiResponse(responseCode = "403", description = "권한 없음")
+    })
+    public ResponseEntity<?> modifyComment(@AuthenticationPrincipal User user,
+                                           @Schema(name = "댓글 id") @PathVariable("commentId") Long commentId,
                                            @RequestBody ModifyCommentDto modifyCommentDto) {
 
         modifyCommentDto.validateFieldsNotNull();

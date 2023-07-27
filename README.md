@@ -60,6 +60,13 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 ## :link: ERD
 ![ERD](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/95662784-005c-4a80-8ccb-702acbb28a2e)
 </br>
+
+
+## :link: 배포하면서...
+* [배포](https://prefercoding.tistory.com/39)
+</br>
+
+
 ## 🔗Team
 <div align="center" >
 

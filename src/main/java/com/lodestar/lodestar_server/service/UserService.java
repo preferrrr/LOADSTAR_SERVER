@@ -3,15 +3,14 @@ package com.lodestar.lodestar_server.service;
 import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
-import com.lodestar.lodestar_server.dto.response.BookmarkDto;
-import com.lodestar.lodestar_server.dto.response.LoginResponseDto;
-import com.lodestar.lodestar_server.dto.response.MyBoardDto;
-import com.lodestar.lodestar_server.dto.response.MyPageResponseDto;
+import com.lodestar.lodestar_server.dto.response.*;
 import com.lodestar.lodestar_server.entity.Board;
+import com.lodestar.lodestar_server.entity.Comment;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.BookmarkRepository;
+import com.lodestar.lodestar_server.repository.CommentRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +33,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
 
     public void signUp(SignUpRequestDto signUpRequestDto) {
@@ -80,8 +80,9 @@ public class UserService {
 
         User user = userRepository.findByUsername(loginRequestDto.getUsername());
 
-        List<String> roleList = user.getRoles();;
-        httpSession.setAttribute("id",String.valueOf(user.getId()));
+        List<String> roleList = user.getRoles();
+        ;
+        httpSession.setAttribute("id", String.valueOf(user.getId()));
         httpSession.setAttribute("roles", roleList);
 
         LoginResponseDto responseDto = new LoginResponseDto();
@@ -91,7 +92,7 @@ public class UserService {
 
     public void dupCheckUsername(String username) {
         boolean result = checkUsername(username);
-        if(result) {
+        if (result) {
             throw new ExistUsernameException(username);
         }
     }
@@ -112,7 +113,6 @@ public class UserService {
     private boolean duplicateEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
 
 
     public String findId(String email) {
@@ -165,7 +165,7 @@ public class UserService {
         List<Board> myBoards = boardRepository.findByUserId(user.getId());
         ArrayList<MyBoardDto> myBoardDtos = new ArrayList<>();
 
-        for(int i = 0; i < myBoards.size(); i++) {
+        for (int i = 0; i < myBoards.size(); i++) {
             MyBoardDto board = new MyBoardDto();
             board.setTitle(myBoards.get(i).getTitle());
             board.setBoardId(myBoards.get(i).getId());
@@ -176,13 +176,26 @@ public class UserService {
         List<Board> bookmarkBoards = boardRepository.findBoardsByIdIn(user.getId());
         ArrayList<BookmarkDto> bookmarkDtos = new ArrayList<>();
 
-        for(int i = 0; i < bookmarkBoards.size(); i++) {
+        for (int i = 0; i < bookmarkBoards.size(); i++) {
             BookmarkDto board = new BookmarkDto();
             board.setTitle(bookmarkBoards.get(i).getTitle());
             board.setBoardId(bookmarkBoards.get(i).getId());
             bookmarkDtos.add(board);
         }
         responseDto.setBookmarks(bookmarkDtos);
+
+        List<Comment> myComments = commentRepository.findByUser(user);
+        ArrayList<MyCommentDto> commentDtos = new ArrayList<>();
+
+        for (int i = 0; i < myComments.size(); i++) {
+            MyCommentDto dto = new MyCommentDto();
+            dto.setCommentId(myComments.get(i).getId());
+            dto.setContent(myComments.get(i).getContent());
+            dto.setBoardId(myComments.get(i).getBoard().getId());
+            commentDtos.add(dto);
+        }
+        responseDto.setComments(commentDtos);
+
 
 
         return responseDto;

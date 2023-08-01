@@ -62,6 +62,10 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 </br>
 
 
+## :link: 아키텍쳐 구조
+![아키텍쳐](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/5a46cf33-911a-457c-bd90-dc4450c649cb)
+</br>
+
 ## :link: 배포하면서...
 * [1차 배포 - nginx, reverse proxy, Mixed Content](https://prefercoding.tistory.com/39)
 </br>

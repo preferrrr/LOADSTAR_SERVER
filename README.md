@@ -58,8 +58,23 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 </br>
 
 ## :link: ERD
-![ERD](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/95662784-005c-4a80-8ccb-702acbb28a2e)
+![ERD 2](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/d0dfec31-8cfa-49d6-9aa3-138afcb3e1d2)
 </br>
+
+
+## :link: 아키텍쳐 구조
+![아키텍쳐](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/5a46cf33-911a-457c-bd90-dc4450c649cb)
+</br>
+
+## :link: 배포하면서...
+* [1차 배포 - nginx, reverse proxy, Mixed Content](https://prefercoding.tistory.com/39)
+</br>
+
+## :link: 무심코 적용한 auto_increment index
+* [insert와 select의 인덱스에 따른 성능 차이 테스트](https://prefercoding.tistory.com/40)
+</br>
+
+
 ## 🔗Team
 <div align="center" >
 

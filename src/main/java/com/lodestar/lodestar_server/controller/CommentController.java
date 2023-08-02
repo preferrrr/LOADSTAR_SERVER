@@ -81,5 +81,4 @@ public class CommentController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    //TODO: 내가 쓴 댓글 조회
 }

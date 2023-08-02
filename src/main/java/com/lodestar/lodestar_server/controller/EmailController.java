@@ -66,42 +66,23 @@ public class EmailController {
      * emails/find-password/send-email
      */
 
-    @PostMapping("/find-password/send-email")
+    @PostMapping("/find-password")
     @Operation(summary = "비밀번호 찾기 이메일 인증코드 전송")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
-            @ApiResponse(responseCode = "400", description = "해당 메일로 가입한 유저 없음"),
+            @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 아이디 없음."),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
     public ResponseEntity<?> findPwdSendEmail(@RequestBody EmailRequestDto requestDto) throws Exception {
 
         requestDto.validateFieldsNotNull();
 
-        emailService.findPwdSendEmail(requestDto.getEmail());
-
+        emailService.findPwdSendEmail(requestDto.getEmail(), requestDto.getUsername());
 
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
-    /**
-     * 비밀번호 찾기 이메일 인증코드 확인
-     * /emails/find-password/check-key
-     * */
-    @GetMapping("/find-password/check-key")
-    @PostMapping("/find-password/send-email")
-    @Operation(summary = "비밀번호 찾기 인증코드 확인")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공"),
-            @ApiResponse(responseCode = "400", description = "인증 실패")
-    })//TODO: 비밀번호 찾기 => 이메일로 임시 비밀번호 전송으로 바꿔야함.
-    public ResponseEntity<?> findPwdCheckKey(@Schema(name = "이메일") @RequestParam("email") String email,
-                                             @Schema(name = "인증코드") @RequestParam("key") String key) {
-
-        FindPasswordResponseDto responseDto = emailService.findPwdCheckKey(email, key);
-
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
-    }
 
 }

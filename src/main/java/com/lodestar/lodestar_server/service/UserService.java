@@ -9,7 +9,6 @@ import com.lodestar.lodestar_server.entity.Comment;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.repository.BoardRepository;
-import com.lodestar.lodestar_server.repository.BookmarkRepository;
 import com.lodestar.lodestar_server.repository.CommentRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -116,14 +115,10 @@ public class UserService {
 
 
     public String findId(String email) {
-        if (!userRepository.existsByEmail(email)) {
-            throw new NotExistEmailException(email);
-        } else {
-            User user = userRepository.findByEmail(email);
-            String username = user.getUsername();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotExistEmailException(email));
+        String username = user.getUsername();
 
-            return encryptPassword(username);
-        }
+        return encryptUsername(username);
     }
 
     public void changePassword(FindPasswordRequestDto requestDto) {
@@ -140,7 +135,7 @@ public class UserService {
     }
 
 
-    private String encryptPassword(String username) {
+    private String encryptUsername(String username) {
         int length = username.length();
         int replaceLength = length / 3; // 문자열의 3분의 1 길이 계산
 
@@ -195,7 +190,6 @@ public class UserService {
             commentDtos.add(dto);
         }
         responseDto.setComments(commentDtos);
-
 
 
         return responseDto;

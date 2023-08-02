@@ -2,10 +2,8 @@ package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.response.FindPasswordResponseDto;
 import com.lodestar.lodestar_server.entity.Mail;
-import com.lodestar.lodestar_server.exception.AuthFailException;
-import com.lodestar.lodestar_server.exception.DuplicateEmailException;
-import com.lodestar.lodestar_server.exception.NotExistEmailException;
-import com.lodestar.lodestar_server.exception.SendEmailFailException;
+import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.repository.EmailRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import jakarta.mail.Message;
@@ -15,11 +13,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -33,10 +33,10 @@ public class EmailService {
     private final UserRepository userRepository;
 
     private final EmailRepository emailRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&*()[]?";
 
     private MimeMessage createMessage(String to, String authCode) throws Exception {
-        System.out.println("보내는 대상 : " + to);
-        System.out.println("인증 코드 : " + authCode);
         MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
@@ -62,6 +62,27 @@ public class EmailService {
         return message;
     }
 
+    private MimeMessage createFindPwdMessage(String to, String authCode) throws Exception {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
+        message.setSubject("LOADSTAR 임시 비밀번호");//제목
+
+        String msgg = "";
+        msgg += "<div style='margin:20px;'>";
+        msgg += "<h1> 안녕하세요 LODESTAR 입니다. </h1>";
+        msgg += "<br>";
+        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
+        msgg += "<h3 style='color:blue;'>임시 비밀번호</h3>";
+        msgg += "<div style='font-size:130%'>";
+        msgg += "CODE : <strong>";
+        msgg += authCode + "</strong><div><br/> ";
+        msgg += "</div>";
+        message.setText(msgg, "utf-8", "html");//내용
+        message.setFrom(new InternetAddress("tjsgh2946@gmail.com", "LOADSTAR"));//보내는 사람
+
+        return message;
+    }
     public static String createKey() {
         StringBuilder key = new StringBuilder();
         Random rnd = new Random();
@@ -74,7 +95,7 @@ public class EmailService {
         return key.toString();
     }
 
-    public void sendEmail(String to) throws Exception {
+    public void sendAuthCode(String to) throws Exception {
 
         String key = createKey();
         MimeMessage message = createMessage(to, key);
@@ -98,7 +119,7 @@ public class EmailService {
             throw new DuplicateEmailException(to);
         }
 
-        sendEmail(to);
+        sendAuthCode(to);
     }
 
 
@@ -128,27 +149,37 @@ public class EmailService {
         return now.isBefore(createdTime.plusMinutes(3)) && now.isAfter(createdTime);
     }
 
-    public void findPwdSendEmail(String email) throws Exception{
-        if (!existEmail(email)) {
-            throw new NotExistEmailException(email);
-        }
+    public void findPwdSendEmail(String email, String username) throws Exception {
+        User user = userRepository.findByEmail(email).orElseThrow(()->new NotExistEmailException(email));
+        if(!user.getUsername().equals(username))
+            throw new NotExistUserException(email + ", " + username);
 
-        sendEmail(email);
+        sendAndSaveRandomPwd(email, user);
     }
 
-    public FindPasswordResponseDto findPwdCheckKey(String email, String key) {
+    public void sendAndSaveRandomPwd(String to, User user) throws Exception {
 
-        boolean result = checkKey(email, key);
+        String key = createRandomPwd();
+        MimeMessage message = createMessage(to, key);
 
-        if(result) {
-            FindPasswordResponseDto responseDto = new FindPasswordResponseDto();
-            responseDto.setUserId(userRepository.findByEmail(email).getId());
-            responseDto.setResult(true);
-            return responseDto;
-        } else {
-            throw new AuthFailException(email);
+        try {
+            emailSender.send(message);
+            user.setPassword(passwordEncoder.encode(key));
+        } catch (MailException e) {
+            throw new SendEmailFailException(to);
         }
     }
 
+
+
+    private String createRandomPwd() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(12);
+        for (int i = 0; i < 12; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(randomIndex));
+        }
+        return sb.toString();
+    }
 
 }

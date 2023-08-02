@@ -13,9 +13,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Schema(name = "이메일")
 public class EmailRequestDto {
-    String email;
+    private String username;
+    private String email;
 
     public void validateFieldsNotNull() {
+        if(username == null || username.isEmpty() || username.isBlank())
+            throw new InvalidRequestParameterException("Invalid username");
         if(email == null || email.isEmpty() || email.isBlank())
             throw new InvalidRequestParameterException("Invalid email");
     }

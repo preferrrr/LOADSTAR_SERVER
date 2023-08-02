@@ -119,4 +119,12 @@ public class ExceptionHandler {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND); /**404, db 조회 실패.*/
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler({NotExistUserException.class})
+    public ResponseEntity<?> handleNotExistUserException(final NotExistUserException e) {
+
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
+        log.error(msg);
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST); /**400, 해당 이메일과 유저네임으로 가입한 유저 없음.*/
+    }
 }

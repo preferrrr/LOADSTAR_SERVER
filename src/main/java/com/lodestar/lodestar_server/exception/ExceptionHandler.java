@@ -44,7 +44,7 @@ public class ExceptionHandler {
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); /**204*/
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler({SendEmailFailException.class})
@@ -126,5 +126,16 @@ public class ExceptionHandler {
         log.error(msg);
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST); /**400, 해당 이메일과 유저네임으로 가입한 유저 없음.*/
+    }
+
+
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({DuplicateBookmarkException.class})
+    public ResponseEntity<?> handleDuplicateBookmarkException(final DuplicateBookmarkException e) {
+
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
+        log.error(msg);
+
+        return new ResponseEntity<>(HttpStatus.CONFLICT); /**409, 이미 유저가 게시글 북마크로 등록함.*/
     }
 }

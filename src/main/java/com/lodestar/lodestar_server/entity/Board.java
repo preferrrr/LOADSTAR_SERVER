@@ -29,14 +29,12 @@ public class Board extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    //해시태그는 조회 기능에만 쓰임.
-    //delim = '#'으로 구분할 예정
-    //그럼 조회할 때 join보다는 성능이 좋을거같음.
-    //해시태그로 조회할 때 like '%hashtag%'
-    //String hashtag;
-
-    //해시태그가 인스타처럼 새롭게 만들 수 있는게 아니라, 개수가 제한적인데
-    //확장성과 조회 성능을 고려하면 해시태그 테이블을 따로 만드는게 나을것 같기도....
+    //유저가 북마크를 등록할 때마다 +-1 해주도록 함.
+    //이 컬럼이 없다면, 메인 페이지 게시글 조회, 검색 등으로 게시글들을 가져올 때
+    //각 게시글마다 Bookmark 테이블에서 계산해야함.
+    //사용자가 북마크를 등록했는데, 이 컬럼에 1이 더해지지 않는 경우 ? => @Transactional로 해결됨.
+    @Column(name = "bookmark_count", columnDefinition = "INT default 0")
+    private Integer bookmarkCount;
 
     @Column(columnDefinition = "INT default 0")
     private Integer view;

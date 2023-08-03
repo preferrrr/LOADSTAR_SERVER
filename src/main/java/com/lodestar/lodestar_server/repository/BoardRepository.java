@@ -57,8 +57,21 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     void deleteById(Long boardId);
 
 
+
+    //띄어쓰기를 고려해야함.
+    //예를 들어, 저장된 게시글 제목이 '프론트 엔드'이고
+    //검색 키워드가 '프론트엔드'라면 검색결과에 나오지 않음.
+    //그래서 저장된 게시글의 제목에 띄어쓰기(공백)이 있다면, 저장된 게시글의 공백을 제거하고 검색함.
+    //그러기 위해서 mysql의 replace를 사용.
+    //저장된 게시글의 제목이 '프론트엔드'이고
+    //검색 키워드가 '프론트 엔드'라면 검색어에 있는 공백때문에 '프론트엔드'가 검색되지 않을 것인데,
+    //그러지 않기 위해서 regexp를 사용. => like %프론트%, like %엔드%가 검색 결과로 나옴.
+    //하지만 regexp를 이렇게 사용한다면 프론트엔드와 상관없는 백엔드도 검색될 것이다.
+    //이 같은 경우와
+    //키워드가 아닌 문장으로 검색하는 경우에 너무 많은 경우의 수를 고려해야 한다.
+    //하지만 난 이정도에서 만족하도록 하겠다.
     @Query(nativeQuery = true,
-            value = "select b.board_id from board b " +
+            value = "select distinct b.board_id from board b " +
                     "where replace(b.title, ' ', '') regexp :keywords or replace(b.content, ' ','') regexp :keywords",
             countQuery = "select count(b.board_id) from board b")
     Page<Long> searchBoards(Pageable pageable, @Param("keywords") String keywords);

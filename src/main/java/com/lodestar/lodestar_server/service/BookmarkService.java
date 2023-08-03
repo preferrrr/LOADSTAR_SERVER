@@ -4,11 +4,14 @@ import com.lodestar.lodestar_server.dto.request.SaveBookmarkDto;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.Bookmark;
 import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.exception.DuplicateBookmarkException;
+import com.lodestar.lodestar_server.exception.NotFoundException;
 import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.BookmarkRepository;
 import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,17 +25,37 @@ public class BookmarkService {
     private final BoardRepository boardRepository;
 
     public void saveBookmark(User user, SaveBookmarkDto saveBookmarkDto) {
-        Bookmark bookmark = new Bookmark();
 
         Board board = boardRepository.getReferenceById(saveBookmarkDto.getBoardId());
+
+        if (bookmarkRepository.existsBookmarkByBoardAndUser(board, user))
+            throw new DuplicateBookmarkException("userId: " + user.getId() + ", boardId: " + board.getId());
+
+        Bookmark bookmark = new Bookmark();
+
         bookmark.setBoard(board);
         bookmark.setUser(user);
 
         bookmarkRepository.save(bookmark);
+
+        board = boardRepository.findById(saveBookmarkDto.getBoardId()).orElseThrow(() -> new NotFoundException("[get board] boardId : " + saveBookmarkDto.getBoardId()));
+        board.setBookmarkCount(board.getBookmarkCount() + 1);
+
+
+
     }
 
     public void deleteBookmark(User user, Long boardId) {
         Board board = boardRepository.getReferenceById(boardId);
+
+        if (!bookmarkRepository.existsBookmarkByBoardAndUser(board, user))
+            throw new NotFoundException("userId: " + user.getId() + ", boardId: " + board.getId());
+        //북마크 테이블에 등록된 북마크가 있어야 하는데, 없다면 어떤 에러를 반환해주지 ?,,,, 찾을 수 없는거니까 NOT FOUND
+        //아니면 BAD REQUEST?
+
+        board = boardRepository.findById(boardId).orElseThrow(()-> new NotFoundException("[get board] boardId : " + boardId));
+
+        board.setBookmarkCount(board.getBookmarkCount() - 1);
 
         bookmarkRepository.deleteByBoardAndUser(board, user);
     }

@@ -77,7 +77,7 @@ public class BoardService {
         }
         else {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "created_at");
-
+            //createAt -> create_at으로 달리지기 때문에 pageable 재정의
 
             List<String> hashtagList = new ArrayList<>();
 
@@ -232,6 +232,47 @@ public class BoardService {
         hashtagRepository.saveAll(addHashtags);
         hashtagRepository.deleteAllInBatch(deleteHashtags);
 
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<BoardPagingDto> searchBoards(Pageable pageable, String keywords) {
+
+        List<BoardPagingDto> result = new ArrayList<>();
+
+        String param = keywords.replaceAll(" ", "|");
+
+        Page<Long> pagingIds = boardRepository.searchBoards(pageable, param);
+
+
+        List<Long> boardIds = new ArrayList<>();
+        for (Long id : pagingIds) {
+            boardIds.add(id);
+        }
+
+        List<Board> boards= boardRepository.findBoardsWhereInBoardIds(boardIds);
+
+        for (Board board : boards) {
+            BoardPagingDto dto = new BoardPagingDto();
+            dto.setBoardId(board.getId());
+            dto.setTitle(board.getTitle());
+            List<String> hashtagNames = new ArrayList<>();
+
+            for (BoardHashtag hashtag : board.getHashtag()) {
+                hashtagNames.add(hashtag.getHashtagName());
+            }
+            dto.setHashtags(hashtagNames);
+
+            List<CareerDto> careerDtos = new ArrayList<>();
+            for(Career career : board.getUser().getCareers()) {
+                careerDtos.add(career.createDto());
+            }
+            dto.setArr(careerDtos);
+
+            result.add(dto);
+        }
+
+        return result;
     }
 
 

@@ -5,6 +5,7 @@ import com.lodestar.lodestar_server.dto.request.ModifyBoardDto;
 import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
 import com.lodestar.lodestar_server.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import com.lodestar.lodestar_server.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -129,6 +130,29 @@ public class BoardController {
         boardService.modifyBoard(user, boardId, modifyBoardDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    /**게시글 검색
+     * /boards/search
+     * */
+    @GetMapping(value = "/search")
+    @Operation(summary = "게시글 검색")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))} ),
+            @ApiResponse(responseCode = "204", description = "body null 존재")
+    })
+    public ResponseEntity<?> searchBoards(@PageableDefault(size = 8, sort = "created_at", direction = Sort.Direction.DESC)
+                                          @Schema(description = "페이지 번호", example = "0") Pageable pageable,
+                                          @Schema(description = "검색 키워드",example = "스프링 부트") @RequestParam("keywords")  String keywords) {
+
+        if(keywords.length() == 0 || keywords.isEmpty() || keywords.isBlank())
+            throw new InvalidRequestParameterException("invalid keywords"); // 검색어가 없을 때 204 NO CONTENT 반환.
+
+        List<BoardPagingDto> response= boardService.searchBoards(pageable, keywords);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

@@ -55,4 +55,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findBoardsByIdIn(@Param("userId") Long userId);
 
     void deleteById(Long boardId);
+
+
+    @Query(nativeQuery = true,
+            value = "select b.board_id from board b " +
+                    "where replace(b.title, ' ', '') regexp :keywords or replace(b.content, ' ','') regexp :keywords",
+            countQuery = "select count(b.board_id) from board b")
+    Page<Long> searchBoards(Pageable pageable, @Param("keywords") String keywords);
+
+
 }

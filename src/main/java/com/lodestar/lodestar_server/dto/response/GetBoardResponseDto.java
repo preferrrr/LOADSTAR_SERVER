@@ -30,6 +30,12 @@ public class GetBoardResponseDto {
     @Schema(description = "게시글 조회한 유저가 이 글을 북마크로 등록했는지 여부", example = "true")
     private boolean bookmark;
 
+    @Schema(description = "북마크 갯수")
+    private Integer bookmarkCount;
+
+    @Schema(description = "조회수")
+    private Integer view;
+
     @Schema(description = "게시글 작성자의 경력들")
     private List<CareerDto> arr;
 

@@ -80,9 +80,11 @@ public class UserService {
         User user = userRepository.findByUsername(loginRequestDto.getUsername());
 
         List<String> roleList = user.getRoles();
-        ;
+        List<Long> boardList = new ArrayList<>();
+
         httpSession.setAttribute("id", String.valueOf(user.getId()));
         httpSession.setAttribute("roles", roleList);
+        httpSession.setAttribute("boards", boardList);
 
         LoginResponseDto responseDto = new LoginResponseDto();
         responseDto.setUserId(user.getId());

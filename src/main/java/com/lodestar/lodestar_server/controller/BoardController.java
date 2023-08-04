@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -83,10 +84,11 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = @Content(schema = @Schema(implementation = GetBoardResponseDto.class)))
     })
-    public ResponseEntity<?> getBoard(@AuthenticationPrincipal User user,
+    public ResponseEntity<?> getBoard(HttpSession httpSession,
+                                      @AuthenticationPrincipal User user,
                                       @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
-        GetBoardResponseDto responseDto = boardService.getBoard(user, boardId);
+        GetBoardResponseDto responseDto = boardService.getBoard(httpSession, user, boardId);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }

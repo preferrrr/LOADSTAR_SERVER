@@ -10,6 +10,7 @@ import com.lodestar.lodestar_server.entity.*;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.exception.NotFoundException;
 import com.lodestar.lodestar_server.repository.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -104,6 +105,9 @@ public class BoardService {
             BoardPagingDto dto = new BoardPagingDto();
             dto.setBoardId(board.getId());
             dto.setTitle(board.getTitle());
+            dto.setView(board.getView());
+            dto.setBookmarkCount(board.getBookmarkCount());
+
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
@@ -124,10 +128,25 @@ public class BoardService {
     }
 
 
-    @Transactional(readOnly = true)
-    public GetBoardResponseDto getBoard(User user, Long boardId) {
+    public GetBoardResponseDto getBoard(HttpSession httpSession, User user, Long boardId) {
 
         Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
+
+
+        //조회수 처리를 위한 로직
+        //session의 boards에 게시글 인덱스가 있으면 조회수 증가 X
+        //게시글 작성자라면 조회수 증가 X
+        //session의 boards에 게시글 인덱스가 없으면 조회수 증가 O, 게시글 인덱스 추가
+        // => boards에 게시글 인덱스가 없고, 조회한 사람이 게시글 작성자가 아니고
+        List<Long> list = (List<Long>) httpSession.getAttribute("boards");
+
+        if((!list.contains(boardId)) && (findBoard.getUser().getId() != user.getId())) {
+            //이미 조회한 게시글이 아니고 작성자도 아니어야해.
+            findBoard.setView(findBoard.getView() + 1);
+            list.add(boardId);
+            httpSession.setAttribute("boards",list);
+        }
+
 
         GetBoardResponseDto response = new GetBoardResponseDto();
 
@@ -136,6 +155,8 @@ public class BoardService {
         response.setContent(findBoard.getContent());
         response.setCreatedAt(findBoard.getCreatedAt());
         response.setModifiedAt(findBoard.getModifiedAt());
+        response.setView(findBoard.getView());
+        response.setBookmarkCount(findBoard.getBookmarkCount());
 
 
         //TODO: 그래프를 그리기 위한 Career를,
@@ -256,6 +277,9 @@ public class BoardService {
             BoardPagingDto dto = new BoardPagingDto();
             dto.setBoardId(board.getId());
             dto.setTitle(board.getTitle());
+            dto.setView(board.getView());
+            dto.setBookmarkCount(board.getBookmarkCount());
+
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {

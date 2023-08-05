@@ -141,6 +141,13 @@ public class UserController {
 
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout( HttpSession httpSession) {
+        userService.logout(httpSession);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 
 }

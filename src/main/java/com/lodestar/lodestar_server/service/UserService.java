@@ -197,4 +197,8 @@ public class UserService {
         return responseDto;
 
     }
+
+    public void logout(HttpSession httpSession) {
+        httpSession.invalidate();
+    }
 }

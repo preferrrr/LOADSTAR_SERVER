@@ -5,13 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
 
-public interface BoardRepository extends JpaRepository<Board, Long> {
+public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
     Optional<Board> findById(Long id);
 
     List<Board> findByUserId(Long userId);
@@ -27,14 +28,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "where b.id in :boardIds " +
             "order by b.createdAt desc")
     List<Board> findBoardsWhereInBoardIds(@Param("boardIds") List<Long> boardIds);
-
-
-    @Query(nativeQuery = true,
-            value = "select b.board_id from board b join board_hashtag h on b.board_id = h.board_id " +
-                    "where hashtag_name in (:hashtags) " +
-                    "group by b.board_id",
-            countQuery = "select count(b.board_id) from board b join board_hashtag h on b.board_id = h.board_id")
-    Page<Long> findBoardIdByHashtags(Pageable pageable, @Param("hashtags") List<String> hashtags);
 
 
     //TODO: distinct하지 않으면 중복돼서 조회됨. 예를들어 hathtag가 2개면 comment가 2쌍으로 중복됨.결과 수 만큼 나옴.이유 체크

@@ -14,12 +14,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +45,7 @@ public class BoardService {
 
         //TODO: 해시태그의 개수만큼 insert 쿼리가 생성됨 => bulk query로 해결 가능
         // 근데 Id의 전략을 identity를 사용했기 때문에 jpa에서는 bulk query 사용 불가 => jdbc template 사용해서 해결 가능.
+        // hashtag 테이블은 identity 전략을 사용하지 않음으로써 bulk query 가능
         for (int i = 0; i < hashtagNames.size(); i++) {
             BoardHashtag hashtag = new BoardHashtag();
             hashtag.setBoard(board);
@@ -62,43 +60,12 @@ public class BoardService {
     }
 
 
-
     @Transactional(readOnly = true)
     public List<BoardPagingDto> getBoardList(Pageable pageable, String[] hashtags) {
 
-        List<Board> boards = new ArrayList<>();
         List<BoardPagingDto> result = new ArrayList<>();
 
-        if(hashtags.length == 0) {
-            Page<Board> pageBoards = boardRepository.findAll(pageable);
-
-            for (Board board : pageBoards) {
-                boards.add(board);
-            }
-        }
-        else {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "created_at");
-            //createAt -> create_at으로 달리지기 때문에 pageable 재정의
-
-            List<String> hashtagList = new ArrayList<>();
-
-            for (String item : hashtags) {
-                hashtagList.add(item);
-            }
-
-            Page<Long> pagingIds = boardRepository.findBoardIdByHashtags(pageable, hashtagList);
-
-
-            //TODO: native query를 사용해서 board_id만 조회한 이유
-
-            List<Long> boardIds = new ArrayList<>();
-            for (Long id : pagingIds) {
-                boardIds.add(id);
-            }
-
-            boards = boardRepository.findBoardsWhereInBoardIds(boardIds);
-
-        }
+        List<Board> boards = boardRepository.getBoardList(pageable,hashtags);
 
 
         for (Board board : boards) {
@@ -298,7 +265,6 @@ public class BoardService {
 
         return result;
     }
-
 
 
 }

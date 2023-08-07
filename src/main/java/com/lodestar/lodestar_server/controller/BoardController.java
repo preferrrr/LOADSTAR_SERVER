@@ -35,26 +35,29 @@ public class BoardController {
     private final BoardService boardService;
 
 
-    /**메인페이지 게시글 조회
+    /**
+     * 메인페이지 게시글 조회
      * /boards
-     * */
+     */
     @GetMapping(value = "")
     @Operation(summary = "메인 페이지 게시글 목록 조회")
     @ApiResponse(responseCode = "200", description = "성공",
-            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))} )
-    public ResponseEntity<?> getBoardList(@PageableDefault(size = 8, sort = "createdAt", direction = Sort.Direction.DESC)
-                                              @Schema(description = "페이지 번호", example = "0") Pageable pageable,
-                                          @RequestParam("hashtags") @Schema(description = "적용할 해시태그들",example = "알고리즘, 운영체제") String[] hashtags) {
+            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
+    public ResponseEntity<?> querydslTest(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+            example = "createdAt,desc / view,asc / bookmarkCount,desc")
+                                          @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                          @Schema(description = "적용할 해시태그들",example = "알고리즘, 운영체제") @RequestParam(value = "hashtags", required = false) String[] hashtags) {
 
-        List<BoardPagingDto> response= boardService.getBoardList(pageable, hashtags);
+        List<BoardPagingDto> response = boardService.getBoardList(pageable, hashtags);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    /**게시글 작성
+    /**
+     * 게시글 작성
      * /boards
-     * */
+     */
     @PostMapping("")
     @Operation(summary = "게시글 작성")
     @ApiResponses(value = {
@@ -72,12 +75,10 @@ public class BoardController {
     }
 
 
-
-
     /**
      * 게시글 인덱스로 조회
      * /boards/{boardId}
-     * */
+     */
     @GetMapping(value = "/{boardId}")
     @Operation(summary = "게시글 인덱스로 조회")
     @ApiResponses(value = {
@@ -94,12 +95,10 @@ public class BoardController {
     }
 
 
-
-
     /**
      * 게시글 삭제
      * /boards/{boardId}
-     * */
+     */
     @DeleteMapping(value = "/{boardId}")
     @Operation(summary = "게시글 삭제")
     @ApiResponses(value = {
@@ -117,7 +116,7 @@ public class BoardController {
     /**
      * 게시글 수정
      * /boards/{boardId}
-     * */
+     */
     @PatchMapping(value = "/{boardId}")
     @Operation(summary = "게시글 수정")
     @ApiResponses(value = {
@@ -135,24 +134,25 @@ public class BoardController {
     }
 
 
-    /**게시글 검색
+    /**
+     * 게시글 검색
      * /boards/search
-     * */
+     */
     @GetMapping(value = "/search")
     @Operation(summary = "게시글 검색")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공",
-                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))} ),
+                    content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))}),
             @ApiResponse(responseCode = "204", description = "body null 존재")
     })
     public ResponseEntity<?> searchBoards(@PageableDefault(size = 8, sort = "created_at", direction = Sort.Direction.DESC)
                                           @Schema(description = "페이지 번호", example = "0") Pageable pageable,
-                                          @Schema(description = "검색 키워드",example = "스프링 부트") @RequestParam("keywords")  String keywords) {
+                                          @Schema(description = "검색 키워드", example = "스프링 부트") @RequestParam("keywords") String keywords) {
 
-        if(keywords.length() == 0 || keywords.isEmpty() || keywords.isBlank())
+        if (keywords.length() == 0 || keywords.isEmpty() || keywords.isBlank())
             throw new InvalidRequestParameterException("invalid keywords"); // 검색어가 없을 때 204 NO CONTENT 반환.
 
-        List<BoardPagingDto> response= boardService.searchBoards(pageable, keywords);
+        List<BoardPagingDto> response = boardService.searchBoards(pageable, keywords);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

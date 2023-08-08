@@ -12,9 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -22,13 +24,14 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private static QBoard board = QBoard.board;
+    private static QUser user = QUser.user;
+    private static QBoardHashtag hashtag = QBoardHashtag.boardHashtag;
+
+    private static QComment comment = QComment.comment;
 
     @Override
     public List<Board> getBoardList(Pageable pageable, String[] hashtags) {
-
-        QBoard board = QBoard.board;
-        QBoardHashtag hashtag = QBoardHashtag.boardHashtag;
-        QUser user = QUser.user;
 
         JPAQuery<Long> getIdsQuery;
 
@@ -64,7 +67,6 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .distinct()
                 .join(board.hashtag, hashtag).fetchJoin().distinct()
                 .join(board.user, user).fetchJoin()
-                .on(user.id.eq(board.user.id))
                 .where(board.id.in(Ids));
 
         for (Sort.Order o : pageable.getSort()) {
@@ -76,6 +78,21 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         List<Board> result = getBoardsQuery.fetch();
 
         return result;
+    }
+
+    @Override
+    public Optional<Board> getBoard(Long boardId) {
+
+        JPAQuery<Board> jpaQuery = jpaQueryFactory
+                .selectFrom(board)
+                .distinct()
+                .leftJoin(board.hashtag, hashtag).fetchJoin()
+                .leftJoin(board.comments, comment)
+                .where(board.id.eq(boardId));
+
+        Board board = jpaQuery.fetchOne();
+
+        return Optional.ofNullable(board);
     }
 
 //    private BooleanBuilder containHashtags(String[] hashtags) {

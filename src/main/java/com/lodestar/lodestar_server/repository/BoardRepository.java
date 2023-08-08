@@ -22,14 +22,6 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
     Page<Board> findAll(Pageable pageable);
 
 
-    @Query("select distinct b from Board b " +
-            "join b.hashtag h " +
-            "join fetch Career c on b.user = c.user " +
-            "where b.id in :boardIds " +
-            "order by b.createdAt desc")
-    List<Board> findBoardsWhereInBoardIds(@Param("boardIds") List<Long> boardIds);
-
-
     //TODO: distinct하지 않으면 중복돼서 조회됨. 예를들어 hathtag가 2개면 comment가 2쌍으로 중복됨.결과 수 만큼 나옴.이유 체크
     //FetchJoin에서 생기는 문제. 카테시안 곱이 발생하여 중복이 발생함
     //M*N으로 모든 경우의 수를 출력하게 됨 => distinct 또는 Set 자료구조 사용해서 해결
@@ -51,6 +43,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
 
 
 
+    /***********************************searchBoards********************************************/
     //띄어쓰기를 고려해야함.
     //예를 들어, 저장된 게시글 제목이 '프론트 엔드'이고
     //검색 키워드가 '프론트엔드'라면 검색결과에 나오지 않음.
@@ -69,5 +62,12 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
             countQuery = "select count(b.board_id) from board b")
     Page<Long> searchBoards(Pageable pageable, @Param("keywords") String keywords);
 
+
+    @Query("select distinct b from Board b " +
+            "join b.hashtag h " +
+            "join fetch Career c on b.user = c.user " +
+            "where b.id in :boardIds " +
+            "order by b.createdAt desc")
+    List<Board> findBoardsWhereInBoardIds(@Param("boardIds") List<Long> boardIds);
 
 }

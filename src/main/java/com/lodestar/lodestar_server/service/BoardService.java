@@ -97,7 +97,8 @@ public class BoardService {
 
     public GetBoardResponseDto getBoard(HttpSession httpSession, User user, Long boardId) {
 
-        Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
+        //Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
+        Board findBoard = boardRepository.getBoard(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
 
 
         //조회수 처리를 위한 로직

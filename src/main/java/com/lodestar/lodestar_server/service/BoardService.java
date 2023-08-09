@@ -98,7 +98,7 @@ public class BoardService {
     public GetBoardResponseDto getBoard(HttpSession httpSession, User user, Long boardId) {
 
         //Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
-        Board findBoard = boardRepository.getBoard(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
+        Board findBoard = boardRepository.getBoardWithHashAndComById(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
 
         //조회수 처리를 위한 로직
         //session의 boards에 게시글 인덱스가 있으면 조회수 증가 X
@@ -179,7 +179,7 @@ public class BoardService {
     }
 
     public void modifyBoard(User user, Long boardId, ModifyBoardDto modifyBoardDto) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NotFoundException("[modify board] boardId : " + boardId));
+        Board board = boardRepository.getBoardWithHashtagsById(boardId).orElseThrow(() -> new NotFoundException("[modify board] boardId : " + boardId));
 
         if(board.getUser().getId() != user.getId()) {
             throw new AuthFailException(board.getUser().getId() + " != " + user.getId());

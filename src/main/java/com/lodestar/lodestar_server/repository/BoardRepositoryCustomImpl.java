@@ -81,7 +81,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     }
 
     @Override
-    public Optional<Board> getBoard(Long boardId) {
+    public Optional<Board> getBoardWithHashAndComById(Long boardId) {
 
         JPAQuery<Board> jpaQuery = jpaQueryFactory
                 .selectFrom(board)
@@ -95,6 +95,20 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         return Optional.ofNullable(board);
     }
 
+
+    @Override
+    public Optional<Board> getBoardWithHashtagsById(Long boardId) {
+
+        JPAQuery<Board> jpaQuery = jpaQueryFactory
+                .selectFrom(board)
+                .distinct()
+                .leftJoin(board.hashtag, hashtag).fetchJoin()
+                .where(board.id.eq(boardId));
+
+        Board board = jpaQuery.fetchOne();
+
+        return Optional.ofNullable(board);
+    }
 //    private BooleanBuilder containHashtags(String[] hashtags) {
 //        BooleanBuilder builder = new BooleanBuilder();
 //        QBoardHashtag hashtag = QBoardHashtag.boardHashtag;

@@ -10,6 +10,8 @@ public interface BoardRepositoryCustom {
 
     List<Board> getBoardList(Pageable pageable, String[] hashtags);
 
-    Optional<Board> getBoard(Long boardId);
+    Optional<Board> getBoardWithHashAndComById(Long boardId);
+
+    Optional<Board> getBoardWithHashtagsById(Long boardId);
 }
 

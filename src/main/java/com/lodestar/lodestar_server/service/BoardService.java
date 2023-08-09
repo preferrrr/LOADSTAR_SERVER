@@ -100,7 +100,6 @@ public class BoardService {
         //Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
         Board findBoard = boardRepository.getBoard(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
 
-
         //조회수 처리를 위한 로직
         //session의 boards에 게시글 인덱스가 있으면 조회수 증가 X
         //게시글 작성자라면 조회수 증가 X
@@ -127,10 +126,7 @@ public class BoardService {
         response.setBookmarkCount(findBoard.getBookmarkCount());
 
 
-        //TODO: 그래프를 그리기 위한 Career를,
-        // 게시글을 작성한 유저를 조회할 때 fetch join으로 같이 가져와서 쿼리 횟수 1번 줄임
-        User findUser = userRepository.findByIdWithCareers(findBoard.getUser().getId()).orElseThrow(()->new NotFoundException("[get board] userId : " + findBoard.getUser().getId()));
-
+        User findUser = userRepository.findUserWithCareersById(findBoard.getUser().getId()).orElseThrow(()->new NotFoundException("[get board] userId : " + findBoard.getUser().getId()));
         response.setUserId(findUser.getId());
         response.setUsername(findUser.getUsername());
 
@@ -144,8 +140,11 @@ public class BoardService {
 
 
         //현재 로그인한 유저,유저가 이 게시글을 북마크로 동록했는지 안 했는지 체크 (쿼리)
-        User bookmarkUser = userRepository.getReferenceById(user.getId());
-        boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,bookmarkUser);
+        //위에서 findUserWithCareersById로 조회할 때 내가 북마크한 게시글들도 가져와서, 현재 게시글이 포함되어 있는지
+        //검사하는게 더 빠를 수도 있을까?하는 생각....
+        //하지만 근본적으로 ToMany는 2개 이상 fetch join 할 수 없음. careers와 bookmarks가 둘 다 user에게 ToMany임.
+        //카테시안 곱에 의해 중복 데이터 발생하는데 이때 Hibernate는 올바른 열을 올바른 엔티티에 매핑 할 수 없다.
+        boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,user);
         response.setBookmark(bookmark);
 
         List<BoardHashtag> hashtagList = findBoard.getHashtag();
@@ -155,9 +154,7 @@ public class BoardService {
         }
         response.setHashtags(hashtags);
 
-        //TODO: 댓글 쓴 유저 같이 조회 => commentRepository에서 jpql로 N+1 해결
-        //쿼리 5번.
-        List<Comment> commentList = commentRepository.findByBoardIdWithUserInfo(findBoard.getId());
+        List<Comment> commentList = commentRepository.findCommentsWithUserInfoByBoardId(findBoard.getId());
         List<CommentDto> comments = new ArrayList<>();
 
         for(Comment comment : commentList) {

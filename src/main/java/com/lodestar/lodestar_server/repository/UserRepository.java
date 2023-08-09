@@ -9,11 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
     User findByUsername(String username);
 
     Optional<User> findByEmail(String email);
 
+    /** querydsl로 대체*/
     @Query("select distinct u from User u " +
             "left join fetch u.careers c " +
             "where u.id = :id")

@@ -19,6 +19,8 @@ public class BoardPagingDto {
     private Long boardId;
     @Schema(description = "게시글 제목", example = "안녕하세요. 초보 개발자입니다.")
     private String title;
+    @Schema(description = "작성자")
+    private String username;
     @Schema(description = "북마크 수")
     private Integer bookmarkCount;
     @Schema(description = "조회수")

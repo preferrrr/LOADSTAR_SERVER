@@ -153,8 +153,8 @@ public class UserService {
         return modifiedStr;
     }
 
-    public MyPageResponseDto myPage(User authUser) {
-        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new AuthFailException(String.valueOf("[mypage] userId : " + authUser.getId())));
+    public MyPageResponseDto myPage(User me) {
+        User user = userRepository.findById(me.getId()).orElseThrow(() -> new AuthFailException(String.valueOf("[mypage] userId : " + me.getId())));
         MyPageResponseDto responseDto = new MyPageResponseDto();
         responseDto.setEmail(user.getEmail());
         responseDto.setUsername(user.getUsername());

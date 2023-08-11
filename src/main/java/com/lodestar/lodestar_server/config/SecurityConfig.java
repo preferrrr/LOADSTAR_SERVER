@@ -59,6 +59,8 @@ public class SecurityConfig {
                     authR.requestMatchers(HttpMethod.POST, "/boards").hasAuthority("USER"); //작성
                     authR.requestMatchers("/boards/{boardId}").hasAuthority("USER"); //get, patch, delete (조회,수정,삭제)
                     authR.requestMatchers("/boards/image").hasAuthority("USER");
+                    authR.requestMatchers("/boards/my-boards").hasAuthority("USER");
+                    authR.requestMatchers("/boards/search").hasAuthority("USER");
 
                     //Comment
                     authR.requestMatchers("/comments/**").hasAuthority("USER");

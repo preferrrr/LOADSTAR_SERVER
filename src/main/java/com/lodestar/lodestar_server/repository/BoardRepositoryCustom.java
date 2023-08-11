@@ -1,6 +1,7 @@
 package com.lodestar.lodestar_server.repository;
 
 import com.lodestar.lodestar_server.entity.Board;
+import com.lodestar.lodestar_server.entity.User;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -13,5 +14,7 @@ public interface BoardRepositoryCustom {
     Optional<Board> getBoardWithHashAndComById(Long boardId);
 
     Optional<Board> getBoardWithHashtagsById(Long boardId);
+
+    List<Board> getMyBoardList(User user , Pageable pageable);
 }
 

@@ -47,7 +47,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                     .select(board.id)
                     .distinct()
                     .from(board)
-                    .join(board.hashtag,hashtag)
+                    .leftJoin(board.hashtag,hashtag)
                     .where(hashtag.hashtagName.in(hashtags))
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize());
@@ -65,7 +65,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         JPAQuery<Board> getBoardsQuery = jpaQueryFactory
                 .selectFrom(board)
                 .distinct()
-                .join(board.hashtag, hashtag).fetchJoin().distinct()
+                .leftJoin(board.hashtag, hashtag).fetchJoin()
                 .join(board.user, user).fetchJoin()
                 .where(board.id.in(Ids));
 
@@ -76,6 +76,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         }
 
         List<Board> result = getBoardsQuery.fetch();
+
 
         return result;
     }
@@ -108,6 +109,30 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         Board board = jpaQuery.fetchOne();
 
         return Optional.ofNullable(board);
+    }
+
+    @Override
+    public List<Board> getMyBoardList(User me, Pageable pageable) {
+
+        JPAQuery<Board> getBoardsQuery = jpaQueryFactory
+                .select(board)
+                .distinct()
+                .from(board)
+                .leftJoin(board.hashtag, hashtag)
+                .join(board.user, user).fetchJoin()
+                .where(board.user.id.eq(me.getId()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());;
+
+        for (Sort.Order o : pageable.getSort()) {
+            PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
+            getBoardsQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                    pathBuilder.get(o.getProperty())));
+        }
+
+        List<Board> result = getBoardsQuery.fetch();
+
+        return result;
     }
 //    private BooleanBuilder containHashtags(String[] hashtags) {
 //        BooleanBuilder builder = new BooleanBuilder();

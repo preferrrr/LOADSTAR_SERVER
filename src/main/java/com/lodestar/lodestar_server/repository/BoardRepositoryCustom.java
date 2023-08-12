@@ -16,5 +16,7 @@ public interface BoardRepositoryCustom {
     Optional<Board> getBoardWithHashtagsById(Long boardId);
 
     List<Board> getMyBoardList(User user , Pageable pageable);
+
+    List<Board> getMyBookmarkBoardList(User user, Pageable pageable);
 }
 

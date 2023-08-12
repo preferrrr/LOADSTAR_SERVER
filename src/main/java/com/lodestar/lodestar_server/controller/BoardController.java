@@ -45,7 +45,7 @@ public class BoardController {
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
     public ResponseEntity<?> getBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                          @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                          @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                           @Schema(description = "적용할 해시태그들",example = "알고리즘, 운영체제") @RequestParam(value = "hashtags", required = false) String[] hashtags) {
 
         List<BoardPagingDto> response = boardService.getBoardList(pageable, hashtags);
@@ -143,10 +143,28 @@ public class BoardController {
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
     public ResponseEntity<?> getMyBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                          @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                          @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                           @AuthenticationPrincipal User user) {
 
         List<BoardPagingDto> response = boardService.getMyBoardList(user, pageable);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * 북마크한 게시글 조회
+     * /boards/my-boards
+     */
+    @GetMapping(value = "/my-bookmarks")
+    @Operation(summary = "내가 쓴 게시글 조회")
+    @ApiResponse(responseCode = "200", description = "성공",
+            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
+    public ResponseEntity<?> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+            example = "createdAt,desc / view,asc / bookmarkCount,desc")
+                                            @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                            @AuthenticationPrincipal User user) {
+
+        List<BoardPagingDto> response = boardService.getMyBookmarkBoardList(user, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -163,7 +181,7 @@ public class BoardController {
                     content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))}),
             @ApiResponse(responseCode = "204", description = "body null 존재")
     })
-    public ResponseEntity<?> searchBoards(@PageableDefault(size = 8, sort = "created_at", direction = Sort.Direction.DESC)
+    public ResponseEntity<?> searchBoards(@PageableDefault(size = 3, sort = "created_at", direction = Sort.Direction.DESC)
                                           @Schema(description = "페이지 번호", example = "0") Pageable pageable,
                                           @Schema(description = "검색 키워드", example = "스프링 부트") @RequestParam("keywords") String keywords) {
 

@@ -27,8 +27,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     private static QBoard board = QBoard.board;
     private static QUser user = QUser.user;
     private static QBoardHashtag hashtag = QBoardHashtag.boardHashtag;
-
     private static QComment comment = QComment.comment;
+    private static QBookmark bookmark = QBookmark.bookmark;
 
     @Override
     public List<Board> getBoardList(Pageable pageable, String[] hashtags) {
@@ -122,7 +122,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .join(board.user, user).fetchJoin()
                 .where(board.user.id.eq(me.getId()))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());;
+                .limit(pageable.getPageSize());
 
         for (Sort.Order o : pageable.getSort()) {
             PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
@@ -134,6 +134,33 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
         return result;
     }
+
+    @Override
+    public List<Board> getMyBookmarkBoardList(User me, Pageable pageable) {
+
+        JPAQuery<Board> getBoardsQuery = jpaQueryFactory
+                .selectFrom(board)
+                .distinct()
+                .leftJoin(board.hashtag, hashtag)
+                .join(board.user, user).fetchJoin() // to one이니까 한 번에 가져와.
+                .join(board.bookmarks, bookmark)
+                .where(bookmark.user.id.eq(me.getId()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        for (Sort.Order o : pageable.getSort()) {
+            PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
+            getBoardsQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                    pathBuilder.get(o.getProperty())));
+        }
+
+        List<Board> result = getBoardsQuery.fetch();
+
+        return result;
+    }
+
+
+
 //    private BooleanBuilder containHashtags(String[] hashtags) {
 //        BooleanBuilder builder = new BooleanBuilder();
 //        QBoardHashtag hashtag = QBoardHashtag.boardHashtag;

@@ -2,8 +2,10 @@ package com.lodestar.lodestar_server.repository;
 
 import com.lodestar.lodestar_server.entity.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -159,6 +161,32 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         return result;
     }
 
+    @Override
+    public List<Board> getMyCommentBoardList(User me, Pageable pageable) {
+
+        JPAQuery<Board> getBoardsQuery = jpaQueryFactory
+                .selectFrom(board)
+                .distinct()
+                .leftJoin(board.hashtag, hashtag)
+                .join(board.user, user).fetchJoin() // to one이니까 한 번에 가져와.
+                .where(board.id.in(JPAExpressions
+                                .select(comment.board.id)
+                                .distinct()
+                                .from(comment)
+                                .where(comment.user.id.eq(me.getId()))))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        for (Sort.Order o : pageable.getSort()) {
+            PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
+            getBoardsQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
+                    pathBuilder.get(o.getProperty())));
+        }
+
+        List<Board> result = getBoardsQuery.fetch();
+
+        return result;
+    }
 
 
 //    private BooleanBuilder containHashtags(String[] hashtags) {

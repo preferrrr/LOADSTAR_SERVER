@@ -169,6 +169,24 @@ public class BoardController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * 댓글 작성한 게시글 조회
+     * /boards/my-boards
+     */
+    @GetMapping(value = "/my-comment-boards")
+    @Operation(summary = "내가 쓴 게시글 조회")
+    @ApiResponse(responseCode = "200", description = "성공",
+            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
+    public ResponseEntity<?> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+            example = "createdAt,desc / view,asc / bookmarkCount,desc")
+                                                    @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                    @AuthenticationPrincipal User user) {
+
+        List<BoardPagingDto> response = boardService.getMyCommentBoardList(user, pageable);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     /**
      * 게시글 검색

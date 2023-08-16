@@ -18,5 +18,7 @@ public interface BoardRepositoryCustom {
     List<Board> getMyBoardList(User user , Pageable pageable);
 
     List<Board> getMyBookmarkBoardList(User user, Pageable pageable);
+
+    List<Board> getMyCommentBoardList(User user, Pageable pageable);
 }
 

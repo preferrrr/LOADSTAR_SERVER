@@ -340,4 +340,42 @@ public class BoardService {
 
         return result;
     }
+
+
+    @Transactional(readOnly = true)
+    public List<BoardPagingDto> getMyCommentBoardList(User user, Pageable pageable) {
+
+        List<BoardPagingDto> result = new ArrayList<>();
+
+        List<Board> boards = boardRepository.getMyCommentBoardList(user, pageable);
+
+
+        for (Board board : boards) {
+            BoardPagingDto dto = new BoardPagingDto();
+            dto.setBoardId(board.getId());
+            dto.setTitle(board.getTitle());
+            dto.setView(board.getView());
+            dto.setBookmarkCount(board.getBookmarkCount());
+
+            List<String> hashtagNames = new ArrayList<>();
+
+            for (BoardHashtag hashtag : board.getHashtag()) {
+                hashtagNames.add(hashtag.getHashtagName());
+            }
+            dto.setHashtags(hashtagNames);
+
+            List<CareerDto> careerDtos = new ArrayList<>();
+            for(Career career : board.getUser().getCareers()) {
+                careerDtos.add(career.createDto());
+            }
+            dto.setArr(careerDtos);
+
+            dto.setUsername(board.getUser().getUsername());
+
+            result.add(dto);
+        }
+
+        return result;
+    }
+
 }

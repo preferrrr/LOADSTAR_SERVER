@@ -60,6 +60,8 @@ public class SecurityConfig {
                     authR.requestMatchers("/boards/{boardId}").hasAuthority("USER"); //get, patch, delete (조회,수정,삭제)
                     authR.requestMatchers("/boards/image").hasAuthority("USER");
                     authR.requestMatchers("/boards/my-boards").hasAuthority("USER");
+                    authR.requestMatchers("/boards/my-bookmarks").hasAuthority("USER");
+                    authR.requestMatchers("/boards/my-comment-boards").hasAuthority("USER");
                     authR.requestMatchers("/boards/search").hasAuthority("USER");
 
                     //Comment

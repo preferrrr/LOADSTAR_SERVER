@@ -7,19 +7,15 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"hashtag_name","board_id"})})
 public class BoardHashtag {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_hashtag_id")
-    Long id;
+    @EmbeddedId
+    private BoardHashtagId boardHashtagId;
 
-    @Column(name = "hashtag_name", nullable = false)
-    String hashtagName;
-
-    @JoinColumn(name = "board_id", nullable = false)
-    @ManyToOne(fetch = FetchType.EAGER)
-    Board board;
+    @MapsId("boardId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
 
 }

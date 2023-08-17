@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final JdbcTemplate jdbcTemplate;
 
     private static QBoard board = QBoard.board;
     private static QUser user = QUser.user;
@@ -50,7 +52,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                     .distinct()
                     .from(board)
                     .leftJoin(board.hashtag,hashtag)
-                    .where(hashtag.hashtagName.in(hashtags))
+                    .where(hashtag.boardHashtagId.hashtagName.in(hashtags))
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize());
 
@@ -164,6 +166,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     @Override
     public List<Board> getMyCommentBoardList(User me, Pageable pageable) {
 
+        //TODO : subquery는 성능에 좋지 않음. subquery->query가 아닌 query->subquery. 생각과 반대로 수행됨
+        // 다른 방법생각해야함
         JPAQuery<Board> getBoardsQuery = jpaQueryFactory
                 .selectFrom(board)
                 .distinct()

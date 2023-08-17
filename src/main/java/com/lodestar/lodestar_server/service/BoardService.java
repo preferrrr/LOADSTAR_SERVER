@@ -48,8 +48,13 @@ public class BoardService {
         // hashtag 테이블은 identity 전략을 사용하지 않음으로써 bulk query 가능
         for (int i = 0; i < hashtagNames.size(); i++) {
             BoardHashtag hashtag = new BoardHashtag();
+
+            BoardHashtagId id = new BoardHashtagId();
+            id.setHashtagName(hashtagNames.get(i));
+
+            hashtag.setBoardHashtagId(id);
             hashtag.setBoard(board);
-            hashtag.setHashtagName(hashtagNames.get(i));
+
             hashtags.add(hashtag);
         }
 
@@ -78,7 +83,7 @@ public class BoardService {
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getHashtagName());
+                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
             }
             dto.setHashtags(hashtagNames);
 
@@ -150,11 +155,11 @@ public class BoardService {
         response.setBookmark(bookmark);
 
         List<BoardHashtag> hashtagList = findBoard.getHashtag();
-        List<String> hashtags = new ArrayList<>();
+        List<String> hashtagNames = new ArrayList<>();
         for (BoardHashtag hashtag : hashtagList) {
-            hashtags.add(hashtag.getHashtagName());
+            hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
         }
-        response.setHashtags(hashtags);
+        response.setHashtags(hashtagNames);
 
         List<Comment> commentList = commentRepository.findCommentsWithUserInfoByBoardId(findBoard.getId());
         List<CommentDto> comments = new ArrayList<>();
@@ -191,28 +196,34 @@ public class BoardService {
         board.setContent(modifyBoardDto.getContent());
 
 
-        List<BoardHashtag> savedHashtags = board.getHashtag();
+        List<BoardHashtag> savedHashtags = board.getHashtag(); // 게시글에 저장되어있던 해시태그들.
         List<String> savedHashtagNames = new ArrayList<>();
         for(int i = 0 ; i < savedHashtags.size(); i++) {
-            savedHashtagNames.add(savedHashtags.get(i).getHashtagName());
+            savedHashtagNames.add(savedHashtags.get(i).getBoardHashtagId().getHashtagName());
         }
 
-        List<String> requestHashtagNames = modifyBoardDto.getHashtags();
+        List<String> requestHashtagNames = modifyBoardDto.getHashtags(); // 요청된 해시태그들.
 
-        List<BoardHashtag> addHashtags = new ArrayList<>();
+        List<BoardHashtag> addHashtags = new ArrayList<>(); // 추가할 해시태그들.
+        //요청된 해시태그가 저장되어있던 해시태그에 포함되어있지 않으면 추가
         for(int i = 0 ; i < requestHashtagNames.size(); i++) {
             if(!savedHashtagNames.contains(requestHashtagNames.get(i))) {
                 BoardHashtag hashtag = new BoardHashtag();
+
+                BoardHashtagId id = new BoardHashtagId();
+                id.setHashtagName(requestHashtagNames.get(i));
+
                 hashtag.setBoard(board);
-                hashtag.setHashtagName(requestHashtagNames.get(i));
+                hashtag.setBoardHashtagId(id);
 
                 addHashtags.add(hashtag);
             }
         }
 
-        List<BoardHashtag> deleteHashtags = new ArrayList<>();
+        List<BoardHashtag> deleteHashtags = new ArrayList<>(); // 삭제할 해시태그들.
+        //저장되어있던 해시태그가 요청된 해시태그에 없으면 삭제.
         for(BoardHashtag hashtag : savedHashtags) {
-            if(!requestHashtagNames.contains(hashtag.getHashtagName()))
+            if(!requestHashtagNames.contains(hashtag.getBoardHashtagId().getHashtagName()))
                 deleteHashtags.add(hashtag);
         }
 
@@ -250,7 +261,7 @@ public class BoardService {
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getHashtagName());
+                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
             }
             dto.setHashtags(hashtagNames);
 
@@ -286,7 +297,7 @@ public class BoardService {
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getHashtagName());
+                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
             }
             dto.setHashtags(hashtagNames);
 
@@ -323,7 +334,7 @@ public class BoardService {
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getHashtagName());
+                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
             }
             dto.setHashtags(hashtagNames);
 
@@ -360,7 +371,7 @@ public class BoardService {
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getHashtagName());
+                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
             }
             dto.setHashtags(hashtagNames);
 

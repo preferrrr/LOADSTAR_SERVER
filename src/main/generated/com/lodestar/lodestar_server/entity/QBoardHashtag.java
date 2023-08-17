@@ -24,9 +24,7 @@ public class QBoardHashtag extends EntityPathBase<BoardHashtag> {
 
     public final QBoard board;
 
-    public final StringPath hashtagName = createString("hashtagName");
-
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final QBoardHashtagId boardHashtagId;
 
     public QBoardHashtag(String variable) {
         this(BoardHashtag.class, forVariable(variable), INITS);
@@ -47,6 +45,7 @@ public class QBoardHashtag extends EntityPathBase<BoardHashtag> {
     public QBoardHashtag(Class<? extends BoardHashtag> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.board = inits.isInitialized("board") ? new QBoard(forProperty("board"), inits.get("board")) : null;
+        this.boardHashtagId = inits.isInitialized("boardHashtagId") ? new QBoardHashtagId(forProperty("boardHashtagId")) : null;
     }
 
 }

@@ -65,8 +65,8 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
 
 
     @Query("select distinct b from Board b " +
-            "join b.hashtag h " +
-            "join fetch Career c on b.user = c.user " +
+            "left join b.hashtag h " +
+            "left join fetch Career c on b.user = c.user " +
             "where b.id in :boardIds " +
             "order by b.createdAt desc")
     List<Board> findBoardsWhereInBoardIds(@Param("boardIds") List<Long> boardIds);

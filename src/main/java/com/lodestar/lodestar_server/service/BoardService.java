@@ -31,7 +31,7 @@ public class BoardService {
     private final BookmarkRepository bookmarkRepository;
     private final HashtagRepository hashtagRepository;
     private final CommentRepository commentRepository;
-    private final BoardHashtagRepository boardHashtagRepository;
+    private final HashtagRepositoryJdbc hashtagRepositoryJdbc;
 
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
@@ -63,7 +63,7 @@ public class BoardService {
 //        board.setHashtag(hashtags);
 
         boardRepository.save(board); // 트랜잭션이 걸려있기 때문에 둘 다 성공해야 저장됨.
-        boardHashtagRepository.saveHashtags(board.getId(), hashtagNames);
+        hashtagRepositoryJdbc.saveHashtags(board.getId(), hashtagNames);
 
     }
 

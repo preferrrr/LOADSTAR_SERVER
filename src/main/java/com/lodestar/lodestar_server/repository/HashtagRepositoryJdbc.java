@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class BoardHashtagRepository {
+public class HashtagRepositoryJdbc {
     private final JdbcTemplate jdbcTemplate;
 
     public void saveHashtags(Long boardId, List<String> hashtagNames) {

@@ -31,6 +31,7 @@ public class BoardService {
     private final BookmarkRepository bookmarkRepository;
     private final HashtagRepository hashtagRepository;
     private final CommentRepository commentRepository;
+    private final BoardHashtagRepository boardHashtagRepository;
 
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
@@ -40,27 +41,27 @@ public class BoardService {
         board.setTitle(createBoardDto.getTitle());
         board.setContent(createBoardDto.getContent());
 
-        List<BoardHashtag> hashtags = new ArrayList<>();
-        List<String> hashtagNames = createBoardDto.getHashtags();
 
         //TODO: 해시태그의 개수만큼 insert 쿼리가 생성됨 => bulk query로 해결 가능
-        // 근데 Id의 전략을 identity를 사용했기 때문에 jpa에서는 bulk query 사용 불가 => jdbc template 사용해서 해결 가능.
+        // 근데 Id의 전략을 identity를 사용했기 때문에 jpa에서는 bulk query(jpa batch) 사용 불가 => jdbc template 사용해서 해결 가능.
         // hashtag 테이블은 identity 전략을 사용하지 않음으로써 bulk query 가능
-        for (int i = 0; i < hashtagNames.size(); i++) {
-            BoardHashtag hashtag = new BoardHashtag();
+        // => hashtag 테이블 auto increment 기본키 제거, (board_id, hashtag_name) 기본키로 바꿈
+        // => jdbc template 사용해서 bulk query로 insert 성능 개선.
+//        for (int i = 0; i < hashtagNames.size(); i++) {
+//            BoardHashtag hashtag = new BoardHashtag();
+//
+//            BoardHashtagId id = new BoardHashtagId();
+//            id.setHashtagName(hashtagNames.get(i));
+//
+//            hashtag.setBoardHashtagId(id);
+//            hashtag.setBoard(board);
+//
+//            hashtags.add(hashtag);
+//        }
+//        board.setHashtag(hashtags);
 
-            BoardHashtagId id = new BoardHashtagId();
-            id.setHashtagName(hashtagNames.get(i));
-
-            hashtag.setBoardHashtagId(id);
-            hashtag.setBoard(board);
-
-            hashtags.add(hashtag);
-        }
-
-        board.setHashtag(hashtags);
-
-        boardRepository.save(board);
+        boardRepository.save(board); // 트랜잭션이 걸려있기 때문에 둘 다 성공해야 저장됨.
+        boardHashtagRepository.saveHashtags(board.getId(), hashtagNames);
 
     }
 

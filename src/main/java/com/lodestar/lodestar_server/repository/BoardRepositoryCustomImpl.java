@@ -26,7 +26,6 @@ import java.util.Optional;
 public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final JdbcTemplate jdbcTemplate;
 
     private static QBoard board = QBoard.board;
     private static QUser user = QUser.user;

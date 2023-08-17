@@ -41,6 +41,8 @@ public class BoardService {
         board.setTitle(createBoardDto.getTitle());
         board.setContent(createBoardDto.getContent());
 
+//      List<BoardHashtag> hashtags = new ArrayList<>();
+        List<String> hashtagNames = createBoardDto.getHashtags();
 
         //TODO: 해시태그의 개수만큼 insert 쿼리가 생성됨 => bulk query로 해결 가능
         // 근데 Id의 전략을 identity를 사용했기 때문에 jpa에서는 bulk query(jpa batch) 사용 불가 => jdbc template 사용해서 해결 가능.
@@ -238,8 +240,6 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardPagingDto> searchBoards(Pageable pageable, String keywords) {
 
-        List<BoardPagingDto> result = new ArrayList<>();
-
         String param = keywords.replaceAll(" ", "|");
 
         Page<Long> pagingIds = boardRepository.searchBoards(pageable, param);
@@ -252,30 +252,7 @@ public class BoardService {
 
         List<Board> boards= boardRepository.findBoardsWhereInBoardIds(boardIds);
 
-        for (Board board : boards) {
-            BoardPagingDto dto = new BoardPagingDto();
-            dto.setBoardId(board.getId());
-            dto.setTitle(board.getTitle());
-            dto.setView(board.getView());
-            dto.setBookmarkCount(board.getBookmarkCount());
-
-            List<String> hashtagNames = new ArrayList<>();
-
-            for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
-            }
-            dto.setHashtags(hashtagNames);
-
-            List<CareerDto> careerDtos = new ArrayList<>();
-            for(Career career : board.getUser().getCareers()) {
-                careerDtos.add(career.createDto());
-            }
-            dto.setArr(careerDtos);
-
-            dto.setUsername(board.getUser().getUsername());
-
-            result.add(dto);
-        }
+        List<BoardPagingDto> result = createDtos(boards);
 
         return result;
     }
@@ -283,35 +260,9 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardPagingDto> getMyBoardList(User user, Pageable pageable) {
 
-        List<BoardPagingDto> result = new ArrayList<>();
-
         List<Board> boards = boardRepository.getMyBoardList(user, pageable);
 
-
-        for (Board board : boards) {
-            BoardPagingDto dto = new BoardPagingDto();
-            dto.setBoardId(board.getId());
-            dto.setTitle(board.getTitle());
-            dto.setView(board.getView());
-            dto.setBookmarkCount(board.getBookmarkCount());
-
-            List<String> hashtagNames = new ArrayList<>();
-
-            for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
-            }
-            dto.setHashtags(hashtagNames);
-
-            List<CareerDto> careerDtos = new ArrayList<>();
-            for(Career career : board.getUser().getCareers()) {
-                careerDtos.add(career.createDto());
-            }
-            dto.setArr(careerDtos);
-
-            dto.setUsername(board.getUser().getUsername());
-
-            result.add(dto);
-        }
+        List<BoardPagingDto> result = createDtos(boards);
 
         return result;
     }
@@ -320,35 +271,9 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardPagingDto> getMyBookmarkBoardList(User user, Pageable pageable) {
 
-        List<BoardPagingDto> result = new ArrayList<>();
-
         List<Board> boards = boardRepository.getMyBookmarkBoardList(user, pageable);
 
-
-        for (Board board : boards) {
-            BoardPagingDto dto = new BoardPagingDto();
-            dto.setBoardId(board.getId());
-            dto.setTitle(board.getTitle());
-            dto.setView(board.getView());
-            dto.setBookmarkCount(board.getBookmarkCount());
-
-            List<String> hashtagNames = new ArrayList<>();
-
-            for (BoardHashtag hashtag : board.getHashtag()) {
-                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
-            }
-            dto.setHashtags(hashtagNames);
-
-            List<CareerDto> careerDtos = new ArrayList<>();
-            for(Career career : board.getUser().getCareers()) {
-                careerDtos.add(career.createDto());
-            }
-            dto.setArr(careerDtos);
-
-            dto.setUsername(board.getUser().getUsername());
-
-            result.add(dto);
-        }
+        List<BoardPagingDto> result = createDtos(boards);
 
         return result;
     }
@@ -357,10 +282,15 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardPagingDto> getMyCommentBoardList(User user, Pageable pageable) {
 
-        List<BoardPagingDto> result = new ArrayList<>();
-
         List<Board> boards = boardRepository.getMyCommentBoardList(user, pageable);
 
+        List<BoardPagingDto> result = createDtos(boards);
+
+        return result;
+    }
+
+    private List<BoardPagingDto> createDtos(List<Board> boards) {
+        List<BoardPagingDto> result = new ArrayList<>();
 
         for (Board board : boards) {
             BoardPagingDto dto = new BoardPagingDto();
@@ -388,6 +318,7 @@ public class BoardService {
         }
 
         return result;
+
     }
 
 }

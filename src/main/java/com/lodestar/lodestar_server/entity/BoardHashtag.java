@@ -7,6 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "board_hashtag")
 public class BoardHashtag {
 
     @EmbeddedId

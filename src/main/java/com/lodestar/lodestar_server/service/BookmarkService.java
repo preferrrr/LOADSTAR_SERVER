@@ -3,6 +3,7 @@ package com.lodestar.lodestar_server.service;
 import com.lodestar.lodestar_server.dto.request.SaveBookmarkDto;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.Bookmark;
+import com.lodestar.lodestar_server.entity.BookmarkId;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.DuplicateBookmarkException;
 import com.lodestar.lodestar_server.exception.NotFoundException;
@@ -32,7 +33,10 @@ public class BookmarkService {
             throw new DuplicateBookmarkException("userId: " + user.getId() + ", boardId: " + board.getId());
 
         Bookmark bookmark = new Bookmark();
-
+        BookmarkId id = new BookmarkId();
+        id.setBoardId(board.getId());
+        id.setUserId(user.getId());
+        bookmark.setBookmarkId(id);
         bookmark.setBoard(board);
         bookmark.setUser(user);
 

@@ -7,22 +7,20 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "bookmark",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id","board_id"})})
+@Table(name = "bookmark")
 public class Bookmark {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bookmark_id")
-    private Long id;
+    @EmbeddedId
+    private BookmarkId bookmarkId;
 
-    @JoinColumn(name = "user_id", nullable = false)
+    @MapsId("boardId")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
-
-    @JoinColumn(name = "board_Id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
     private Board board;
 
+    @MapsId("userId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

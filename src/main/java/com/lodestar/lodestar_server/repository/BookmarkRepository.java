@@ -20,7 +20,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     boolean existsBookmarkByBoardAndUser(Board board, User user);
 
 
-    void deleteByBoardAndUser(Board board, User user);
+    void deleteByBoardAndUser(Board board, User user);zz
 
 
 }

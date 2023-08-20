@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -29,4 +30,8 @@ public class BoardPagingDto {
     private List<String> hashtags;
     @Schema(description = "게시글 작성자의 경력들")
     private List<CareerDto> arr;
+    @Schema(description = "작성 시간")
+    private LocalDateTime createdAt;
+    @Schema(description = "수정 시간")
+    private LocalDateTime modifiesAt;
 }

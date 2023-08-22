@@ -151,15 +151,25 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     @Override
     public List<Board> getMyBookmarkBoardList(User me, Pageable pageable) {
 
+//        JPAQuery<Board> getBoardsQuery = jpaQueryFactory
+//                .selectFrom(board)
+//                .distinct()
+//                .leftJoin(board.hashtag, hashtag)
+//                .join(board.user, user).fetchJoin() // to one이니까 한 번에 가져와.
+//                .join(board.bookmarks, bookmark)
+//                .where(bookmark.user.id.eq(me.getId()))
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize());
+
         JPAQuery<Board> getBoardsQuery = jpaQueryFactory
                 .selectFrom(board)
                 .distinct()
-                .leftJoin(board.hashtag, hashtag)
                 .join(board.user, user).fetchJoin() // to one이니까 한 번에 가져와.
                 .join(board.bookmarks, bookmark)
                 .where(bookmark.user.id.eq(me.getId()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
+
 
         for (Sort.Order o : pageable.getSort()) {
             PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());

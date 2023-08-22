@@ -5,6 +5,7 @@ import com.lodestar.lodestar_server.dto.request.ModifyBoardDto;
 import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
 import com.lodestar.lodestar_server.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.dto.response.MyBoardDto;
+import com.lodestar.lodestar_server.dto.response.MyBookmarkBoardDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import com.lodestar.lodestar_server.service.BoardService;
@@ -141,10 +142,10 @@ public class BoardController {
     @GetMapping(value = "/my-boards")
     @Operation(summary = "내가 쓴 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
-            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
+            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBoardDto.class)))})
     public ResponseEntity<?> getMyBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                          @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                          @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                           @AuthenticationPrincipal User user) {
 
         List<MyBoardDto> response = boardService.getMyBoardList(user, pageable);
@@ -159,13 +160,13 @@ public class BoardController {
     @GetMapping(value = "/my-bookmarks")
     @Operation(summary = "내가 쓴 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
-            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
+            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBookmarkBoardDto.class)))})
     public ResponseEntity<?> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                            @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                             @AuthenticationPrincipal User user) {
 
-        List<BoardPagingDto> response = boardService.getMyBookmarkBoardList(user, pageable);
+        List<MyBookmarkBoardDto> response = boardService.getMyBookmarkBoardList(user, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

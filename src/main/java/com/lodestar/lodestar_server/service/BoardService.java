@@ -253,11 +253,27 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public List<BoardPagingDto> getMyBookmarkBoardList(User user, Pageable pageable) {
+    public List<MyBookmarkBoardDto> getMyBookmarkBoardList(User user, Pageable pageable) {
 
         List<Board> boards = boardRepository.getMyBookmarkBoardList(user, pageable);
 
-        List<BoardPagingDto> result = createDtos(boards);
+        List<MyBookmarkBoardDto> result = new ArrayList<>();
+
+        for (Board board : boards) {
+            MyBookmarkBoardDto dto = new MyBookmarkBoardDto();
+
+            dto.setBoardId(board.getId());
+            dto.setTitle(board.getTitle());
+            dto.setUsername(board.getUser().getUsername());
+            dto.setView(board.getView());
+            dto.setBookmarkCount(board.getBookmarkCount());
+            dto.setCreatedAt(board.getCreatedAt());
+            dto.setModifiedAt(board.getModifiedAt());
+
+            result.add(dto);
+        }
+
+
 
         return result;
     }

@@ -4,7 +4,6 @@ import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.dto.response.MessageResponseDto;
-import com.lodestar.lodestar_server.dto.response.MyPageResponseDto;
 import com.lodestar.lodestar_server.entity.User;
 
 import com.lodestar.lodestar_server.service.UserService;

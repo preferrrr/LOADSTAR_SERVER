@@ -44,8 +44,6 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath password = createString("password");
 
-    public final StringPath refreshTokenValue = createString("refreshTokenValue");
-
     public final ListPath<String, StringPath> roles = this.<String, StringPath>createList("roles", String.class, StringPath.class, PathInits.DIRECT2);
 
     //inherited

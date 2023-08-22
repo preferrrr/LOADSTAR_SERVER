@@ -62,7 +62,6 @@ public class UserService {
         List<String> roles = new ArrayList<>();
         roles.add("USER");
         user.setRoles(roles);
-        user.setRefreshTokenValue(null);
 
         userRepository.save(user);
 

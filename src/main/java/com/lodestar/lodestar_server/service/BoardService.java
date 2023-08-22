@@ -315,7 +315,7 @@ public class BoardService {
             dto.setUsername(board.getUser().getUsername());
 
             dto.setCreatedAt(board.getCreatedAt());
-            dto.setModifiesAt(board.getModifiedAt());
+            dto.setModifiedAt(board.getModifiedAt());
 
             result.add(dto);
         }

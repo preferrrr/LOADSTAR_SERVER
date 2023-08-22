@@ -38,9 +38,6 @@ public class User extends BaseEntity implements UserDetails, Persistable<Long> {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
-    @Column(name = "refresh_token_value")
-    private String refreshTokenValue;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Board> boards = new ArrayList<>();
 

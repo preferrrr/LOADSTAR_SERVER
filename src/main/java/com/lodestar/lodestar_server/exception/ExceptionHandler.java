@@ -56,8 +56,8 @@ public class ExceptionHandler {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); /**500,메일 전송 실패 서버 에러로 간주*/
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({NotCheckEmailException.class})
-    public ResponseEntity<?> handleNotCheckEmailException(final NotCheckEmailException e) {
+    @org.springframework.web.bind.annotation.ExceptionHandler({NotCheckException.class})
+    public ResponseEntity<?> handleNotCheckEmailException(final NotCheckException e) {
 
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);

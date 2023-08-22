@@ -33,5 +33,5 @@ public class BoardPagingDto {
     @Schema(description = "작성 시간")
     private LocalDateTime createdAt;
     @Schema(description = "수정 시간")
-    private LocalDateTime modifiesAt;
+    private LocalDateTime modifiedAt;
 }

@@ -56,13 +56,13 @@ public class SecurityConfig {
                     //Board
                     authR.requestMatchers(HttpMethod.GET, "/boards/search").permitAll(); //메인페이지 게시글목록 조회
                     authR.requestMatchers(HttpMethod.GET, "/boards").permitAll(); //메인페이지 게시글목록 조회
+                    authR.requestMatchers("/boards/search").permitAll();
                     authR.requestMatchers(HttpMethod.POST, "/boards").hasAuthority("USER"); //작성
                     authR.requestMatchers("/boards/{boardId}").hasAuthority("USER"); //get, patch, delete (조회,수정,삭제)
                     authR.requestMatchers("/boards/image").hasAuthority("USER");
                     authR.requestMatchers("/boards/my-boards").hasAuthority("USER");
                     authR.requestMatchers("/boards/my-bookmarks").hasAuthority("USER");
                     authR.requestMatchers("/boards/my-comment-boards").hasAuthority("USER");
-                    authR.requestMatchers("/boards/search").hasAuthority("USER");
 
                     //Comment
                     authR.requestMatchers("/comments/**").hasAuthority("USER");

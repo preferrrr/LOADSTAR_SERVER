@@ -4,8 +4,6 @@ import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.dto.response.*;
-import com.lodestar.lodestar_server.entity.Board;
-import com.lodestar.lodestar_server.entity.Comment;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;
 import com.lodestar.lodestar_server.repository.BoardRepository;
@@ -45,14 +43,14 @@ public class UserService {
         //5. 둘 다 true 되면 Join 활성화
         //6. Join 누르면 한 번 더 체크 해줄거냐? 안 해줄거냐 ?
 
-        if (duplicateUsername(signUpRequestDto.getUsername()) || !signUpRequestDto.isUsernameCheck()) {
+        if (duplicateUsername(signUpRequestDto.getUsername())) {
             throw new DuplicateUsernameException(signUpRequestDto.getUsername());
         }
         if (duplicateEmail(signUpRequestDto.getEmail())) {
             throw new DuplicateEmailException(signUpRequestDto.getEmail());
         }
-        if (!signUpRequestDto.isEmailCheck()) {
-            throw new NotCheckEmailException(signUpRequestDto.getEmail());
+        if (!signUpRequestDto.isEmailCheck() || !signUpRequestDto.isUsernameCheck()) {
+            throw new NotCheckException(signUpRequestDto.getEmail() + ", " + signUpRequestDto.getUsername());
         }
 
 

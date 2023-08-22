@@ -93,7 +93,7 @@ public class UserController {
      * /users/find-id
      * */
     @GetMapping("/find-id")
-    @Operation(summary = "아이디 중복 확인")
+    @Operation(summary = "아이디 찾기")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 유저 없음")
@@ -125,7 +125,7 @@ public class UserController {
 
 
     @GetMapping("/logout")
-    public ResponseEntity logout( HttpSession httpSession) {
+    public ResponseEntity logout(HttpSession httpSession) {
 
         userService.logout(httpSession);
 

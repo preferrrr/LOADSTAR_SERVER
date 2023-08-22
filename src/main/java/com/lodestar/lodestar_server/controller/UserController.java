@@ -123,24 +123,6 @@ public class UserController {
     }
 
 
-    /**
-     * 마이페이지
-     * /users/my-page
-     * */
-    @Operation(summary = "마이페이지")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공"),
-            @ApiResponse(responseCode = "403", description = "잘못된 접근")
-    })
-    @GetMapping("/my-page")
-    public ResponseEntity<?> myPage(@AuthenticationPrincipal User user) {
-
-        MyPageResponseDto responseDto = userService.myPage(user);
-
-        return new ResponseEntity<>(responseDto,HttpStatus.OK);
-
-    }
-
     @GetMapping("/logout")
     public ResponseEntity<?> logout( HttpSession httpSession) {
         userService.logout(httpSession);

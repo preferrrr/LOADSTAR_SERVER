@@ -3,6 +3,7 @@ package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.request.CreateCommentDto;
 import com.lodestar.lodestar_server.dto.request.ModifyCommentDto;
+import com.lodestar.lodestar_server.dto.response.MyCommentDto;
 import com.lodestar.lodestar_server.entity.Board;
 import com.lodestar.lodestar_server.entity.Comment;
 import com.lodestar.lodestar_server.entity.User;
@@ -12,8 +13,12 @@ import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -57,5 +62,27 @@ public class CommentService {
         comment.setContent(modifyCommentDto.getContent());
 
 
+    }
+
+    public List<MyCommentDto> getMyComments(User user, Pageable pageable) {
+
+        List<Comment> comments = commentRepository.getMyComments(user, pageable);
+
+        List<MyCommentDto> result = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            MyCommentDto dto = new MyCommentDto();
+            dto.setCommentContent(comment.getContent());
+            dto.setCommentCreatedAt(comment.getCreatedAt());
+            dto.setCommentModifiedAt(comment.getModifiedAt());
+            dto.setBoardId(comment.getBoard().getId());
+            dto.setBoardTitle(comment.getBoard().getTitle());
+            dto.setBookmarkCount(comment.getBoard().getBookmarkCount());
+            dto.setView(comment.getBoard().getView());
+
+            result.add(dto);
+        }
+
+        return result;
     }
 }

@@ -2,17 +2,27 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.request.CreateCommentDto;
 import com.lodestar.lodestar_server.dto.request.ModifyCommentDto;
+import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
+import com.lodestar.lodestar_server.dto.response.MyBoardDto;
+import com.lodestar.lodestar_server.dto.response.MyCommentDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/comments")
@@ -80,5 +90,21 @@ public class CommentController {
         commentService.modifyComment(user, commentId, modifyCommentDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * 내가 쓴 댓글 조회
+     * /comments/my-comments
+     */
+    @GetMapping(value = "/my-comments")
+    @Operation(summary = "내가 쓴 댓글 조회")
+    @ApiResponse(responseCode = "200", description = "성공",
+            content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyCommentDto.class)))})
+    public ResponseEntity<?> getMyComments(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                            @AuthenticationPrincipal User user) {
+
+        List<MyCommentDto> response = commentService.getMyComments(user, pageable);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

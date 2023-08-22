@@ -133,7 +133,6 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .distinct()
                 .from(board)
                 .leftJoin(board.hashtag, hashtag)
-                .join(board.user, user)
                 .where(board.user.id.eq(me.getId()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());

@@ -153,50 +153,6 @@ public class UserService {
         return modifiedStr;
     }
 
-    public MyPageResponseDto myPage(User me) {
-        User user = userRepository.findById(me.getId()).orElseThrow(() -> new AuthFailException(String.valueOf("[mypage] userId : " + me.getId())));
-        MyPageResponseDto responseDto = new MyPageResponseDto();
-        responseDto.setEmail(user.getEmail());
-        responseDto.setUsername(user.getUsername());
-
-        List<Board> myBoards = boardRepository.findByUserId(user.getId());
-        ArrayList<MyBoardDto> myBoardDtos = new ArrayList<>();
-
-        for (int i = 0; i < myBoards.size(); i++) {
-            MyBoardDto board = new MyBoardDto();
-            board.setTitle(myBoards.get(i).getTitle());
-            board.setBoardId(myBoards.get(i).getId());
-            myBoardDtos.add(board);
-        }
-        responseDto.setBoards(myBoardDtos);
-
-        List<Board> bookmarkBoards = boardRepository.findBoardsByIdIn(user.getId());
-        ArrayList<BookmarkDto> bookmarkDtos = new ArrayList<>();
-
-        for (int i = 0; i < bookmarkBoards.size(); i++) {
-            BookmarkDto board = new BookmarkDto();
-            board.setTitle(bookmarkBoards.get(i).getTitle());
-            board.setBoardId(bookmarkBoards.get(i).getId());
-            bookmarkDtos.add(board);
-        }
-        responseDto.setBookmarks(bookmarkDtos);
-
-        List<Comment> myComments = commentRepository.findByUser(user);
-        ArrayList<MyCommentDto> commentDtos = new ArrayList<>();
-
-        for (int i = 0; i < myComments.size(); i++) {
-            MyCommentDto dto = new MyCommentDto();
-            dto.setCommentId(myComments.get(i).getId());
-            dto.setContent(myComments.get(i).getContent());
-            dto.setBoardId(myComments.get(i).getBoard().getId());
-            commentDtos.add(dto);
-        }
-        responseDto.setComments(commentDtos);
-
-
-        return responseDto;
-
-    }
 
     public void logout(HttpSession httpSession) {
         httpSession.invalidate();

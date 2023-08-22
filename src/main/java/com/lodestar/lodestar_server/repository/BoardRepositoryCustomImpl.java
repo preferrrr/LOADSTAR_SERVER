@@ -117,12 +117,23 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     @Override
     public List<Board> getMyBoardList(User me, Pageable pageable) {
 
+//        JPAQuery<Board> getBoardsQuery = jpaQueryFactory
+//                .select(board)
+//                .distinct()
+//                .from(board)
+//                .leftJoin(board.hashtag, hashtag)
+//                .join(board.user, user).fetchJoin()
+//                .where(board.user.id.eq(me.getId()))
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize());
+
+
         JPAQuery<Board> getBoardsQuery = jpaQueryFactory
                 .select(board)
                 .distinct()
                 .from(board)
                 .leftJoin(board.hashtag, hashtag)
-                .join(board.user, user).fetchJoin()
+                .join(board.user, user)
                 .where(board.user.id.eq(me.getId()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());

@@ -4,6 +4,7 @@ import com.lodestar.lodestar_server.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.dto.request.ModifyBoardDto;
 import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
 import com.lodestar.lodestar_server.dto.response.GetBoardResponseDto;
+import com.lodestar.lodestar_server.dto.response.MyBoardDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import com.lodestar.lodestar_server.service.BoardService;
@@ -146,7 +147,7 @@ public class BoardController {
                                           @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                           @AuthenticationPrincipal User user) {
 
-        List<BoardPagingDto> response = boardService.getMyBoardList(user, pageable);
+        List<MyBoardDto> response = boardService.getMyBoardList(user, pageable);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

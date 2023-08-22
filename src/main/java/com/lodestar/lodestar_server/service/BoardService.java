@@ -2,10 +2,7 @@ package com.lodestar.lodestar_server.service;
 
 import com.lodestar.lodestar_server.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.dto.request.ModifyBoardDto;
-import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
-import com.lodestar.lodestar_server.dto.response.CareerDto;
-import com.lodestar.lodestar_server.dto.response.CommentDto;
-import com.lodestar.lodestar_server.dto.response.GetBoardResponseDto;
+import com.lodestar.lodestar_server.dto.response.*;
 import com.lodestar.lodestar_server.entity.*;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.exception.NotFoundException;
@@ -232,11 +229,24 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public List<BoardPagingDto> getMyBoardList(User user, Pageable pageable) {
+    public List<MyBoardDto> getMyBoardList(User user, Pageable pageable) {
 
         List<Board> boards = boardRepository.getMyBoardList(user, pageable);
 
-        List<BoardPagingDto> result = createDtos(boards);
+        List<MyBoardDto> result = new ArrayList<>();
+
+        for(Board board : boards) {
+            MyBoardDto dto = new MyBoardDto();
+
+            dto.setBoardId(board.getId());
+            dto.setTitle(board.getTitle());
+            dto.setBookmarkCount(board.getBookmarkCount());
+            dto.setView(board.getView());
+            dto.setCreatedAt(board.getCreatedAt());
+            dto.setModifiedAt(board.getModifiedAt());
+
+            result.add(dto);
+        }
 
         return result;
     }

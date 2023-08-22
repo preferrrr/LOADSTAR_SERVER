@@ -41,7 +41,7 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<?> saveComment(@AuthenticationPrincipal User user,
+    public ResponseEntity saveComment(@AuthenticationPrincipal User user,
                                          @RequestBody CreateCommentDto createCommentDto) {
 
         createCommentDto.validateFieldsNotNull();
@@ -61,7 +61,7 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<?> deleteComment(@AuthenticationPrincipal User user,
+    public ResponseEntity deleteComment(@AuthenticationPrincipal User user,
                                            @Schema(name = "댓글 id") @PathVariable("commentId") Long commentId) {
 
         commentService.deleteComment(user, commentId);
@@ -81,7 +81,7 @@ public class CommentController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<?> modifyComment(@AuthenticationPrincipal User user,
+    public ResponseEntity modifyComment(@AuthenticationPrincipal User user,
                                            @Schema(name = "댓글 id") @PathVariable("commentId") Long commentId,
                                            @RequestBody ModifyCommentDto modifyCommentDto) {
 
@@ -100,7 +100,7 @@ public class CommentController {
     @Operation(summary = "내가 쓴 댓글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyCommentDto.class)))})
-    public ResponseEntity<?> getMyComments(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<List<MyCommentDto>> getMyComments(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                             @AuthenticationPrincipal User user) {
 
         List<MyCommentDto> response = commentService.getMyComments(user, pageable);

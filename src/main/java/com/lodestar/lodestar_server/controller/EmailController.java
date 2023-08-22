@@ -31,7 +31,7 @@ public class EmailController {
             @ApiResponse(responseCode = "409", description = "해당 메일로 가입한 유저 존재"),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity<?> checkEmail(@RequestBody EmailRequestDto emailRequestDto) throws Exception {
+    public ResponseEntity checkEmail(@RequestBody EmailRequestDto emailRequestDto) throws Exception {
 
         emailRequestDto.validateFieldsNotNull();
 
@@ -51,7 +51,7 @@ public class EmailController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "인증 실패")
     })
-    public ResponseEntity<?> checkKey(@Schema(name = "이메일") @RequestParam("email") String email,
+    public ResponseEntity checkKey(@Schema(name = "이메일") @RequestParam("email") String email,
                                       @Schema(name = "인증코드") @RequestParam("key") String key) {
 
         if (emailService.checkKey(email, key)) {
@@ -74,7 +74,7 @@ public class EmailController {
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 아이디 없음."),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity<?> findPwdSendEmail(@RequestBody EmailRequestDto requestDto) throws Exception {
+    public ResponseEntity findPwdSendEmail(@RequestBody EmailRequestDto requestDto) throws Exception {
 
         requestDto.validateFieldsNotNull();
 

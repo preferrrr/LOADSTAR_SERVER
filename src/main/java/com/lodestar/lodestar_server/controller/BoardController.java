@@ -45,7 +45,7 @@ public class BoardController {
     @Operation(summary = "메인 페이지 게시글 목록 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
-    public ResponseEntity<?> getBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<List<BoardPagingDto>> getBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
                                           @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                           @Schema(description = "적용할 해시태그들",example = "알고리즘, 운영체제") @RequestParam(value = "hashtags", required = false) String[] hashtags) {
@@ -67,7 +67,7 @@ public class BoardController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "403", description = "권한없음, 토큰 만료")
     })
-    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal User user,
+    public ResponseEntity saveBoard(@AuthenticationPrincipal User user,
                                        @RequestBody CreateBoardDto createBoardDto) {
 
         createBoardDto.validateFieldsNotNull();
@@ -87,7 +87,7 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = @Content(schema = @Schema(implementation = GetBoardResponseDto.class)))
     })
-    public ResponseEntity<?> getBoard(HttpSession httpSession,
+    public ResponseEntity<GetBoardResponseDto> getBoard(HttpSession httpSession,
                                       @AuthenticationPrincipal User user,
                                       @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
@@ -107,7 +107,7 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal User user,
+    public ResponseEntity deleteBoard(@AuthenticationPrincipal User user,
                                          @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
         boardService.deleteBoard(user, boardId);
@@ -126,7 +126,7 @@ public class BoardController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<?> modifyBoard(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId,
+    public ResponseEntity modifyBoard(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId,
                                          @RequestBody ModifyBoardDto modifyBoardDto) {
 
         modifyBoardDto.validateFieldsNotNull();
@@ -143,7 +143,7 @@ public class BoardController {
     @Operation(summary = "내가 쓴 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBoardDto.class)))})
-    public ResponseEntity<?> getMyBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<List<MyBoardDto>> getMyBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
                                           @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                           @AuthenticationPrincipal User user) {
@@ -161,7 +161,7 @@ public class BoardController {
     @Operation(summary = "내가 쓴 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBookmarkBoardDto.class)))})
-    public ResponseEntity<?> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<List<MyBookmarkBoardDto>> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
                                             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                             @AuthenticationPrincipal User user) {
@@ -179,7 +179,7 @@ public class BoardController {
     @Operation(summary = "내가 쓴 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
-    public ResponseEntity<?> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<List<BoardPagingDto>> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
                                                     @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                                     @AuthenticationPrincipal User user) {
@@ -201,7 +201,7 @@ public class BoardController {
                     content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))}),
             @ApiResponse(responseCode = "204", description = "body null 존재")
     })
-    public ResponseEntity<?> searchBoards(@PageableDefault(size = 3, sort = "created_at", direction = Sort.Direction.DESC)
+    public ResponseEntity<List<BoardPagingDto>> searchBoards(@PageableDefault(size = 3, sort = "created_at", direction = Sort.Direction.DESC)
                                           @Schema(description = "페이지 번호", example = "0") Pageable pageable,
                                           @Schema(description = "검색 키워드", example = "스프링 부트") @RequestParam("keywords") String keywords) {
 

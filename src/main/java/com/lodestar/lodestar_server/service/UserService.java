@@ -71,7 +71,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<?> login(HttpSession httpSession, LoginRequestDto loginRequestDto) {
+    public ResponseEntity<LoginResponseDto> login(HttpSession httpSession, LoginRequestDto loginRequestDto) {
 
         if (!checkUsername(loginRequestDto.getUsername())
                 || !checkPassword(loginRequestDto.getUsername(), loginRequestDto.getPassword()))

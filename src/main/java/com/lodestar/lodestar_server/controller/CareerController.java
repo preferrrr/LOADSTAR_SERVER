@@ -28,7 +28,7 @@ public class CareerController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<?> saveCareer(@AuthenticationPrincipal User user,
+    public ResponseEntity saveCareer(@AuthenticationPrincipal User user,
                                         @RequestBody CareerDtos careerDtos) {
 
         careerDtos.validateFieldsNotNull();
@@ -47,7 +47,7 @@ public class CareerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    public ResponseEntity<?> getCareer(@AuthenticationPrincipal User user) {
+    public ResponseEntity<CareerDtos> getCareer(@AuthenticationPrincipal User user) {
 
         CareerDtos dtos = new CareerDtos();
         dtos.setArr(careerService.getCareer(user));
@@ -65,7 +65,7 @@ public class CareerController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<?> modifyCareer(@AuthenticationPrincipal User user,
+    public ResponseEntity modifyCareer(@AuthenticationPrincipal User user,
                                           @RequestBody CareerDtos careerDtos) {
 
         careerDtos.validateFieldsNotNull();

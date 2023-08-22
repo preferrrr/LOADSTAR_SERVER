@@ -29,7 +29,7 @@ public class BookmarkController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<?> saveBookmark(@AuthenticationPrincipal User user, @RequestBody SaveBookmarkDto saveBookmarkDto) {
+    public ResponseEntity saveBookmark(@AuthenticationPrincipal User user, @RequestBody SaveBookmarkDto saveBookmarkDto) {
         saveBookmarkDto.validateFieldsNotNull();
         bookmarkService.saveBookmark(user, saveBookmarkDto);
 
@@ -45,7 +45,7 @@ public class BookmarkController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    public ResponseEntity<?> deleteBookmark(@AuthenticationPrincipal User user,
+    public ResponseEntity deleteBookmark(@AuthenticationPrincipal User user,
                                             @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
         bookmarkService.deleteBookmark(user, boardId);

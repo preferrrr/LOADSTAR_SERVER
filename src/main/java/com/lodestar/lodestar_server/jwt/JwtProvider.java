@@ -26,7 +26,7 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secretKey;
     //private final long ACCESS_TOKEN_VALID_TIME = 30 * 60 * 1000L;   // 30분
-    private final long ACCESS_TOKEN_VALID_TIME =  2 * 30 * 60 * 1000L;   // 30분
+    private final long ACCESS_TOKEN_VALID_TIME =  2 * 30 * 60 * 1000L;   // 60분
     private final long REFRESH_TOKEN_VALID_TIME = 60 * 60 * 24 * 14 * 1000L;   // 2주
 
     private final CustomUserDetailsService userDetailsService;
@@ -65,15 +65,13 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String[] resolveToken(HttpServletRequest request) {
-        String access = request.getHeader("X-ACCESS-TOKEN");
-        String refresh = request.getHeader("X-REFRESH-TOKEN");
-        String[] tokens = {access, refresh};
+    public String resolveToken(HttpServletRequest request) {
+        if (request.getHeader("X-ACCESS-TOKEN") != null)
+            return request.getHeader("X-ACCESS-TOKEN");
 
-        return tokens;
+        return null;
     }
 
-    //TODO: 이걸로 권한얻는데, jwt를 사용하니까 db를 조회하지 않고 권한이 부여될 수 있도록 수정 해야함. (@AuthenticationPrincipal)
     public Authentication getAuthentication(String token) {
         User user = new User();
         String userId = getUserId(token);
@@ -90,15 +88,18 @@ public class JwtProvider {
         return (ArrayList<String>) getClaimsFromJwt(token).getBody().get("roles");
     }
 
-    public int isAccessTokenValid(String access) {
+    public boolean isTokenValid(String token) {
         try {
-            Jws<Claims> claims = getClaimsFromJwt(access);
-            return 1;
+            Jws<Claims> claims = getClaimsFromJwt(token);
+            return !claims.getBody().getExpiration().before(new Date());
         } catch (ExpiredJwtException e) {
-            return 2;
-        }
-        catch (Exception e) {
-            return 0;
+            throw new JwtException("[expired jwt] token : " + token);
+        } catch (SecurityException e) {
+            throw new JwtException("[wrong signature] token : " + token);
+        } catch (MalformedJwtException e) {
+            throw new JwtException("[invalid jwt] token : " + token);
+        } catch (UnsupportedJwtException e) {
+            throw new JwtException("[unsupported JWT] token : " + token);
         }
     }
 

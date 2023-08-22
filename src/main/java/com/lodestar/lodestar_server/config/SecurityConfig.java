@@ -1,6 +1,7 @@
 package com.lodestar.lodestar_server.config;
 
 import com.lodestar.lodestar_server.jwt.JwtAuthenticationFilter;
+import com.lodestar.lodestar_server.jwt.JwtExceptionFilter;
 import com.lodestar.lodestar_server.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -71,7 +72,8 @@ public class SecurityConfig {
                     authR.requestMatchers("/swagger-ui/**").permitAll();
                     authR.requestMatchers("/api-docs/**").permitAll();
                 })
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class);
 
         return http.build();
 

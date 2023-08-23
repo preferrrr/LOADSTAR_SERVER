@@ -52,18 +52,18 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 </br>
 
 ## :link: Rest API 명세서
-* [LOADSTAR API 문서](https://docs.google.com/spreadsheets/d/1zNMbE5-97dbYUMXMaAt4ehp7-XVktkDqHnT658MP_u4/edit?pli=1#gid=0)
+* [LOADSTAR API 문서](https://docs.google.com/spreadsheets/d/1WdqjxqWwwNCfYBz0yHv42CSH6WzfixzCcjpVz03uOec/edit#gid=0)
 ![API 명세서](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/700fa76a-99a6-4bda-988f-3f56d091c183)
 
 </br>
 
 ## :link: ERD
-![ERD 2](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/d0dfec31-8cfa-49d6-9aa3-138afcb3e1d2)
+![erd3](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/ecb58bd8-96f3-4fba-9e36-c3cbdf7581b4)
 </br>
 
 
 ## :link: 아키텍쳐 구조
-![아키텍쳐](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/5a46cf33-911a-457c-bd90-dc4450c649cb)
+![아키텍쳐2](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/b424e61b-ad27-4be8-8267-6d183c1e1df3)
 </br>
 
 ## :link: 배포하면서...

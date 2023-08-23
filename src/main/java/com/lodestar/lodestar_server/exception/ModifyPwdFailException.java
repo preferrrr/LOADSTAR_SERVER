@@ -2,11 +2,11 @@ package com.lodestar.lodestar_server.exception;
 
 import lombok.Getter;
 
-public class ChangePwdFailException extends RuntimeException{
+public class ModifyPwdFailException extends RuntimeException{
     @Getter
     private final String NAME;
 
-    public ChangePwdFailException(String msg) {
+    public ModifyPwdFailException(String msg) {
         super(msg);
         NAME = "ChangePwdFailException";
     }

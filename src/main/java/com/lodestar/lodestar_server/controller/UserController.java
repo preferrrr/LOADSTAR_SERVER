@@ -1,12 +1,12 @@
 package com.lodestar.lodestar_server.controller;
 
-import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
+import com.lodestar.lodestar_server.dto.request.ModifyPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.dto.response.LoginResponseDto;
 import com.lodestar.lodestar_server.dto.response.MessageResponseDto;
-import com.lodestar.lodestar_server.entity.User;
 
+import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -105,20 +104,20 @@ public class UserController {
     }
 
     /**
-     * 비밀번호 찾기 인증 후 변경
-     * /users/find-password
+     * 비밀번호 변경
+     * /users/password
      * */
-    @PatchMapping("/find-password")
-    @Operation(summary = "비밀번호 찾기 인증 후 변경, 추후에 지울 수도")
+    @PatchMapping("/password")
+    @Operation(summary = "비밀번호 변경")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
-            @ApiResponse(responseCode = "400")
+            @ApiResponse(responseCode = "400", description = "현재 비밀번호 틀림.")
     })//TODO: 비밀번호 찾기 => 이메일로 임시 비밀번호 보낸다면 이거 필요없음.
-    public ResponseEntity findPassword(@RequestBody FindPasswordRequestDto requestDto) {
+    public ResponseEntity modifyPassword(@AuthenticationPrincipal User user, @RequestBody ModifyPasswordRequestDto requestDto) {
 
         requestDto.validateFieldsNotNull();
 
-        userService.changePassword(requestDto);
+        userService.modifyPassword(user, requestDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

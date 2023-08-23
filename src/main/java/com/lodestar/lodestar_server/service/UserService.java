@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.request.FindPasswordRequestDto;
+import com.lodestar.lodestar_server.dto.request.ModifyPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.dto.response.*;
@@ -120,16 +120,22 @@ public class UserService {
         return encryptUsername(username);
     }
 
-    public void changePassword(FindPasswordRequestDto requestDto) {
-        Optional<User> findUser = userRepository.findById(requestDto.getUserId());
+    public void modifyPassword(User me, ModifyPasswordRequestDto requestDto) {
+
+        Optional<User> findUser = userRepository.findById(me.getId());
         User user;
         if (findUser.isPresent()) {
             user = findUser.get();
         } else {
-            throw new ChangePwdFailException(String.valueOf(requestDto.getUserId()));
+            throw new NotFoundException("[modify password] userId : " + me.getId());
         }
-        String password = passwordEncoder.encode(requestDto.getPassword());
-        user.setPassword(password);
+
+        if(!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword()))
+            throw new ModifyPwdFailException("userId : " + user.getId());
+
+        String modifyPassword = passwordEncoder.encode(requestDto.getModifyPassword());
+
+        user.setPassword(modifyPassword);
 
     }
 

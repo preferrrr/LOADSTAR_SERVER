@@ -83,8 +83,8 @@ public class ExceptionHandler {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN); /**403, 권한 없음.*/
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({ChangePwdFailException.class})
-    public ResponseEntity<?> handleChangePwdFailException(final ChangePwdFailException e) {
+    @org.springframework.web.bind.annotation.ExceptionHandler({ModifyPwdFailException.class})
+    public ResponseEntity<?> handleChangePwdFailException(final ModifyPwdFailException e) {
 
         String msg = e.getNAME() + ": [" + e.getMessage() + "]";
         log.error(msg);

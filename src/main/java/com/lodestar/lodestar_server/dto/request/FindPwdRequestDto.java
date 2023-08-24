@@ -11,13 +11,19 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "이메일")
-public class EmailRequestDto {
-
+@Schema(name = "비밀번호 찾기 요청 body")
+public class FindPwdRequestDto {
+    
+    @Schema(name = "아이디")
+    private String username;
+    @Schema(name = "이메일")
     private String email;
-
+    
     public void validateFieldsNotNull() {
+        if(username == null || username.isEmpty() || username.isBlank())
+            throw new InvalidRequestParameterException("Invalid username");
         if(email == null || email.isEmpty() || email.isBlank())
             throw new InvalidRequestParameterException("Invalid email");
     }
+    
 }

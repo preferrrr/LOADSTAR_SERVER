@@ -4,6 +4,6 @@ import lombok.*;
 
 @Getter
 @Builder
-public class LoginResponseDto {
-    private Long userId;
+public class FindIdResponseDto {
+    private String message;
 }

@@ -95,29 +95,13 @@ public class BoardService {
             httpSession.setAttribute("boards",list);
         }
 
-
-        GetBoardResponseDto response = new GetBoardResponseDto();
-
-        response.setBoardId(findBoard.getId());
-        response.setTitle(findBoard.getTitle());
-        response.setContent(findBoard.getContent());
-        response.setCreatedAt(findBoard.getCreatedAt());
-        response.setModifiedAt(findBoard.getModifiedAt());
-        response.setView(findBoard.getView());
-        response.setBookmarkCount(findBoard.getBookmarkCount());
-
-
         User findUser = userRepository.findUserWithCareersById(findBoard.getUser().getId()).orElseThrow(()->new NotFoundException("[get board] userId : " + findBoard.getUser().getId()));
-        response.setUserId(findUser.getId());
-        response.setUsername(findUser.getUsername());
 
         List<Career> careerList = findUser.getCareers();
         List<CareerDto> dtoList = new ArrayList<>();
         for(Career career : careerList) {
             dtoList.add(career.createDto());
         }
-        response.setArr(dtoList);
-
 
 
         //현재 로그인한 유저,유저가 이 게시글을 북마크로 동록했는지 안 했는지 체크 (쿼리)
@@ -126,23 +110,44 @@ public class BoardService {
         //하지만 근본적으로 ToMany는 2개 이상 fetch join 할 수 없음. careers와 bookmarks가 둘 다 user에게 ToMany임.
         //카테시안 곱에 의해 중복 데이터 발생하는데 이때 Hibernate는 올바른 열을 올바른 엔티티에 매핑 할 수 없다.
         boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,user);
-        response.setBookmark(bookmark);
 
         List<BoardHashtag> hashtagList = findBoard.getHashtag();
         List<String> hashtagNames = new ArrayList<>();
         for (BoardHashtag hashtag : hashtagList) {
             hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
         }
-        response.setHashtags(hashtagNames);
 
         List<Comment> commentList = commentRepository.findCommentsWithUserInfoByBoardId(findBoard.getId());
         List<CommentDto> comments = new ArrayList<>();
 
         for(Comment comment : commentList) {
-            comments.add(comment.createDto());
-        }
-        response.setComments(comments);
+            CommentDto dto = CommentDto.builder()
+                    .commentId(comment.getId())
+                    .commentContent(comment.getContent())
+                    .createdAt(comment.getCreatedAt())
+                    .modifiedAt(comment.getModifiedAt())
+                    .userId(comment.getUser().getId())
+                    .username(comment.getUser().getUsername())
+                    .build();
 
+            comments.add(dto);
+        }
+
+        GetBoardResponseDto response = GetBoardResponseDto.builder()
+                .boardId(findBoard.getId())
+                .title(findBoard.getTitle())
+                .content(findBoard.getContent())
+                .createdAt(findBoard.getCreatedAt())
+                .modifiedAt(findBoard.getModifiedAt())
+                .view(findBoard.getView())
+                .bookmarkCount(findBoard.getBookmarkCount())
+                .userId(findUser.getId())
+                .username(findUser.getUsername())
+                .arr(dtoList)
+                .bookmark(bookmark)
+                .hashtags(hashtagNames)
+                .comments(comments)
+                .build();
 
         return response;
     }
@@ -236,14 +241,14 @@ public class BoardService {
         List<MyBoardDto> result = new ArrayList<>();
 
         for(Board board : boards) {
-            MyBoardDto dto = new MyBoardDto();
-
-            dto.setBoardId(board.getId());
-            dto.setTitle(board.getTitle());
-            dto.setBookmarkCount(board.getBookmarkCount());
-            dto.setView(board.getView());
-            dto.setCreatedAt(board.getCreatedAt());
-            dto.setModifiedAt(board.getModifiedAt());
+            MyBoardDto dto = MyBoardDto.builder()
+                    .boardId(board.getId())
+                    .title(board.getTitle())
+                    .bookmarkCount(board.getBookmarkCount())
+                    .view(board.getView())
+                    .createdAt(board.getCreatedAt())
+                    .modifiedAt(board.getModifiedAt())
+                    .build();
 
             result.add(dto);
         }
@@ -260,15 +265,16 @@ public class BoardService {
         List<MyBookmarkBoardDto> result = new ArrayList<>();
 
         for (Board board : boards) {
-            MyBookmarkBoardDto dto = new MyBookmarkBoardDto();
 
-            dto.setBoardId(board.getId());
-            dto.setTitle(board.getTitle());
-            dto.setUsername(board.getUser().getUsername());
-            dto.setView(board.getView());
-            dto.setBookmarkCount(board.getBookmarkCount());
-            dto.setCreatedAt(board.getCreatedAt());
-            dto.setModifiedAt(board.getModifiedAt());
+            MyBookmarkBoardDto dto = MyBookmarkBoardDto.builder()
+                    .boardId(board.getId())
+                    .title(board.getTitle())
+                    .username(board.getUser().getUsername())
+                    .view(board.getView())
+                    .bookmarkCount(board.getBookmarkCount())
+                    .createdAt(board.getCreatedAt())
+                    .modifiedAt(board.getModifiedAt())
+                    .build();
 
             result.add(dto);
         }

@@ -83,8 +83,10 @@ public class UserService {
         httpSession.setAttribute("roles", roleList);
         httpSession.setAttribute("boards", boardList);
 
-        LoginResponseDto responseDto = new LoginResponseDto();
-        responseDto.setUserId(user.getId());
+        LoginResponseDto responseDto = LoginResponseDto.builder()
+                .userId(user.getId())
+                .build();
+
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
@@ -113,11 +115,14 @@ public class UserService {
     }
 
 
-    public String findId(String email) {
+    public FindIdResponseDto findId(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new NotExistEmailException(email));
-        String username = user.getUsername();
 
-        return encryptUsername(username);
+        FindIdResponseDto response = FindIdResponseDto.builder()
+                .message(encryptUsername(user.getUsername()))
+                .build();
+
+        return response;
     }
 
     public void modifyPassword(User me, ModifyPasswordRequestDto requestDto) {

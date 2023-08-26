@@ -1,12 +1,13 @@
 package com.lodestar.lodestar_server.dto.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@Builder
 public class MyBoardDto {
     private Long boardId;
     private String title;

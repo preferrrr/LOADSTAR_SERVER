@@ -1,17 +1,12 @@
 package com.lodestar.lodestar_server.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 @Schema(description = "댓글 응답 값들")
 public class CommentDto {
     @Schema(description = "댓글 인덱스",example = "1")

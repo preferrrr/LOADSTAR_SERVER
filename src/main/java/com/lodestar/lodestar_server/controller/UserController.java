@@ -4,7 +4,7 @@ import com.lodestar.lodestar_server.dto.request.ModifyPasswordRequestDto;
 import com.lodestar.lodestar_server.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.dto.response.LoginResponseDto;
-import com.lodestar.lodestar_server.dto.response.MessageResponseDto;
+import com.lodestar.lodestar_server.dto.response.FindIdResponseDto;
 
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.UserService;
@@ -97,9 +97,10 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 유저 없음")
     })//TODO: 아이디 찾기도 이메일 인증 필요하도록 ?
-    public ResponseEntity<MessageResponseDto> findId(@RequestParam("email") String email) {
-        String username = userService.findId(email);
-        MessageResponseDto responseDto = new MessageResponseDto(username);
+    public ResponseEntity<FindIdResponseDto> findId(@RequestParam("email") String email) {
+
+        FindIdResponseDto responseDto = userService.findId(email);
+
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 

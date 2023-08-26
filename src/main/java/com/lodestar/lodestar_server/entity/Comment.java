@@ -1,6 +1,5 @@
 package com.lodestar.lodestar_server.entity;
 
-import com.lodestar.lodestar_server.dto.response.CommentDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,16 +32,6 @@ public class Comment extends BaseEntity {
 //    @OneToOne(mappedBy = "comment")
 //    Notice notice;
 
-    public CommentDto createDto() {
-        CommentDto dto = new CommentDto();
-        dto.setCommentContent(this.content);
-        dto.setCreatedAt(this.getCreatedAt());
-        dto.setModifiedAt(this.getModifiedAt());
-        dto.setCommentId(this.id);
-        dto.setUsername(this.user.getUsername());
-        dto.setUserId(this.user.getId());
 
-        return dto;
-    }
 
 }

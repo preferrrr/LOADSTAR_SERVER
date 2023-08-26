@@ -9,10 +9,8 @@ import com.lodestar.lodestar_server.exception.DuplicateBookmarkException;
 import com.lodestar.lodestar_server.exception.NotFoundException;
 import com.lodestar.lodestar_server.repository.BoardRepository;
 import com.lodestar.lodestar_server.repository.BookmarkRepository;
-import com.lodestar.lodestar_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

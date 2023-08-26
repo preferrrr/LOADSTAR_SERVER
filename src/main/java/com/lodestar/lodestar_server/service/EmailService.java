@@ -1,6 +1,5 @@
 package com.lodestar.lodestar_server.service;
 
-import com.lodestar.lodestar_server.dto.response.FindPasswordResponseDto;
 import com.lodestar.lodestar_server.entity.Mail;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.exception.*;

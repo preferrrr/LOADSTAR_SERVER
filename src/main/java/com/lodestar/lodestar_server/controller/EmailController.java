@@ -2,7 +2,6 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.request.EmailRequestDto;
 import com.lodestar.lodestar_server.dto.request.FindPwdRequestDto;
-import com.lodestar.lodestar_server.dto.response.FindPasswordResponseDto;
 import com.lodestar.lodestar_server.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;

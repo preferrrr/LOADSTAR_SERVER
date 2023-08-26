@@ -2,8 +2,6 @@ package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.request.CreateCommentDto;
 import com.lodestar.lodestar_server.dto.request.ModifyCommentDto;
-import com.lodestar.lodestar_server.dto.response.BoardPagingDto;
-import com.lodestar.lodestar_server.dto.response.MyBoardDto;
 import com.lodestar.lodestar_server.dto.response.MyCommentDto;
 import com.lodestar.lodestar_server.entity.User;
 import com.lodestar.lodestar_server.service.CommentService;

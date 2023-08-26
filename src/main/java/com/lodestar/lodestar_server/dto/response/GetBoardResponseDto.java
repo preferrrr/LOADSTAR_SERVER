@@ -1,20 +1,13 @@
 package com.lodestar.lodestar_server.dto.response;
 
-import com.lodestar.lodestar_server.dto.response.CareerDto;
-import com.lodestar.lodestar_server.dto.response.CommentDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
+@Builder
 @Schema(description = "게시글 조회 응답")
 public class GetBoardResponseDto {
     @Schema(description = "게시글 인덱스", example = "1")

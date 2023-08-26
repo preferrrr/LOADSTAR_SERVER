@@ -8,17 +8,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(name = "이메일")
 public class EmailRequestDto {
-    private String username;
+
     private String email;
 
     public void validateFieldsNotNull() {
-        if(username == null || username.isEmpty() || username.isBlank())
-            throw new InvalidRequestParameterException("Invalid username");
         if(email == null || email.isEmpty() || email.isBlank())
             throw new InvalidRequestParameterException("Invalid email");
     }

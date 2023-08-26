@@ -1,7 +1,7 @@
 package com.lodestar.lodestar_server.controller;
 
 import com.lodestar.lodestar_server.dto.request.EmailRequestDto;
-import com.lodestar.lodestar_server.dto.response.FindPasswordResponseDto;
+import com.lodestar.lodestar_server.dto.request.FindPwdRequestDto;
 import com.lodestar.lodestar_server.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -74,7 +74,7 @@ public class EmailController {
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 아이디 없음."),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity findPwdSendEmail(@RequestBody EmailRequestDto requestDto) throws Exception {
+    public ResponseEntity findPwdSendEmail(@RequestBody FindPwdRequestDto requestDto) throws Exception {
 
         requestDto.validateFieldsNotNull();
 

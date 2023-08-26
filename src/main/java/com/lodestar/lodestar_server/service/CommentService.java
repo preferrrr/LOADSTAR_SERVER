@@ -71,14 +71,18 @@ public class CommentService {
         List<MyCommentDto> result = new ArrayList<>();
 
         for (Comment comment : comments) {
-            MyCommentDto dto = new MyCommentDto();
-            dto.setCommentContent(comment.getContent());
-            dto.setCommentCreatedAt(comment.getCreatedAt());
-            dto.setCommentModifiedAt(comment.getModifiedAt());
-            dto.setBoardId(comment.getBoard().getId());
-            dto.setBoardTitle(comment.getBoard().getTitle());
-            dto.setBookmarkCount(comment.getBoard().getBookmarkCount());
-            dto.setView(comment.getBoard().getView());
+
+            Board board = comment.getBoard();
+
+            MyCommentDto dto = MyCommentDto.builder()
+                    .commentContent(comment.getContent())
+                    .commentCreatedAt(comment.getCreatedAt())
+                    .commentModifiedAt(comment.getModifiedAt())
+                    .boardId(board.getId())
+                    .boardTitle(board.getTitle())
+                    .bookmarkCount(board.getBookmarkCount())
+                    .view(board.getView())
+                    .build();
 
             result.add(dto);
         }

@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Schema(name = "수정할 내용")
 public class ModifyCommentDto {
     private String content;

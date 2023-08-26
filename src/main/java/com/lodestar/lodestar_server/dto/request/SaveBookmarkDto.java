@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "북마크 등록할 게시글 id")
 public class SaveBookmarkDto {
     @Schema(description = "북마크 등록할 게시글 id")

@@ -10,9 +10,6 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "수정할 내용")
 public class ModifyBoardDto {
 

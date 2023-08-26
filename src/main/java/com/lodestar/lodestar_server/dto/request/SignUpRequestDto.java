@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 @Schema(name = "회원가입에 필요한 값")
 public class SignUpRequestDto {
     @Schema(name = "유저 아이디")

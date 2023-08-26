@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(description = "게시글 작성 body")
 public class CreateBoardDto {
     @Schema(description = "게시글 제목", example = "안녕하세요.")

@@ -8,9 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 @Schema(name = "아이디, 비밀번호")
 public class LoginRequestDto {
 

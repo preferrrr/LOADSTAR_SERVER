@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(name = "비밀번호 찾기 요청 body")
 public class FindPwdRequestDto {
     

@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Schema(name = "이메일")
 public class EmailRequestDto {
 

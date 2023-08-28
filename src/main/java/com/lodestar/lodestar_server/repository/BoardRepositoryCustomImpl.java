@@ -51,7 +51,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                     .distinct()
                     .from(board)
                     .leftJoin(board.hashtags,hashtag)
-                    .where(hashtag.boardHashtagId.hashtagName.in(hashtags))
+                    .where(hashtag.id.hashtagName.in(hashtags))
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize());
 

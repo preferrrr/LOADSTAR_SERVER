@@ -31,13 +31,14 @@ public class CommentService {
 
 
     public void createComment(User user, CreateCommentDto createCommentDto) {
-        Comment comment = new Comment();
 
         Board board= boardRepository.getReferenceById(createCommentDto.getBoardId());
 
-        comment.setUser(user);
-        comment.setBoard(board);
-        comment.setContent(createCommentDto.getContent());
+        Comment comment = Comment.builder()
+                .user(user)
+                .board(board)
+                .content(createCommentDto.getContent())
+                .build();
 
         commentRepository.save(comment);
     }
@@ -59,7 +60,7 @@ public class CommentService {
         if(comment.getUser().getId() != user.getId())
             throw new AuthFailException("modify Comment Id: " + commentId);
 
-        comment.setContent(modifyCommentDto.getContent());
+        comment.modifyContent(modifyCommentDto.getContent());
 
 
     }

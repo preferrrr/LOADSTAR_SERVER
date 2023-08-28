@@ -30,13 +30,10 @@ public class BookmarkService {
         if (bookmarkRepository.existsBookmarkByBoardAndUser(board, user))
             throw new DuplicateBookmarkException("userId: " + user.getId() + ", boardId: " + board.getId());
 
-        Bookmark bookmark = new Bookmark();
-        BookmarkId id = new BookmarkId();
-        id.setBoardId(board.getId());
-        id.setUserId(user.getId());
-        bookmark.setBookmarkId(id);
-        bookmark.setBoard(board);
-        bookmark.setUser(user);
+        Bookmark bookmark = Bookmark.builder()
+                .board(board)
+                .user(user)
+                .build();
 
         bookmarkRepository.save(bookmark);
 

@@ -53,15 +53,16 @@ public class UserService {
             throw new NotCheckException(signUpRequestDto.getEmail() + ", " + signUpRequestDto.getUsername());
         }
 
-
-        User user = new User();
-        user.setUsername(signUpRequestDto.getUsername());
-        user.setEmail(signUpRequestDto.getEmail());
         String password = passwordEncoder.encode(signUpRequestDto.getPassword());
-        user.setPassword(password);
         List<String> roles = new ArrayList<>();
         roles.add("USER");
-        user.setRoles(roles);
+
+        User user = User.builder()
+                .username(signUpRequestDto.getUsername())
+                .email(signUpRequestDto.getEmail())
+                .password(password)
+                .roles(roles)
+                .build();
 
         userRepository.save(user);
 
@@ -79,8 +80,7 @@ public class UserService {
         List<String> roleList = user.getRoles();
         List<Long> boardList = new ArrayList<>();
 
-        httpSession.setAttribute("id", String.valueOf(user.getId()));
-        httpSession.setAttribute("roles", roleList);
+        httpSession.setAttribute("user", user);
         httpSession.setAttribute("boards", boardList);
 
         LoginResponseDto responseDto = LoginResponseDto.builder()
@@ -140,7 +140,7 @@ public class UserService {
 
         String modifyPassword = passwordEncoder.encode(requestDto.getModifyPassword());
 
-        user.setPassword(modifyPassword);
+        user.modifyPassword(modifyPassword);
 
     }
 

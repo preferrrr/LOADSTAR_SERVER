@@ -24,7 +24,13 @@ public class CareerService {
         List<Career> careerList = new ArrayList<>();
 
         for(CareerDto dto : careerRequestDto.getArr()) {
-            Career career = Career.createCareer(user, dto);
+            Career career = Career.builder()
+                    .user(user)
+                    .x(dto.getX())
+                    .y1(dto.getY().get(0))
+                    .y2(dto.getY().get(1))
+                    .rangeName(dto.getRangeName())
+                    .build();
             careerList.add(career);
         }
 
@@ -60,7 +66,13 @@ public class CareerService {
 
         for(CareerDto careerDto : careerDtos.getArr()) { //추가된 커리어를 저장하기 위함
             if(!rangeNames1.contains(careerDto.getRangeName())) {
-                Career career = Career.createCareer(user, careerDto);
+                Career career = Career.builder()
+                        .user(user)
+                        .x(careerDto.getX())
+                        .y1(careerDto.getY().get(0))
+                        .y2(careerDto.getY().get(1))
+                        .rangeName(careerDto.getRangeName())
+                        .build();
                 addCareers.add(career);
             }
         }

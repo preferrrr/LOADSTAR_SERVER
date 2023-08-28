@@ -2,7 +2,9 @@ package com.lodestar.lodestar_server.entity;
 
 import com.lodestar.lodestar_server.dto.response.CareerDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -10,9 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
 @Table(name = "career")
 @DynamicInsert
+@NoArgsConstructor
 public class Career extends BaseEntity{
 
     @Id
@@ -48,15 +51,13 @@ public class Career extends BaseEntity{
         return dto;
     }
 
-    public static Career createCareer(User user, CareerDto careerDto) {
-        Career career = new Career();
-        career.user = user;
-        career.x = careerDto.getX();
-        career.y1= careerDto.getY().get(0);
-        career.y2 = careerDto.getY().get(1);
-        career.rangeName = careerDto.getRangeName();
-
-        return career;
+    @Builder
+    public Career(User user, String x, Long y1, Long y2, String rangeName) {
+        this.user = user;
+        this.x = x;
+        this.y1= y1;
+        this.y2 = y2;
+        this.rangeName = rangeName;
     }
 
 

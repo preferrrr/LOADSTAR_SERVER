@@ -1,7 +1,9 @@
 package com.lodestar.lodestar_server.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.domain.Persistable;
@@ -11,10 +13,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
 @Table(name = "mail")
 @EntityListeners(value = {AuditingEntityListener.class})
-
 public class Mail implements Persistable<Long> {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +35,11 @@ public class Mail implements Persistable<Long> {
     @Override
     public boolean isNew() {
         return getCreatedAt() == null;
+    }
+
+    @Builder
+    public Mail(String email, String authKey) {
+        this.email = email;
+        this.authKey = authKey;
     }
 }

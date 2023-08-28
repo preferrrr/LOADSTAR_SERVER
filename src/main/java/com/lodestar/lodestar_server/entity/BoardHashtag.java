@@ -1,22 +1,32 @@
 package com.lodestar.lodestar_server.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
 @Table(name = "board_hashtag")
 public class BoardHashtag {
 
     @EmbeddedId
-    private BoardHashtagId boardHashtagId;
+    private BoardHashtagId id;
 
     @MapsId("boardId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @Builder
+    public BoardHashtag(Board board, String hashtagName) {
+        BoardHashtagId id = BoardHashtagId.builder()
+                .boardId(board.getId())
+                .hashtagName(hashtagName)
+                .build();
 
+        this.id = id;
+        this.board = board;
+    }
 }

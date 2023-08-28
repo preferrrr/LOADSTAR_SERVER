@@ -1,9 +1,9 @@
 package com.lodestar.lodestar_server.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.domain.Persistable;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @DynamicInsert
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "user")
 public class User extends BaseEntity implements UserDetails, Persistable<Long> {
@@ -37,6 +38,18 @@ public class User extends BaseEntity implements UserDetails, Persistable<Long> {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
+
+    @Builder
+    public User(String username, String password, String email, List<String> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+    }
+
+    public void modifyPassword(String password) {
+        this.password = password;
+    }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Board> boards = new ArrayList<>();

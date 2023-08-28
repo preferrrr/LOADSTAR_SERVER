@@ -9,6 +9,8 @@ import java.util.List;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(name = "그래프 요소들")
 public class CareerDtos {
 

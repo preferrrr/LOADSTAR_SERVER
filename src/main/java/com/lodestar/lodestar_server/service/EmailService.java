@@ -98,9 +98,10 @@ public class EmailService {
 
         String key = createKey();
         MimeMessage message = createMessage(to, key);
-        Mail email = new Mail();
-        email.setEmail(to);
-        email.setAuthKey(key);
+        Mail email = Mail.builder()
+                .email(to)
+                .authKey(key)
+                .build();
 
         try {
             emailSender.send(message);
@@ -163,7 +164,7 @@ public class EmailService {
 
         try {
             emailSender.send(message);
-            user.setPassword(passwordEncoder.encode(key));
+            user.modifyPassword(passwordEncoder.encode(key));
         } catch (MailException e) {
             throw new SendEmailFailException(to);
         }

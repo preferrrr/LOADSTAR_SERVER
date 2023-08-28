@@ -114,7 +114,7 @@ public class BoardService {
         List<BoardHashtag> hashtagList = findBoard.getHashtags();
         List<String> hashtagNames = new ArrayList<>();
         for (BoardHashtag hashtag : hashtagList) {
-            hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
+            hashtagNames.add(hashtag.getId().getHashtagName());
         }
 
         List<Comment> commentList = commentRepository.findCommentsWithUserInfoByBoardId(findBoard.getId());
@@ -176,7 +176,7 @@ public class BoardService {
         List<BoardHashtag> savedHashtags = board.getHashtags(); // 게시글에 저장되어있던 해시태그들.
         List<String> savedHashtagNames = new ArrayList<>();
         for(int i = 0 ; i < savedHashtags.size(); i++) {
-            savedHashtagNames.add(savedHashtags.get(i).getBoardHashtagId().getHashtagName());
+            savedHashtagNames.add(savedHashtags.get(i).getId().getHashtagName());
         }
 
         List<String> requestHashtagNames = modifyBoardDto.getHashtags(); // 요청된 해시태그들.
@@ -185,13 +185,11 @@ public class BoardService {
         //요청된 해시태그가 저장되어있던 해시태그에 포함되어있지 않으면 추가
         for(int i = 0 ; i < requestHashtagNames.size(); i++) {
             if(!savedHashtagNames.contains(requestHashtagNames.get(i))) {
-                BoardHashtag hashtag = new BoardHashtag();
 
-                BoardHashtagId id = new BoardHashtagId();
-                id.setHashtagName(requestHashtagNames.get(i));
-
-                hashtag.setBoard(board);
-                hashtag.setBoardHashtagId(id);
+                BoardHashtag hashtag = BoardHashtag.builder()
+                        .board(board)
+                        .hashtagName(requestHashtagNames.get(i))
+                        .build();
 
                 addHashtags.add(hashtag);
             }
@@ -200,7 +198,7 @@ public class BoardService {
         List<BoardHashtag> deleteHashtags = new ArrayList<>(); // 삭제할 해시태그들.
         //저장되어있던 해시태그가 요청된 해시태그에 없으면 삭제.
         for(BoardHashtag hashtag : savedHashtags) {
-            if(!requestHashtagNames.contains(hashtag.getBoardHashtagId().getHashtagName()))
+            if(!requestHashtagNames.contains(hashtag.getId().getHashtagName()))
                 deleteHashtags.add(hashtag);
         }
 
@@ -301,7 +299,7 @@ public class BoardService {
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtags()) {
-                hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
+                hashtagNames.add(hashtag.getId().getHashtagName());
             }
 
             List<CareerDto> careerDtos = new ArrayList<>();

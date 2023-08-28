@@ -1,14 +1,18 @@
 package com.lodestar.lodestar_server.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @DynamicInsert
+@DynamicUpdate
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +33,15 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     String content;
 
-//    @OneToOne(mappedBy = "comment")
-//    Notice notice;
+    @Builder
+    public Comment(Board board, User user, String content) {
+        this.board = board;
+        this.user = user;
+        this.content = content;
+    }
 
-
+    public void modifyContent(String content) {
+        this.content = content;
+    }
 
 }

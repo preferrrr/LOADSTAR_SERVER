@@ -8,6 +8,8 @@ import java.util.List;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "사용자 경력")
 public class CareerDto {
 

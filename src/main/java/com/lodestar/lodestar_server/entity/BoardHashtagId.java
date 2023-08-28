@@ -1,15 +1,13 @@
 package com.lodestar.lodestar_server.entity;
 
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Embeddable
 @Getter
-@Setter
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class BoardHashtagId implements Serializable {
 
@@ -17,4 +15,10 @@ public class BoardHashtagId implements Serializable {
 
     @Column(name = "hashtag_name")
     private String hashtagName;
+
+    @Builder
+    public BoardHashtagId (Long boardId, String hashtagName) {
+        this.boardId = boardId;
+        this.hashtagName = hashtagName;
+    }
 }

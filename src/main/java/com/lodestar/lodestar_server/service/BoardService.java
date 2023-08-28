@@ -29,6 +29,7 @@ public class BoardService {
     private final HashtagRepository hashtagRepository;
     private final CommentRepository commentRepository;
     private final HashtagRepositoryJdbc hashtagRepositoryJdbc;
+    private final CareerService careerService;
 
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
@@ -95,13 +96,14 @@ public class BoardService {
             httpSession.setAttribute("boards",list);
         }
 
-        User findUser = userRepository.findUserWithCareersById(findBoard.getUser().getId()).orElseThrow(()->new NotFoundException("[get board] userId : " + findBoard.getUser().getId()));
-
-        List<Career> careerList = findUser.getCareers();
-        List<CareerDto> dtoList = new ArrayList<>();
-        for(Career career : careerList) {
-            dtoList.add(career.createDto());
-        }
+//        User findUser = userRepository.findUserWithCareersById(findBoard.getUser().getId()).orElseThrow(()->new NotFoundException("[get board] userId : " + findBoard.getUser().getId()));
+//        List<CareerDto> dtoList = new ArrayList<>();
+//        List<Career> careerList = findUser.getCareers();
+//        for(Career career : careerList) {
+//            dtoList.add(career.createDto());
+//        }
+        //user와 join해서 조회하던 career를 redis에 user 객체를 저장함으로써 career만 조회하도록 수정.
+        List<CareerDto> dtoList = careerService.getCareer(user);
 
 
         //현재 로그인한 유저,유저가 이 게시글을 북마크로 동록했는지 안 했는지 체크 (쿼리)
@@ -141,8 +143,8 @@ public class BoardService {
                 .modifiedAt(findBoard.getModifiedAt())
                 .view(findBoard.getView())
                 .bookmarkCount(findBoard.getBookmarkCount())
-                .userId(findUser.getId())
-                .username(findUser.getUsername())
+                .userId(user.getId())
+                .username(user.getUsername())
                 .arr(dtoList)
                 .bookmark(bookmark)
                 .hashtags(hashtagNames)

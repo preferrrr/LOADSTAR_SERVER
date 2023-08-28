@@ -46,7 +46,7 @@ public class CommentController {
 
         commentService.createComment(user, createCommentDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**

@@ -73,7 +73,7 @@ public class BoardController {
         createBoardDto.validateFieldsNotNull();
         boardService.saveBoard(user, createBoardDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 

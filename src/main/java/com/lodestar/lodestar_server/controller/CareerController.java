@@ -35,7 +35,7 @@ public class CareerController {
 
         careerService.saveCareer(user, careerDtos);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**

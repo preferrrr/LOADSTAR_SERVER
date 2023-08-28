@@ -32,11 +32,11 @@ public class BoardService {
 
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
-        Board board = new Board();
-
-        board.setUser(user);
-        board.setTitle(createBoardDto.getTitle());
-        board.setContent(createBoardDto.getContent());
+        Board board = Board.builder()
+                .user(user)
+                .title(createBoardDto.getTitle())
+                .content(createBoardDto.getContent())
+                .build();
 
 //      List<BoardHashtag> hashtags = new ArrayList<>();
         List<String> hashtagNames = createBoardDto.getHashtags();
@@ -90,7 +90,7 @@ public class BoardService {
 
         if((!list.contains(boardId)) && (findBoard.getUser().getId() != user.getId())) {
             //이미 조회한 게시글이 아니고 작성자도 아니어야해.
-            findBoard.setView(findBoard.getView() + 1);
+            findBoard.addView();
             list.add(boardId);
             httpSession.setAttribute("boards",list);
         }
@@ -111,7 +111,7 @@ public class BoardService {
         //카테시안 곱에 의해 중복 데이터 발생하는데 이때 Hibernate는 올바른 열을 올바른 엔티티에 매핑 할 수 없다.
         boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,user);
 
-        List<BoardHashtag> hashtagList = findBoard.getHashtag();
+        List<BoardHashtag> hashtagList = findBoard.getHashtags();
         List<String> hashtagNames = new ArrayList<>();
         for (BoardHashtag hashtag : hashtagList) {
             hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
@@ -171,11 +171,9 @@ public class BoardService {
             throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
         }
 
-        board.setTitle(modifyBoardDto.getTitle());
-        board.setContent(modifyBoardDto.getContent());
+        board.modifyBoard(modifyBoardDto.getTitle(), modifyBoardDto.getContent());
 
-
-        List<BoardHashtag> savedHashtags = board.getHashtag(); // 게시글에 저장되어있던 해시태그들.
+        List<BoardHashtag> savedHashtags = board.getHashtags(); // 게시글에 저장되어있던 해시태그들.
         List<String> savedHashtagNames = new ArrayList<>();
         for(int i = 0 ; i < savedHashtags.size(); i++) {
             savedHashtagNames.add(savedHashtags.get(i).getBoardHashtagId().getHashtagName());
@@ -302,7 +300,7 @@ public class BoardService {
 
             List<String> hashtagNames = new ArrayList<>();
 
-            for (BoardHashtag hashtag : board.getHashtag()) {
+            for (BoardHashtag hashtag : board.getHashtags()) {
                 hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
             }
 

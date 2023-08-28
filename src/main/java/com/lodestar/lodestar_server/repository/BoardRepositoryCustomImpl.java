@@ -50,7 +50,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                     .select(board.id)
                     .distinct()
                     .from(board)
-                    .leftJoin(board.hashtag,hashtag)
+                    .leftJoin(board.hashtags,hashtag)
                     .where(hashtag.boardHashtagId.hashtagName.in(hashtags))
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize());
@@ -68,7 +68,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         JPAQuery<Board> getBoardsQuery = jpaQueryFactory
                 .selectFrom(board)
                 .distinct()
-                .leftJoin(board.hashtag, hashtag).fetchJoin()
+                .leftJoin(board.hashtags, hashtag).fetchJoin()
                 .join(board.user, user).fetchJoin()
                 .where(board.id.in(Ids));
 
@@ -90,7 +90,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         JPAQuery<Board> jpaQuery = jpaQueryFactory
                 .selectFrom(board)
                 .distinct()
-                .leftJoin(board.hashtag, hashtag).fetchJoin()
+                .leftJoin(board.hashtags, hashtag).fetchJoin()
                 .leftJoin(board.comments, comment)
                 .where(board.id.eq(boardId));
 
@@ -106,7 +106,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         JPAQuery<Board> jpaQuery = jpaQueryFactory
                 .selectFrom(board)
                 .distinct()
-                .leftJoin(board.hashtag, hashtag).fetchJoin()
+                .leftJoin(board.hashtags, hashtag).fetchJoin()
                 .where(board.id.eq(boardId));
 
         Board board = jpaQuery.fetchOne();
@@ -132,7 +132,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                 .select(board)
                 .distinct()
                 .from(board)
-                .leftJoin(board.hashtag, hashtag)
+                .leftJoin(board.hashtags, hashtag)
                 .where(board.user.id.eq(me.getId()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
@@ -190,7 +190,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         JPAQuery<Board> getBoardsQuery = jpaQueryFactory
                 .selectFrom(board)
                 .distinct()
-                .leftJoin(board.hashtag, hashtag)
+                .leftJoin(board.hashtags, hashtag)
                 .join(board.user, user).fetchJoin() // to one이니까 한 번에 가져와.
                 .where(board.id.in(JPAExpressions
                                 .select(comment.board.id)

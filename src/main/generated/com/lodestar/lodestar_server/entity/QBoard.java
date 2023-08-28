@@ -35,7 +35,7 @@ public class QBoard extends EntityPathBase<Board> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
-    public final ListPath<BoardHashtag, QBoardHashtag> hashtag = this.<BoardHashtag, QBoardHashtag>createList("hashtag", BoardHashtag.class, QBoardHashtag.class, PathInits.DIRECT2);
+    public final ListPath<BoardHashtag, QBoardHashtag> hashtags = this.<BoardHashtag, QBoardHashtag>createList("hashtags", BoardHashtag.class, QBoardHashtag.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 

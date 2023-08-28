@@ -1,8 +1,7 @@
 package com.lodestar.lodestar_server.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -10,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @DynamicInsert
-@Getter @Setter
+@Getter
 @Entity
 @Table(name = "board")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,11 +46,34 @@ public class Board extends BaseEntity {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoardHashtag> hashtag = new ArrayList<>();
+    private List<BoardHashtag> hashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
+    @Builder
+    public Board(User user, String title, String content) {
+        this.user = user;
+        this.title = title;
+        this.content = content;
+    }
+
+    public void addView() {
+        this.view += 1;
+    }
+
+    public void addBookmarkCount() {
+        this.bookmarkCount += 1;
+    }
+
+    public void subBookmarkCount() {
+        this.bookmarkCount -= 1;
+    }
+
+    public void modifyBoard(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
 
 }

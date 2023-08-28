@@ -41,7 +41,7 @@ public class BookmarkService {
         bookmarkRepository.save(bookmark);
 
         board = boardRepository.findById(saveBookmarkDto.getBoardId()).orElseThrow(() -> new NotFoundException("[get board] boardId : " + saveBookmarkDto.getBoardId()));
-        board.setBookmarkCount(board.getBookmarkCount() + 1);
+        board.addBookmarkCount();
 
 
 
@@ -57,7 +57,7 @@ public class BookmarkService {
 
         board = boardRepository.findById(boardId).orElseThrow(()-> new NotFoundException("[get board] boardId : " + boardId));
 
-        board.setBookmarkCount(board.getBookmarkCount() - 1);
+        board.subBookmarkCount();
 
         bookmarkRepository.deleteByBoardAndUser(board, user);
     }

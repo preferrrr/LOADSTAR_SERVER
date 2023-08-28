@@ -47,7 +47,7 @@ public class BoardController {
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
     public ResponseEntity<List<BoardPagingDto>> getBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                          @PageableDefault(size = 6, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                          @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                           @Schema(description = "적용할 해시태그들",example = "알고리즘, 운영체제") @RequestParam(value = "hashtags", required = false) String[] hashtags) {
 
         List<BoardPagingDto> response = boardService.getBoardList(pageable, hashtags);
@@ -181,7 +181,7 @@ public class BoardController {
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
     public ResponseEntity<List<BoardPagingDto>> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                                    @PageableDefault(size = 3, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                    @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                                     @AuthenticationPrincipal User user) {
 
         List<BoardPagingDto> response = boardService.getMyCommentBoardList(user, pageable);
@@ -201,7 +201,7 @@ public class BoardController {
                     content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))}),
             @ApiResponse(responseCode = "204", description = "body null 존재")
     })
-    public ResponseEntity<List<BoardPagingDto>> searchBoards(@PageableDefault(size = 6, sort = "created_at", direction = Sort.Direction.DESC)
+    public ResponseEntity<List<BoardPagingDto>> searchBoards(@PageableDefault(size = 9, sort = "created_at", direction = Sort.Direction.DESC)
                                           @Schema(description = "페이지 번호", example = "0") Pageable pageable,
                                           @Schema(description = "검색 키워드", example = "스프링 부트") @RequestParam("keywords") String keywords) {
 

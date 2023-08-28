@@ -18,7 +18,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
     List<Board> findByUserId(Long userId);
 
     @Query("select b from Board b " +
-            "left join fetch b.hashtag")
+            "left join fetch b.hashtags")
     Page<Board> findAll(Pageable pageable);
 
 
@@ -30,7 +30,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
     //그래서 comment는 fetch join하지 않고 쿼리 한번만 보내도록 함. 연관관계를 eager로 해주면 다른 로직에서 필요없는 댓글이 조회되므로 여기서 타협...
     /** querydsl로 대체*/
     @Query("select distinct b from Board b " +
-            "left join fetch b.hashtag h " +
+            "left join fetch b.hashtags h " +
             "left join b.comments c " +
             "where b.id = :boardId")
     Optional<Board> findByPathBoardId(@Param("boardId") Long boardId);
@@ -65,7 +65,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
 
 
     @Query("select distinct b from Board b " +
-            "left join b.hashtag h " +
+            "left join b.hashtags h " +
             "left join fetch Career c on b.user = c.user " +
             "where b.id in :boardIds " +
             "order by b.createdAt desc")

@@ -158,7 +158,7 @@ public class BoardController {
      * /boards/my-boards
      */
     @GetMapping(value = "/my-bookmarks")
-    @Operation(summary = "내가 쓴 게시글 조회")
+    @Operation(summary = "북마크한 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBookmarkBoardDto.class)))})
     public ResponseEntity<List<MyBookmarkBoardDto>> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
@@ -176,7 +176,7 @@ public class BoardController {
      * /boards/my-boards
      */
     @GetMapping(value = "/my-comment-boards")
-    @Operation(summary = "내가 쓴 게시글 조회")
+    @Operation(summary = "댓글 작성한 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = BoardPagingDto.class)))})
     public ResponseEntity<List<BoardPagingDto>> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",

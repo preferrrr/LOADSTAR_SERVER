@@ -1,18 +1,13 @@
 package com.lodestar.lodestar_server.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
+@Builder
 @Schema(description = "메인 페이지 게시글 목록")
 public class BoardPagingDto {
 
@@ -22,6 +17,8 @@ public class BoardPagingDto {
     private String title;
     @Schema(description = "작성자")
     private String username;
+    @Schema(description = "내용")
+    private String content;
     @Schema(description = "북마크 수")
     private Integer bookmarkCount;
     @Schema(description = "조회수")

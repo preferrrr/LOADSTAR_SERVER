@@ -49,8 +49,9 @@ public class CareerController {
     })
     public ResponseEntity<CareerDtos> getCareer(@AuthenticationPrincipal User user) {
 
-        CareerDtos dtos = new CareerDtos();
-        dtos.setArr(careerService.getCareer(user));
+        CareerDtos dtos = CareerDtos.builder()
+                .arr(careerService.getCareer(user))
+                .build();
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }

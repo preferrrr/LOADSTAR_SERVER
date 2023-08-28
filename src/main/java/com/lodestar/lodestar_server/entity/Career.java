@@ -35,13 +35,15 @@ public class Career extends BaseEntity{
 
 
     public CareerDto createDto() {
-        CareerDto dto = new CareerDto();
-        dto.setX(this.x);
         List<Long> y = new ArrayList<>();
         y.add(this.y1);
         y.add(this.y2);
-        dto.setY(y);
-        dto.setRangeName(this.rangeName);
+
+        CareerDto dto = CareerDto.builder()
+                .x(this.x)
+                .y(y)
+                .rangeName(this.rangeName)
+                .build();
 
         return dto;
     }

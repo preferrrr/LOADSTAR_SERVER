@@ -299,29 +299,30 @@ public class BoardService {
         List<BoardPagingDto> result = new ArrayList<>();
 
         for (Board board : boards) {
-            BoardPagingDto dto = new BoardPagingDto();
-            dto.setBoardId(board.getId());
-            dto.setTitle(board.getTitle());
-            dto.setView(board.getView());
-            dto.setBookmarkCount(board.getBookmarkCount());
 
             List<String> hashtagNames = new ArrayList<>();
 
             for (BoardHashtag hashtag : board.getHashtag()) {
                 hashtagNames.add(hashtag.getBoardHashtagId().getHashtagName());
             }
-            dto.setHashtags(hashtagNames);
 
             List<CareerDto> careerDtos = new ArrayList<>();
             for(Career career : board.getUser().getCareers()) {
                 careerDtos.add(career.createDto());
             }
-            dto.setArr(careerDtos);
 
-            dto.setUsername(board.getUser().getUsername());
-
-            dto.setCreatedAt(board.getCreatedAt());
-            dto.setModifiedAt(board.getModifiedAt());
+            BoardPagingDto dto = BoardPagingDto.builder()
+                    .boardId(board.getId())
+                    .title(board.getTitle())
+                    .content(board.getContent())
+                    .view(board.getView())
+                    .bookmarkCount(board.getBookmarkCount())
+                    .hashtags(hashtagNames)
+                    .arr(careerDtos)
+                    .username(board.getUser().getUsername())
+                    .createdAt(board.getCreatedAt())
+                    .modifiedAt(board.getModifiedAt())
+                    .build();
 
             result.add(dto);
         }

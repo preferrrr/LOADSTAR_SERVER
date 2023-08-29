@@ -24,7 +24,6 @@ import java.util.List;
 @Slf4j
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
     private final HashtagRepository hashtagRepository;
     private final CommentRepository commentRepository;
@@ -89,7 +88,7 @@ public class BoardService {
         // => boards에 게시글 인덱스가 없고, 조회한 사람이 게시글 작성자가 아니고
         List<Long> list = (List<Long>) httpSession.getAttribute("boards");
 
-        if((!list.contains(boardId)) && (findBoard.getUser().getId() != user.getId())) {
+        if((!list.contains(boardId)) && (!findBoard.getUser().getId().equals(user.getId()))) {
             //이미 조회한 게시글이 아니고 작성자도 아니어야해.
             findBoard.addView();
             list.add(boardId);
@@ -158,9 +157,10 @@ public class BoardService {
     public void deleteBoard(User user, Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new NotFoundException("[delete board] boardId : " + boardId));
 
-        if(board.getUser().getId() != user.getId()) {
+        if(!board.getUser().getId().equals(user.getId()))
             throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
-        }
+        // 처음엔 AuthenticationPrincipal의 User가 필터에서 userId만을 사용하기 위해서 임시로 생성해줬는데,
+        // redis에 User 객체를 저장하고 가져오는 걸로 바꾸면서 Long 타입 비교에 equals를 사용해야함.
 
         boardRepository.deleteById(boardId);
 
@@ -169,9 +169,8 @@ public class BoardService {
     public void modifyBoard(User user, Long boardId, ModifyBoardDto modifyBoardDto) {
         Board board = boardRepository.getBoardWithHashtagsById(boardId).orElseThrow(() -> new NotFoundException("[modify board] boardId : " + boardId));
 
-        if(board.getUser().getId() != user.getId()) {
+        if(!board.getUser().getId().equals(user.getId()) )
             throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
-        }
 
         board.modifyBoard(modifyBoardDto.getTitle(), modifyBoardDto.getContent());
 
@@ -183,17 +182,11 @@ public class BoardService {
 
         List<String> requestHashtagNames = modifyBoardDto.getHashtags(); // 요청된 해시태그들.
 
-        List<BoardHashtag> addHashtags = new ArrayList<>(); // 추가할 해시태그들.
+        List<String> addHashtags = new ArrayList<>(); // 추가할 해시태그들.
         //요청된 해시태그가 저장되어있던 해시태그에 포함되어있지 않으면 추가
         for(int i = 0 ; i < requestHashtagNames.size(); i++) {
             if(!savedHashtagNames.contains(requestHashtagNames.get(i))) {
-
-                BoardHashtag hashtag = BoardHashtag.builder()
-                        .board(board)
-                        .hashtagName(requestHashtagNames.get(i))
-                        .build();
-
-                addHashtags.add(hashtag);
+                addHashtags.add(requestHashtagNames.get(i));
             }
         }
 
@@ -204,9 +197,8 @@ public class BoardService {
                 deleteHashtags.add(hashtag);
         }
 
-
-        hashtagRepository.saveAll(addHashtags);
         hashtagRepository.deleteAllInBatch(deleteHashtags);
+        hashtagRepositoryJdbc.saveHashtags(boardId, addHashtags);
 
     }
 

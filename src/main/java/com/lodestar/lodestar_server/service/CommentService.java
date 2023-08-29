@@ -47,7 +47,7 @@ public class CommentService {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("[delete comment] commentId: " + commentId));
 
-        if(comment.getUser().getId() != user.getId())
+        if(!comment.getUser().getId().equals(user.getId()))
             throw new AuthFailException("delete comment : " + commentId);
 
         commentRepository.deleteById(commentId);
@@ -57,7 +57,7 @@ public class CommentService {
     public void modifyComment(User user, Long commentId, ModifyCommentDto modifyCommentDto) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("[modify comment] commentId: " + commentId));
 
-        if(comment.getUser().getId() != user.getId())
+        if(!comment.getUser().getId().equals(user.getId()))
             throw new AuthFailException("modify Comment Id: " + commentId);
 
         comment.modifyContent(modifyCommentDto.getContent());

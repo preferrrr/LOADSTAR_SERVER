@@ -187,16 +187,25 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
         //TODO : subquery는 성능에 좋지 않음. subquery->query가 아닌 query->subquery. 생각과 반대로 수행됨
         // 다른 방법생각해야함
+//        JPAQuery<Board> getBoardsQuery = jpaQueryFactory
+//                .selectFrom(board)
+//                .distinct()
+//                .leftJoin(board.hashtags, hashtag)
+//                .join(board.user, user).fetchJoin() // to one이니까 한 번에 가져와.
+//                .where(board.id.in(JPAExpressions
+//                                .select(comment.board.id)
+//                                .distinct()
+//                                .from(comment)
+//                                .where(comment.user.id.eq(me.getId()))))
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize());
+
         JPAQuery<Board> getBoardsQuery = jpaQueryFactory
-                .selectFrom(board)
-                .distinct()
+                .selectFrom(board).distinct()
                 .leftJoin(board.hashtags, hashtag)
-                .join(board.user, user).fetchJoin() // to one이니까 한 번에 가져와.
-                .where(board.id.in(JPAExpressions
-                                .select(comment.board.id)
-                                .distinct()
-                                .from(comment)
-                                .where(comment.user.id.eq(me.getId()))))
+                .join(board.user, user).fetchJoin()
+                .join(board.comments, comment)
+                .where(comment.user.id.eq(me.getId()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 

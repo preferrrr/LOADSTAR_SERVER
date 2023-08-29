@@ -96,7 +96,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 유저 없음")
-    })//TODO: 아이디 찾기도 이메일 인증 필요하도록 ?
+    })
     public ResponseEntity<FindIdResponseDto> findId(@RequestParam("email") String email) {
 
         FindIdResponseDto responseDto = userService.findId(email);
@@ -113,7 +113,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "현재 비밀번호 틀림.")
-    })//TODO: 비밀번호 찾기 => 이메일로 임시 비밀번호 보낸다면 이거 필요없음.
+    })
     public ResponseEntity modifyPassword(@AuthenticationPrincipal User user, @RequestBody ModifyPasswordRequestDto requestDto) {
 
         requestDto.validateFieldsNotNull();

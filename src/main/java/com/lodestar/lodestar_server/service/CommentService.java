@@ -65,6 +65,7 @@ public class CommentService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<MyCommentDto> getMyComments(User user, Pageable pageable) {
 
         List<Comment> comments = commentRepository.getMyComments(user, pageable);

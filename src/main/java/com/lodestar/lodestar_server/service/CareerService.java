@@ -53,6 +53,7 @@ public class CareerService {
     }
 
 
+    @Transactional(readOnly = true)
     public void modifyCareer(User user, CareerDtos careerDtos) {
 
         List<Career> careers = careerRepository.findCareersByUser(user); // 원래 저장되어 있던 것들

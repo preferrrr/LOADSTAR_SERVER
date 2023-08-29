@@ -131,6 +131,7 @@ public class EmailService {
     /**
      * 이메일로 테이블 조회해서 그 이메일에 대응되는 Key값과 비교
      */
+    @Transactional(readOnly = true)
     public boolean checkKey(String email, String key) {
 
         Mail emails = emailRepository.findFirstByEmailOrderByCreatedAtDesc(email);

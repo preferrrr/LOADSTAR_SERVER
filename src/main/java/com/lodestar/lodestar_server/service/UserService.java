@@ -77,7 +77,6 @@ public class UserService {
 
         User user = userRepository.findByUsername(loginRequestDto.getUsername());
 
-        List<String> roleList = user.getRoles();
         List<Long> boardList = new ArrayList<>();
 
         httpSession.setAttribute("user", user);

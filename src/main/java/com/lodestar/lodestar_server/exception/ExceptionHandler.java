@@ -138,4 +138,13 @@ public class ExceptionHandler {
 
         return new ResponseEntity<>(HttpStatus.CONFLICT); /**409, 이미 유저가 게시글 북마크로 등록함.*/
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler({DuplicateCareerException.class})
+    public ResponseEntity<?> handleDuplicateCareerException(final DuplicateCareerException e) {
+
+        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
+        log.error(msg);
+
+        return new ResponseEntity<>(HttpStatus.CONFLICT); /**409, 이미 유저가 커리어 등록함.*/
+    }
 }

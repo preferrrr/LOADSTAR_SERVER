@@ -4,6 +4,7 @@ import com.lodestar.lodestar_server.dto.response.CareerDto;
 import com.lodestar.lodestar_server.dto.response.CareerDtos;
 import com.lodestar.lodestar_server.entity.Career;
 import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.exception.DuplicateCareerException;
 import com.lodestar.lodestar_server.repository.CareerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class CareerService {
     private final CareerRepository careerRepository;
 
     public void saveCareer(User user, CareerDtos careerRequestDto) {
+
+        if(careerRepository.existsByUser(user))
+            throw new DuplicateCareerException("userId : " + user.getId());
 
         List<Career> careerList = new ArrayList<>();
 

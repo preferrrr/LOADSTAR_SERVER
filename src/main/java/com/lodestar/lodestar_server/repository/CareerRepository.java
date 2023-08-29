@@ -10,4 +10,6 @@ public interface CareerRepository extends JpaRepository<Career, Long> {
 
     List<Career> findCareersByUser(User user);
 
+    boolean existsByUser(User user);
+
 }

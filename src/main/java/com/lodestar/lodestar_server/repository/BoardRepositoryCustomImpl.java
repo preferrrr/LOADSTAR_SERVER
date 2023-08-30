@@ -36,21 +36,25 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
     @Override
     public List<Board> getBoardList(Pageable pageable, String[] hashtags) {
 
-        JPAQuery<Long> getIdsQuery;
-
-        //TODO : fetch join과 pagination 같이 사용할 수 없음 => 결국 id먼저 조회하는 걸로 돌아가야함.
+        JPAQuery<Board> getBoardsQuery;
         if(hashtags.length == 0) {
-            getIdsQuery = jpaQueryFactory
-                    .select(board.id)
+            getBoardsQuery = jpaQueryFactory
+                    .select(board)
+                    .distinct()
                     .from(board)
+                    .leftJoin(board.hashtags, hashtag)
+                    // to many는 jetch join할 때 페이징 불가. 모두 어플리케이션 메모리로 가지고 와서 스프링에서 페이징함.
+                    // 만약 10만 건이면 10만 개 모두 올라오기 때문에 절대 안됨, N+1은 jpa batch가 해결.
+                    .join(board.user, user).fetchJoin()
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize());
         } else {
-            getIdsQuery = jpaQueryFactory
-                    .select(board.id)
+            getBoardsQuery = jpaQueryFactory
+                    .select(board)
                     .distinct()
                     .from(board)
                     .leftJoin(board.hashtags,hashtag)
+                    .join(board.user, user).fetchJoin()
                     .where(hashtag.id.hashtagName.in(hashtags))
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize());
@@ -59,27 +63,11 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
         for (Sort.Order o : pageable.getSort()) {
             PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
-            getIdsQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
-                    pathBuilder.get(o.getProperty())));
-        }
-
-        List<Long> Ids = getIdsQuery.fetch();
-
-        JPAQuery<Board> getBoardsQuery = jpaQueryFactory
-                .selectFrom(board)
-                .distinct()
-                .leftJoin(board.hashtags, hashtag).fetchJoin()
-                .join(board.user, user).fetchJoin()
-                .where(board.id.in(Ids));
-
-        for (Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
             getBoardsQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC,
                     pathBuilder.get(o.getProperty())));
         }
 
         List<Board> result = getBoardsQuery.fetch();
-
 
         return result;
     }

@@ -62,7 +62,7 @@ public class CareerService {
 
 
     public void modifyCareer(User user, CareerDtos careerDtos) {
-
+        //TODO : 삭제할 커리어 id와 추가할 커리어 dto를 따로 받아서 처리하도록. 그러면 내가 커리어를 줄 때 id까지 같이 줘야함.
         List<Career> careers = careerRepository.findCareersByUser(user); // 원래 저장되어 있던 것들
 
         List<String> rangeNames1 = new ArrayList<>();

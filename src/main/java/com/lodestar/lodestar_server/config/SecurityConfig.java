@@ -89,9 +89,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000") );
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://loadstar.site", "https://loadstar.site"));
         configuration.setAllowCredentials(true);
-        configuration.addAllowedMethod("*");
+        //configuration.addAllowedMethod("*");
+        configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PATCH", "DELETE"));
+        //configuration.setAllowedHeaders();
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("*"); // CORS 문제, 포스트맨에는 보이지만 클라이언트에서 안 보이는거 해결
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

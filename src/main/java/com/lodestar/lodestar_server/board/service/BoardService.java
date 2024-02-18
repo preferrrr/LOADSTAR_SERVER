@@ -1,25 +1,21 @@
 package com.lodestar.lodestar_server.board.service;
 
-import com.lodestar.lodestar_server.board.dto.response.BoardPagingDto;
+import com.lodestar.lodestar_server.board.dto.response.GetBoardListDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.MyBoardDto;
 import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardDto;
 import com.lodestar.lodestar_server.board.entity.Board;
-import com.lodestar.lodestar_server.board.repository.BoardRepository;
-import com.lodestar.lodestar_server.bookmark.repository.BookmarkRepository;
+import com.lodestar.lodestar_server.bookmark.service.BookmarkServiceSupport;
 import com.lodestar.lodestar_server.career.dto.response.CareerDto;
-import com.lodestar.lodestar_server.career.entity.Career;
+import com.lodestar.lodestar_server.career.service.CareerServiceSupport;
 import com.lodestar.lodestar_server.comment.dto.response.CommentDto;
 import com.lodestar.lodestar_server.comment.entity.Comment;
-import com.lodestar.lodestar_server.comment.repository.CommentRepository;
 import com.lodestar.lodestar_server.board.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.board.dto.request.ModifyBoardDto;
+import com.lodestar.lodestar_server.comment.service.CommentServiceSupport;
 import com.lodestar.lodestar_server.exception.AuthFailException;
 import com.lodestar.lodestar_server.exception.NotFoundException;
 import com.lodestar.lodestar_server.hashtag.entity.BoardHashtag;
-import com.lodestar.lodestar_server.hashtag.repository.HashtagRepository;
-import com.lodestar.lodestar_server.hashtag.repository.HashtagRepositoryJdbc;
-import com.lodestar.lodestar_server.career.service.CareerService;
 import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -31,308 +27,169 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class BoardService {
-    private final BoardRepository boardRepository;
-    private final BookmarkRepository bookmarkRepository;
-    private final HashtagRepository hashtagRepository;
-    private final CommentRepository commentRepository;
-    private final HashtagRepositoryJdbc hashtagRepositoryJdbc;
-    private final CareerService careerService;
 
+    private final BoardServiceSupport boardServiceSupport;
+    private final CareerServiceSupport careerServiceSupport;
+    private final BookmarkServiceSupport bookmarkServiceSupport;
+    private final CommentServiceSupport commentServiceSupport;
+
+    @Transactional(readOnly = false)
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
-        Board board = Board.builder()
-                .user(user)
-                .title(createBoardDto.getTitle())
-                .content(createBoardDto.getContent())
-                .build();
+        //Board 엔티티 생성
+        Board board = Board.create(user, createBoardDto.getTitle(), createBoardDto.getContent());
 
-//      List<BoardHashtag> hashtags = new ArrayList<>();
-        List<String> hashtagNames = createBoardDto.getHashtags();
+        //Board 저장
+        boardServiceSupport.saveBoard(board);
 
-        //TODO: 해시태그의 개수만큼 insert 쿼리가 생성됨 => bulk query로 해결 가능
-        // 근데 Id의 전략을 identity를 사용했기 때문에 jpa에서는 bulk query(jpa batch) 사용 불가 => jdbc template 사용해서 해결 가능.
-        // hashtag 테이블은 identity 전략을 사용하지 않음으로써 bulk query 가능
-        // => hashtag 테이블 auto increment 기본키 제거, (board_id, hashtag_name) 기본키로 바꿈
-        // => jdbc template 사용해서 bulk query로 insert 성능 개선.
-//        for (int i = 0; i < hashtagNames.size(); i++) {
-//            BoardHashtag hashtag = new BoardHashtag();
-//
-//            BoardHashtagId id = new BoardHashtagId();
-//            id.setHashtagName(hashtagNames.get(i));
-//
-//            hashtag.setBoardHashtagId(id);
-//            hashtag.setBoard(board);
-//
-//            hashtags.add(hashtag);
-//        }
-//        board.setHashtag(hashtags);
-
-        boardRepository.save(board); // 트랜잭션이 걸려있기 때문에 둘 다 성공해야 저장됨.
-        hashtagRepositoryJdbc.saveHashtags(board.getId(), hashtagNames);
+        //Board의 hashtag 저장
+        boardServiceSupport.saveHashtags(board.getId(), createBoardDto.getHashtags());
 
     }
 
 
     @Transactional(readOnly = true)
-    public List<BoardPagingDto> getBoardList(Pageable pageable, String[] hashtags) {
+    public List<GetBoardListDto> getBoardList(Pageable pageable, String[] hashtags) {
 
-        List<Board> boards = boardRepository.getBoardList(pageable,hashtags);
+        List<Board> boards = boardServiceSupport.getBoardList(pageable, hashtags);
 
-        List<BoardPagingDto> result = createDtos(boards);
-
-        return result;
+        return boardServiceSupport.createGetBoardListDtos(boards);
     }
 
 
+    @Transactional(readOnly = false)
     public GetBoardResponseDto getBoard(HttpSession httpSession, User user, Long boardId) {
 
-        //Board findBoard = boardRepository.findByPathBoardId(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
-        Board findBoard = boardRepository.getBoardWithHashAndComById(boardId).orElseThrow(()->new NotFoundException("[get board] boardId : " + boardId));
+        //조회할 게시글
+        Board board = boardServiceSupport.getBoardWithHashtagsAndCommentsById(boardId);
 
-        //조회수 처리를 위한 로직
-        //session의 boards에 게시글 인덱스가 있으면 조회수 증가 X
-        //게시글 작성자라면 조회수 증가 X
-        //session의 boards에 게시글 인덱스가 없으면 조회수 증가 O, 게시글 인덱스 추가
-        // => boards에 게시글 인덱스가 없고, 조회한 사람이 게시글 작성자가 아니고
-        List<Long> list = (List<Long>) httpSession.getAttribute("boards");
+        //조회수 증가
+        boardServiceSupport.increaseViewIfNotViewedBefore(board, user, httpSession);
 
-        if((!list.contains(boardId)) && (!findBoard.getUser().getId().equals(user.getId()))) {
-            //이미 조회한 게시글이 아니고 작성자도 아니어야해.
-            findBoard.addView();
-            list.add(boardId);
-            httpSession.setAttribute("boards",list);
-        }
+        //작성자의 커리어
+        List<CareerDto> careerDtos = careerServiceSupport.getCareerDtoList(user);
 
-//        User findUser = userRepository.findUserWithCareersById(findBoard.getUser().getId()).orElseThrow(()->new NotFoundException("[get board] userId : " + findBoard.getUser().getId()));
-//        List<CareerDto> dtoList = new ArrayList<>();
-//        List<Career> careerList = findUser.getCareers();
-//        for(Career career : careerList) {
-//            dtoList.add(career.createDto());
-//        }
-        //user와 join해서 조회하던 career를 redis에 user 객체를 저장함으로써 career만 조회하도록 수정.
-        List<CareerDto> dtoList = careerService.getCareer(user);
+        //내가 북마크 해뒀는지 여부
+        boolean isBookmarked = bookmarkServiceSupport.checkExistsBookmarkByBoardAndUser(board, user);
+
+        //게시글 해시태그
+        List<String> hashtagNames = board.getHashtags().stream()
+                .map(hashtag -> hashtag.getId().getHashtagName())
+                .collect(Collectors.toList());
+
+        //댓글
+        List<Comment> commentList = commentServiceSupport.getCommentsWithUserInfoByBoardId(board.getId());
+
+        List<CommentDto> comments = commentList.stream()
+                .map(comment -> CommentDto.builder()
+                        .commentId(comment.getId())
+                        .commentContent(comment.getContent())
+                        .createdAt(comment.getCreatedAt())
+                        .modifiedAt(comment.getModifiedAt())
+                        .userId(comment.getUser().getId())
+                        .username(comment.getUser().getUsername())
+                        .build())
+                .collect(Collectors.toList());
 
 
-        //현재 로그인한 유저,유저가 이 게시글을 북마크로 동록했는지 안 했는지 체크 (쿼리)
-        //위에서 findUserWithCareersById로 조회할 때 내가 북마크한 게시글들도 가져와서, 현재 게시글이 포함되어 있는지
-        //검사하는게 더 빠를 수도 있을까?하는 생각....
-        //하지만 근본적으로 ToMany는 2개 이상 fetch join 할 수 없음. careers와 bookmarks가 둘 다 user에게 ToMany임.
-        //카테시안 곱에 의해 중복 데이터 발생하는데 이때 Hibernate는 올바른 열을 올바른 엔티티에 매핑 할 수 없다.
-        boolean bookmark = bookmarkRepository.existsBookmarkByBoardAndUser(findBoard,user);
-
-        List<BoardHashtag> hashtagList = findBoard.getHashtags();
-        List<String> hashtagNames = new ArrayList<>();
-        for (BoardHashtag hashtag : hashtagList) {
-            hashtagNames.add(hashtag.getId().getHashtagName());
-        }
-
-        List<Comment> commentList = commentRepository.findCommentsWithUserInfoByBoardId(findBoard.getId());
-        List<CommentDto> comments = new ArrayList<>();
-
-        for(Comment comment : commentList) {
-            CommentDto dto = CommentDto.builder()
-                    .commentId(comment.getId())
-                    .commentContent(comment.getContent())
-                    .createdAt(comment.getCreatedAt())
-                    .modifiedAt(comment.getModifiedAt())
-                    .userId(comment.getUser().getId())
-                    .username(comment.getUser().getUsername())
-                    .build();
-
-            comments.add(dto);
-        }
-
-        GetBoardResponseDto response = GetBoardResponseDto.builder()
-                .boardId(findBoard.getId())
-                .title(findBoard.getTitle())
-                .content(findBoard.getContent())
-                .createdAt(findBoard.getCreatedAt())
-                .modifiedAt(findBoard.getModifiedAt())
-                .view(findBoard.getView())
-                .bookmarkCount(findBoard.getBookmarkCount())
+        return GetBoardResponseDto.builder()
+                .boardId(board.getId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .createdAt(board.getCreatedAt())
+                .modifiedAt(board.getModifiedAt())
+                .view(board.getView())
+                .bookmarkCount(board.getBookmarkCount())
                 .userId(user.getId())
                 .username(user.getUsername())
-                .arr(dtoList)
-                .bookmark(bookmark)
+                .arr(careerDtos)
+                .bookmark(isBookmarked)
                 .hashtags(hashtagNames)
                 .comments(comments)
                 .build();
-
-        return response;
     }
 
 
     public void deleteBoard(User user, Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NotFoundException("[delete board] boardId : " + boardId));
 
-        if(!board.getUser().getId().equals(user.getId()))
-            throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
-        // 처음엔 AuthenticationPrincipal의 User가 필터에서 userId만을 사용하기 위해서 임시로 생성해줬는데,
-        // redis에 User 객체를 저장하고 가져오는 걸로 바꾸면서 Long 타입 비교에 equals를 사용해야함.
+        //삭제할 게시글
+        Board board = boardServiceSupport.getBoardById(boardId);
 
-        boardRepository.deleteById(boardId);
+        //게시글 작성자가 맞는지 체크
+        boardServiceSupport.checkIsBoardWriterForDelete(board, user);
 
+        //게시글 삭제
+        boardServiceSupport.deleteBoardById(boardId);
     }
 
     public void modifyBoard(User user, Long boardId, ModifyBoardDto modifyBoardDto) {
-        Board board = boardRepository.getBoardWithHashtagsById(boardId).orElseThrow(() -> new NotFoundException("[modify board] boardId : " + boardId));
 
-        if(!board.getUser().getId().equals(user.getId()) )
-            throw new AuthFailException(board.getUser().getId() + " != " + user.getId());
+        //수정할 게시글
+        Board board = boardServiceSupport.getBoardWithHashtagsById(boardId);
 
+        //게시글 작성자가 맞는지 체크
+        boardServiceSupport.checkIsBoardWriterForModify(board, user);
+
+        //제목, 내용 수정
         board.modifyBoard(modifyBoardDto.getTitle(), modifyBoardDto.getContent());
 
-        List<BoardHashtag> savedHashtags = board.getHashtags(); // 게시글에 저장되어있던 해시태그들.
-        List<String> savedHashtagNames = new ArrayList<>();
-        for(int i = 0 ; i < savedHashtags.size(); i++) {
-            savedHashtagNames.add(savedHashtags.get(i).getId().getHashtagName());
-        }
+        //추가할 해시태그
+        List<String> addHashtags = boardServiceSupport.getAddHashtags(board.getHashtags(), modifyBoardDto.getHashtags());
 
-        List<String> requestHashtagNames = modifyBoardDto.getHashtags(); // 요청된 해시태그들.
+        List<BoardHashtag> deleteHashtags = boardServiceSupport.getDeleteHashtags(board.getHashtags(), modifyBoardDto.getHashtags());
+        //삭제할 해시태그들
 
-        List<String> addHashtags = new ArrayList<>(); // 추가할 해시태그들.
-        //요청된 해시태그가 저장되어있던 해시태그에 포함되어있지 않으면 추가
-        for(int i = 0 ; i < requestHashtagNames.size(); i++) {
-            if(!savedHashtagNames.contains(requestHashtagNames.get(i))) {
-                addHashtags.add(requestHashtagNames.get(i));
-            }
-        }
 
-        List<BoardHashtag> deleteHashtags = new ArrayList<>(); // 삭제할 해시태그들.
-        //저장되어있던 해시태그가 요청된 해시태그에 없으면 삭제.
-        for(BoardHashtag hashtag : savedHashtags) {
-            if(!requestHashtagNames.contains(hashtag.getId().getHashtagName()))
-                deleteHashtags.add(hashtag);
-        }
-
-        hashtagRepository.deleteAllInBatch(deleteHashtags);
-        hashtagRepositoryJdbc.saveHashtags(boardId, addHashtags);
-
+        boardServiceSupport.deleteHashtags(deleteHashtags);
+        boardServiceSupport.saveHashtags(boardId, addHashtags);
     }
 
 
     @Transactional(readOnly = true)
-    public List<BoardPagingDto> searchBoards(Pageable pageable, String keywords) {
+    public List<GetBoardListDto> searchBoards(Pageable pageable, String keywords) {
 
-        String param = keywords.replaceAll(" ", "|");
+        //키워드로 검색한 게시글들의 id
+        List<Long> boardIds = boardServiceSupport.searchBoardByKeyword(pageable, keywords);
 
-        Page<Long> pagingIds = boardRepository.searchBoards(pageable, param);
+        //id로 게시글 검색
+        List<Board> boards = boardServiceSupport.findBoardsWhereInBoardIds(boardIds);
 
-
-        List<Long> boardIds = new ArrayList<>();
-        for (Long id : pagingIds) {
-            boardIds.add(id);
-        }
-
-        List<Board> boards= boardRepository.findBoardsWhereInBoardIds(boardIds);
-
-        List<BoardPagingDto> result = createDtos(boards);
-
-        return result;
+        return boardServiceSupport.createGetBoardListDtos(boards);
     }
 
     @Transactional(readOnly = true)
     public List<MyBoardDto> getMyBoardList(User user, Pageable pageable) {
 
-        List<Board> boards = boardRepository.getMyBoardList(user, pageable);
+        List<Board> myBoards = boardServiceSupport.getMyBoardList(user, pageable);
 
-        List<MyBoardDto> result = new ArrayList<>();
-
-        for(Board board : boards) {
-            MyBoardDto dto = MyBoardDto.builder()
-                    .boardId(board.getId())
-                    .title(board.getTitle())
-                    .bookmarkCount(board.getBookmarkCount())
-                    .view(board.getView())
-                    .createdAt(board.getCreatedAt())
-                    .modifiedAt(board.getModifiedAt())
-                    .build();
-
-            result.add(dto);
-        }
-
-        return result;
+        return boardServiceSupport.entityToMyBoardDtos(myBoards);
     }
 
 
     @Transactional(readOnly = true)
     public List<MyBookmarkBoardDto> getMyBookmarkBoardList(User user, Pageable pageable) {
 
-        List<Board> boards = boardRepository.getMyBookmarkBoardList(user, pageable);
+        List<Board> boards = boardServiceSupport.getMyBookmarkBoardList(user, pageable);
 
-        List<MyBookmarkBoardDto> result = new ArrayList<>();
-
-        for (Board board : boards) {
-
-            MyBookmarkBoardDto dto = MyBookmarkBoardDto.builder()
-                    .boardId(board.getId())
-                    .title(board.getTitle())
-                    .username(board.getUser().getUsername())
-                    .view(board.getView())
-                    .bookmarkCount(board.getBookmarkCount())
-                    .createdAt(board.getCreatedAt())
-                    .modifiedAt(board.getModifiedAt())
-                    .build();
-
-            result.add(dto);
-        }
-
-
-
-        return result;
+        return boardServiceSupport.entityToMyBookmarkBoardDtos(boards);
     }
 
 
     @Transactional(readOnly = true)
-    public List<BoardPagingDto> getMyCommentBoardList(User user, Pageable pageable) {
+    public List<GetBoardListDto> getMyCommentBoardList(User user, Pageable pageable) {
 
-        List<Board> boards = boardRepository.getMyCommentBoardList(user, pageable);
+        List<Board> boards = boardServiceSupport.getMyCommentBoardList(user, pageable);
 
-        List<BoardPagingDto> result = createDtos(boards);
-
-        return result;
+        return boardServiceSupport.createGetBoardListDtos(boards);
     }
 
-    private List<BoardPagingDto> createDtos(List<Board> boards) {
-        List<BoardPagingDto> result = new ArrayList<>();
-
-        for (Board board : boards) {
-
-            List<String> hashtagNames = new ArrayList<>();
-
-            for (BoardHashtag hashtag : board.getHashtags()) {
-                hashtagNames.add(hashtag.getId().getHashtagName());
-            }
-
-            List<CareerDto> careerDtos = new ArrayList<>();
-            for(Career career : board.getUser().getCareers()) {
-                careerDtos.add(career.createDto());
-            }
-
-            BoardPagingDto dto = BoardPagingDto.builder()
-                    .boardId(board.getId())
-                    .title(board.getTitle())
-                    .content(board.getContent())
-                    .view(board.getView())
-                    .bookmarkCount(board.getBookmarkCount())
-                    .hashtags(hashtagNames)
-                    .arr(careerDtos)
-                    .username(board.getUser().getUsername())
-                    .createdAt(board.getCreatedAt())
-                    .modifiedAt(board.getModifiedAt())
-                    .build();
-
-            result.add(dto);
-        }
-
-        return result;
-
-    }
 
 }

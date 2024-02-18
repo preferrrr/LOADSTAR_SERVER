@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface BoardRepositoryCustom {
 
-    List<Board> getBoardList(Pageable pageable, String[] hashtags);
+    List<Board> getBoardList(Pageable pageable);
 
-    Optional<Board> getBoardWithHashAndComById(Long boardId);
+    List<Board> getBoardListWithHashtags(Pageable pageable, String[] hashtags);
+
+    Optional<Board> getBoardWithHashtagsAndCommentsById(Long boardId);
 
     Optional<Board> getBoardWithHashtagsById(Long boardId);
 

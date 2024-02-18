@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Builder
 @Schema(description = "메인 페이지 게시글 목록")
-public class BoardPagingDto {
+public class GetBoardListDto {
 
     @Schema(description = "게시글 인덱스", example = "1")
     private Long boardId;

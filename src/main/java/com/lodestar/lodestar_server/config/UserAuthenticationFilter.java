@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.config;
 
-import com.lodestar.lodestar_server.entity.User;
+import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -26,13 +26,9 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Slf4j
 public class BoardService {
 
     private final BoardServiceSupport boardServiceSupport;
-    private final CareerServiceSupport careerServiceSupport;
-    private final BookmarkServiceSupport bookmarkServiceSupport;
-    private final CommentServiceSupport commentServiceSupport;
 
     @Transactional(readOnly = false)
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
@@ -68,10 +64,10 @@ public class BoardService {
         boardServiceSupport.increaseViewIfNotViewedBefore(board, user, httpSession);
 
         //내가 북마크 해뒀는지 여부
-        boolean isBookmarked = bookmarkServiceSupport.checkExistsBookmarkByBoardAndUser(board, user);
+        boolean isBookmarked = boardServiceSupport.checkExistsBookmarkByBoardAndUser(board, user);
 
         //댓글
-        List<Comment> comments = commentServiceSupport.getCommentsWithUserInfoByBoardId(board.getId());
+        List<Comment> comments = boardServiceSupport.getCommentsWithUserInfoByBoardId(board.getId());
 
         return GetBoardResponseDto.of(board, comments, isBookmarked);
     }

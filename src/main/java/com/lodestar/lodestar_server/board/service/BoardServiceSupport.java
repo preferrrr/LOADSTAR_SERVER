@@ -1,20 +1,13 @@
 package com.lodestar.lodestar_server.board.service;
 
-import com.lodestar.lodestar_server.board.dto.response.GetBoardListDto;
-import com.lodestar.lodestar_server.board.dto.response.MyBoardDto;
-import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.board.exception.BoardNotFoundException;
 import com.lodestar.lodestar_server.board.exception.UnauthorizedDeleteException;
 import com.lodestar.lodestar_server.board.exception.UnauthorizedModifyException;
 import com.lodestar.lodestar_server.board.repository.BoardRepository;
-import com.lodestar.lodestar_server.bookmark.repository.BookmarkRepository;
-import com.lodestar.lodestar_server.career.dto.response.CareerDto;
-import com.lodestar.lodestar_server.career.entity.Career;
-import com.lodestar.lodestar_server.career.service.CareerService;
-import com.lodestar.lodestar_server.comment.repository.CommentRepository;
-import com.lodestar.lodestar_server.exception.AuthFailException;
-import com.lodestar.lodestar_server.exception.NotFoundException;
+import com.lodestar.lodestar_server.bookmark.service.BookmarkServiceSupport;
+import com.lodestar.lodestar_server.comment.entity.Comment;
+import com.lodestar.lodestar_server.comment.service.CommentServiceSupport;
 import com.lodestar.lodestar_server.hashtag.entity.BoardHashtag;
 import com.lodestar.lodestar_server.hashtag.repository.HashtagRepository;
 import com.lodestar.lodestar_server.hashtag.repository.HashtagRepositoryJdbc;
@@ -25,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,11 +28,10 @@ import java.util.stream.Collectors;
 public class BoardServiceSupport {
 
     private final BoardRepository boardRepository;
-    private final BookmarkRepository bookmarkRepository;
     private final HashtagRepository hashtagRepository;
-    private final CommentRepository commentRepository;
     private final HashtagRepositoryJdbc hashtagRepositoryJdbc;
-    private final CareerService careerService;
+    private final BookmarkServiceSupport bookmarkServiceSupport;
+    private final CommentServiceSupport commentServiceSupport;
 
     public void saveBoard(Board board) {
         boardRepository.save(board);
@@ -62,39 +53,6 @@ public class BoardServiceSupport {
             return boardRepository.getBoardList(pageable);
 
         return boardRepository.getBoardListWithHashtags(pageable, hashtags);
-    }
-
-    public List<GetBoardListDto> createGetBoardListDtos(List<Board> boards) {
-
-        List<GetBoardListDto> result = new ArrayList<>();
-
-        for (Board board : boards) {
-
-            List<String> hashtagNames = board.getHashtags().stream()
-                    .map(hashtag -> hashtag.getId().getHashtagName())
-                    .collect(Collectors.toList());
-
-            List<CareerDto> careerDtos = board.getUser().getCareers().stream()
-                    .map(Career::createDto)
-                    .collect(Collectors.toList());
-
-            GetBoardListDto dto = GetBoardListDto.builder()
-                    .boardId(board.getId())
-                    .title(board.getTitle())
-                    .content(board.getContent())
-                    .view(board.getView())
-                    .bookmarkCount(board.getBookmarkCount())
-                    .hashtags(hashtagNames)
-                    .arr(careerDtos)
-                    .username(board.getUser().getUsername())
-                    .createdAt(board.getCreatedAt())
-                    .modifiedAt(board.getModifiedAt())
-                    .build();
-
-            result.add(dto);
-        }
-
-        return result;
     }
 
     public Board getBoardWithHashtagsAndCommentsById(Long boardId) {
@@ -175,41 +133,19 @@ public class BoardServiceSupport {
         return boardRepository.getMyBoardList(user, pageable);
     }
 
-    public List<MyBoardDto> entityToMyBoardDtos(List<Board> myBoards) {
-
-        return myBoards.stream()
-                .map(board -> MyBoardDto.builder()
-                        .boardId(board.getId())
-                        .title(board.getTitle())
-                        .bookmarkCount(board.getBookmarkCount())
-                        .view(board.getView())
-                        .createdAt(board.getCreatedAt())
-                        .modifiedAt(board.getModifiedAt())
-                        .build())
-                .collect(Collectors.toList());
-
-    }
-
     public List<Board> getMyBookmarkBoardList(User user, Pageable pageable) {
         return boardRepository.getMyBookmarkBoardList(user, pageable);
     }
 
-    public List<MyBookmarkBoardDto> entityToMyBookmarkBoardDtos(List<Board> boards) {
-
-        return boards.stream()
-                .map(board -> MyBookmarkBoardDto.builder()
-                        .boardId(board.getId())
-                        .title(board.getTitle())
-                        .username(board.getUser().getUsername())
-                        .view(board.getView())
-                        .bookmarkCount(board.getBookmarkCount())
-                        .createdAt(board.getCreatedAt())
-                        .modifiedAt(board.getModifiedAt())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
     public List<Board> getMyCommentBoardList(User user, Pageable pageable) {
         return boardRepository.getMyCommentBoardList(user, pageable);
+    }
+
+    public boolean checkExistsBookmarkByBoardAndUser(Board board, User user) {
+        return bookmarkServiceSupport.checkExistsBookmarkByBoardAndUser(board,user);
+    }
+
+    public List<Comment> getCommentsWithUserInfoByBoardId(Long id) {
+        return commentServiceSupport.getCommentsWithUserInfoByBoardId(id);
     }
 }

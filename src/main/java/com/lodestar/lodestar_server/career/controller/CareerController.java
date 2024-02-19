@@ -1,5 +1,6 @@
 package com.lodestar.lodestar_server.career.controller;
 
+import com.lodestar.lodestar_server.career.dto.request.ModifyCareerRequestDto;
 import com.lodestar.lodestar_server.career.dto.request.SaveCareerRequestDto;
 import com.lodestar.lodestar_server.career.dto.response.CareerListDto;
 import com.lodestar.lodestar_server.career.dto.response.GetMyCareersResponseDto;
@@ -64,11 +65,9 @@ public class CareerController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
     public ResponseEntity<HttpStatus> modifyCareer(@AuthenticationPrincipal User user,
-                                                   @RequestBody CareerListDto careerListDto) {
+                                                   @RequestBody ModifyCareerRequestDto modifyCareerRequestDto) {
 
-        careerListDto.validateFieldsNotNull();
-
-        careerService.modifyCareer(user, careerListDto);
+        careerService.modifyCareer(user, modifyCareerRequestDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

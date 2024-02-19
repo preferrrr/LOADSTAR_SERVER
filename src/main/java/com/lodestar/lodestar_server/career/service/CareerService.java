@@ -1,8 +1,7 @@
 package com.lodestar.lodestar_server.career.service;
 
+import com.lodestar.lodestar_server.career.dto.request.ModifyCareerRequestDto;
 import com.lodestar.lodestar_server.career.dto.request.SaveCareerRequestDto;
-import com.lodestar.lodestar_server.career.dto.response.CareerDto;
-import com.lodestar.lodestar_server.career.dto.response.CareerListDto;
 import com.lodestar.lodestar_server.career.dto.response.GetMyCareersResponseDto;
 import com.lodestar.lodestar_server.career.entity.Career;
 import com.lodestar.lodestar_server.user.entity.User;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,7 +28,6 @@ public class CareerService {
         careerServiceSupport.saveCareers(user, saveCareerRequestDto.toEntities(user));
     }
 
-    @Transactional(readOnly = true)
     public GetMyCareersResponseDto getMyCareers(User user) {
 
         List<Career> careers = careerServiceSupport.getCareerByUser(user);
@@ -39,37 +36,19 @@ public class CareerService {
     }
 
 
-    public void modifyCareer(User user, CareerListDto careerListDto) {
+    @Transactional(readOnly = false)
+    public void modifyCareer(User user, ModifyCareerRequestDto modifyCareerRequestDto) {
 
-        List<Career> careers = careerServiceSupport.getCareerByUser(user);
+        //삭제할 커리어 조회
+        List<Career> deleteCareers = careerServiceSupport.getCareersByIds(modifyCareerRequestDto.getDeleteCareers());
 
-        List<String> rangeNames1 = new ArrayList<>();
-        for(Career career : careers) {
-            rangeNames1.add(career.getRangeName()); // 추가된 커리어를 저장햐기 위함
-        }
+        //자신의 커리어가 맞는지 확인
+        careerServiceSupport.checkIsOwnCareers(deleteCareers, user);
 
-        List<CareerDto> addCareers = new ArrayList<>();
+        //커리어 삭제
+        careerServiceSupport.deleteCareers(deleteCareers);
 
-        for(CareerDto careerDto : careerListDto.getArr()) { //추가된 커리어를 저장하기 위함
-            if(!rangeNames1.contains(careerDto.getRangeName())) {
-                addCareers.add(careerDto);
-            }
-        }
-
-        List<String> rangeName2 = new ArrayList<>();
-
-        for(CareerDto careerDto : careerListDto.getArr()) {
-            rangeName2.add(careerDto.getRangeName());
-        }
-        List<Career> deleteCareers = new ArrayList<>();
-
-        for(Career career : careers) {
-            if (!rangeName2.contains(career.getRangeName()))
-                deleteCareers.add(career);
-        }
-
-        careerRepositoryJdbc.saveCareers(user.getId(), addCareers);
-        careerRepository.deleteAllInBatch(deleteCareers);
-
+        //추가할 커리어 저장
+        careerServiceSupport.saveCareers(user, modifyCareerRequestDto.newCareerToEntity(user));
     }
 }

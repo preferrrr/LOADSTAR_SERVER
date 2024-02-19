@@ -19,4 +19,11 @@ public class CareerExceptionHandler {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UnauthorizedDeleteCareerException.class)
+    public ResponseEntity<?> handleUnauthorizedDeleteCareerException(final UnauthorizedDeleteCareerException e) {
+
+        log.error("{}", e.getMessage());
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
 }

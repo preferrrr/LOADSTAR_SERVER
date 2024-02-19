@@ -53,7 +53,7 @@ public class Board extends BaseEntity {
     private List<Bookmark> bookmarks = new ArrayList<>();
 
     @Builder
-    public Board(User user, String title, String content) {
+    private Board(User user, String title, String content) {
         this.user = user;
         this.title = title;
         this.content = content;
@@ -74,6 +74,14 @@ public class Board extends BaseEntity {
     public void modifyBoard(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public static Board create(User user, String title, String content) {
+        return Board.builder()
+                .user(user)
+                .title(title)
+                .content(content)
+                .build();
     }
 
 

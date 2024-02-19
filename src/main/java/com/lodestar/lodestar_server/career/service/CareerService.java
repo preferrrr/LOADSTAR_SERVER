@@ -1,12 +1,11 @@
 package com.lodestar.lodestar_server.career.service;
 
+import com.lodestar.lodestar_server.career.dto.request.SaveCareerRequestDto;
 import com.lodestar.lodestar_server.career.dto.response.CareerDto;
-import com.lodestar.lodestar_server.career.dto.response.CareerDtos;
+import com.lodestar.lodestar_server.career.dto.response.CareerListDto;
+import com.lodestar.lodestar_server.career.dto.response.GetMyCareersResponseDto;
 import com.lodestar.lodestar_server.career.entity.Career;
 import com.lodestar.lodestar_server.user.entity.User;
-import com.lodestar.lodestar_server.exception.DuplicateCareerException;
-import com.lodestar.lodestar_server.career.repository.CareerRepository;
-import com.lodestar.lodestar_server.career.repository.CareerRepositoryJdbc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,55 +14,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CareerService {
 
-    private final CareerRepository careerRepository;
-    private final CareerRepositoryJdbc careerRepositoryJdbc;
+    private final CareerServiceSupport careerServiceSupport;
 
-    public void saveCareer(User user, CareerDtos careerRequestDto) {
+    @Transactional(readOnly = false)
+    public void saveCareer(User user, SaveCareerRequestDto saveCareerRequestDto) {
 
-        if(careerRepository.existsByUser(user))
-            throw new DuplicateCareerException("userId : " + user.getId());
+        //이미 저장해둔 커리어가 있는지 확인
+        careerServiceSupport.checkExistsCareerForSave(user);
 
-//        List<Career> careerList = new ArrayList<>();
-//
-//        for(CareerDto dto : careerRequestDto.getArr()) {
-//            Career career = Career.builder()
-//                    .user(user)
-//                    .x(dto.getX())
-//                    .y1(dto.getY().get(0))
-//                    .y2(dto.getY().get(1))
-//                    .rangeName(dto.getRangeName())
-//                    .build();
-//            careerList.add(career);
-//        }
-//
-//        careerRepository.saveAll(careerList);
-        careerRepositoryJdbc.saveCareers(user.getId(), careerRequestDto.getArr());
-
+        //커리어 저장
+        careerServiceSupport.saveCareers(user, saveCareerRequestDto.toEntities(user));
     }
 
     @Transactional(readOnly = true)
-    public List<CareerDto> getCareer(User user) {
+    public GetMyCareersResponseDto getMyCareers(User user) {
 
-        List<CareerDto> careerDtos = new ArrayList<>();
+        List<Career> careers = careerServiceSupport.getCareerByUser(user);
 
-        List<Career> careers = careerRepository.findCareersByUser(user);
-
-        for(Career career: careers) {
-            careerDtos.add(career.createDto());
-        }
-
-        return careerDtos;
-
+        return GetMyCareersResponseDto.of(careers);
     }
 
 
-    public void modifyCareer(User user, CareerDtos careerDtos) {
-        //TODO : 삭제할 커리어 id와 추가할 커리어 dto를 따로 받아서 처리하도록. 그러면 내가 커리어를 줄 때 id까지 같이 줘야함.
-        List<Career> careers = careerRepository.findCareersByUser(user); // 원래 저장되어 있던 것들
+    public void modifyCareer(User user, CareerListDto careerListDto) {
+
+        List<Career> careers = careerServiceSupport.getCareerByUser(user);
 
         List<String> rangeNames1 = new ArrayList<>();
         for(Career career : careers) {
@@ -72,7 +50,7 @@ public class CareerService {
 
         List<CareerDto> addCareers = new ArrayList<>();
 
-        for(CareerDto careerDto : careerDtos.getArr()) { //추가된 커리어를 저장하기 위함
+        for(CareerDto careerDto : careerListDto.getArr()) { //추가된 커리어를 저장하기 위함
             if(!rangeNames1.contains(careerDto.getRangeName())) {
                 addCareers.add(careerDto);
             }
@@ -80,7 +58,7 @@ public class CareerService {
 
         List<String> rangeName2 = new ArrayList<>();
 
-        for(CareerDto careerDto : careerDtos.getArr()) {
+        for(CareerDto careerDto : careerListDto.getArr()) {
             rangeName2.add(careerDto.getRangeName());
         }
         List<Career> deleteCareers = new ArrayList<>();

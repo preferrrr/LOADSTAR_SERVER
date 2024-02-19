@@ -50,9 +50,7 @@ public class BoardController {
                                           @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                                               @Schema(description = "적용할 해시태그들",example = "알고리즘, 운영체제") @RequestParam(value = "hashtags", required = false) String[] hashtags) {
 
-        List<GetBoardListDto> response = boardService.getBoardList(pageable, hashtags);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(boardService.getBoardList(pageable, hashtags), HttpStatus.OK);
     }
 
 
@@ -91,9 +89,7 @@ public class BoardController {
                                       @AuthenticationPrincipal User user,
                                       @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
-        GetBoardResponseDto responseDto = boardService.getBoard(httpSession, user, boardId);
-
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(boardService.getBoard(httpSession, user, boardId), HttpStatus.OK);
     }
 
 
@@ -166,9 +162,7 @@ public class BoardController {
                                             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                             @AuthenticationPrincipal User user) {
 
-        List<MyBookmarkBoardDto> response = boardService.getMyBookmarkBoardList(user, pageable);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(boardService.getMyBookmarkBoardList(user, pageable), HttpStatus.OK);
     }
 
     /**
@@ -184,9 +178,7 @@ public class BoardController {
                                                     @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                                                        @AuthenticationPrincipal User user) {
 
-        List<GetBoardListDto> response = boardService.getMyCommentBoardList(user, pageable);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(boardService.getMyCommentBoardList(user, pageable), HttpStatus.OK);
     }
 
 
@@ -208,9 +200,7 @@ public class BoardController {
         if (keywords.length() == 0 || keywords.isEmpty() || keywords.isBlank())
             throw new InvalidRequestParameterException("invalid keywords"); // 검색어가 없을 때 204 NO CONTENT 반환.
 
-        List<GetBoardListDto> response = boardService.searchBoards(pageable, keywords);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(boardService.searchBoards(pageable, keywords), HttpStatus.OK);
     }
 
 

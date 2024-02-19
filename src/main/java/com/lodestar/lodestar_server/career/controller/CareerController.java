@@ -1,6 +1,8 @@
 package com.lodestar.lodestar_server.career.controller;
 
-import com.lodestar.lodestar_server.career.dto.response.CareerDtos;
+import com.lodestar.lodestar_server.career.dto.request.SaveCareerRequestDto;
+import com.lodestar.lodestar_server.career.dto.response.CareerListDto;
+import com.lodestar.lodestar_server.career.dto.response.GetMyCareersResponseDto;
 import com.lodestar.lodestar_server.user.entity.User;
 import com.lodestar.lodestar_server.career.service.CareerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,62 +18,57 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/careers")
 public class CareerController {
+
     private final CareerService careerService;
 
     /**
      * 커리어 등록(그래프 그리기)
      * /careers
-     * */
+     */
     @PostMapping("")
     @Operation(summary = "커리어 등록 (그래프 그리기)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity saveCareer(@AuthenticationPrincipal User user,
-                                        @RequestBody CareerDtos careerDtos) {
+    public ResponseEntity<HttpStatus> saveCareer(@AuthenticationPrincipal User user,
+                                                 @RequestBody SaveCareerRequestDto saveCareerRequestDto) {
 
-        careerDtos.validateFieldsNotNull();
-
-        careerService.saveCareer(user, careerDtos);
+        careerService.saveCareer(user, saveCareerRequestDto);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     /**
-     * 커리어 조회 (그래프조회)
+     * 나의 커리어 조회 (그래프조회)
      * /careers
-     * */
+     */
     @GetMapping("")
     @Operation(summary = "커리어 조회 (그래프 조회)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    public ResponseEntity<CareerDtos> getCareer(@AuthenticationPrincipal User user) {
+    public ResponseEntity<GetMyCareersResponseDto> getMyCareers(@AuthenticationPrincipal User user) {
 
-        CareerDtos dtos = CareerDtos.builder()
-                .arr(careerService.getCareer(user))
-                .build();
-
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
+        return new ResponseEntity<>(careerService.getMyCareers(user), HttpStatus.OK);
     }
 
     /**
      * 커리어 수정 (그래프 수정)
      * /careers
-     * */
+     */
     @PatchMapping("")
     @Operation(summary = "커리어 수정 (그래프 수정)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity modifyCareer(@AuthenticationPrincipal User user,
-                                          @RequestBody CareerDtos careerDtos) {
+    public ResponseEntity<HttpStatus> modifyCareer(@AuthenticationPrincipal User user,
+                                                   @RequestBody CareerListDto careerListDto) {
 
-        careerDtos.validateFieldsNotNull();
+        careerListDto.validateFieldsNotNull();
 
-        careerService.modifyCareer(user, careerDtos);
+        careerService.modifyCareer(user, careerListDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

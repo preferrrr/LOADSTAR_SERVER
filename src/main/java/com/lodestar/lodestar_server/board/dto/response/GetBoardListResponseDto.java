@@ -1,17 +1,15 @@
 package com.lodestar.lodestar_server.board.dto.response;
 
 import com.lodestar.lodestar_server.board.entity.Board;
-import com.lodestar.lodestar_server.career.dto.response.CareerResponseDto;
+import com.lodestar.lodestar_server.career.dto.response.CareerListDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@Builder
 @Schema(description = "메인 페이지 게시글 목록")
 public class GetBoardListResponseDto {
 
@@ -34,14 +32,14 @@ public class GetBoardListResponseDto {
         @Schema(description = "게시글에 달린 해시태그들", example = "전공자, 현직자, React")
         private List<String> hashtags;
         @Schema(description = "게시글 작성자의 경력들")
-        private List<CareerResponseDto> careerResponseDtos;
+        private CareerListDto careers;
         @Schema(description = "작성 시간")
         private LocalDateTime createdAt;
         @Schema(description = "수정 시간")
         private LocalDateTime modifiedAt;
 
         @Builder
-        private BoardListDto(Long boardId, String title, String username, String content, Integer bookmarkCount, Integer view, List<String> hashtags, List<CareerResponseDto> careerResponseDtos, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        private BoardListDto(Long boardId, String title, String username, String content, Integer bookmarkCount, Integer view, List<String> hashtags, CareerListDto careers, LocalDateTime createdAt, LocalDateTime modifiedAt) {
             this.boardId = boardId;
             this.title = title;
             this.username = username;
@@ -49,7 +47,7 @@ public class GetBoardListResponseDto {
             this.bookmarkCount = bookmarkCount;
             this.view = view;
             this.hashtags = hashtags;
-            this.careerResponseDtos = careerResponseDtos;
+            this.careers = careers;
             this.createdAt = createdAt;
             this.modifiedAt = modifiedAt;
         }
@@ -64,9 +62,7 @@ public class GetBoardListResponseDto {
                     .hashtags(board.getHashtags().stream()
                             .map(hashtag -> hashtag.getId().getHashtagName())
                             .collect(Collectors.toList()))
-                    .careerResponseDtos(board.getUser().getCareers().stream()
-                            .map(career -> CareerResponseDto.of(career))
-                            .collect(Collectors.toList()))
+                    .careers(CareerListDto.of(board.getUser().getCareers()))
                     .username(board.getUser().getUsername())
                     .createdAt(board.getCreatedAt())
                     .modifiedAt(board.getModifiedAt())
@@ -82,7 +78,7 @@ public class GetBoardListResponseDto {
 
     public static GetBoardListResponseDto of(List<Board> boards) {
         return GetBoardListResponseDto.builder()
-                .boards(boards.stream()
+                .boardListDtoList(boards.stream()
                         .map(board -> BoardListDto.of(board))
                         .collect(Collectors.toList()))
                 .build();

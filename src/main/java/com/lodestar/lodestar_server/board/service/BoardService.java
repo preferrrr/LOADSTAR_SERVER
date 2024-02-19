@@ -1,34 +1,27 @@
 package com.lodestar.lodestar_server.board.service;
 
-import com.lodestar.lodestar_server.board.dto.response.GetBoardListDto;
+import com.lodestar.lodestar_server.board.dto.response.GetBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
-import com.lodestar.lodestar_server.board.dto.response.MyBoardDto;
-import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardDto;
+import com.lodestar.lodestar_server.board.dto.response.GetMyBoardListResponseDto;
+import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardListResponseDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.bookmark.service.BookmarkServiceSupport;
 import com.lodestar.lodestar_server.career.dto.response.CareerDto;
 import com.lodestar.lodestar_server.career.service.CareerServiceSupport;
-import com.lodestar.lodestar_server.comment.dto.response.CommentDto;
 import com.lodestar.lodestar_server.comment.entity.Comment;
 import com.lodestar.lodestar_server.board.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.board.dto.request.ModifyBoardDto;
 import com.lodestar.lodestar_server.comment.service.CommentServiceSupport;
-import com.lodestar.lodestar_server.exception.AuthFailException;
-import com.lodestar.lodestar_server.exception.NotFoundException;
 import com.lodestar.lodestar_server.hashtag.entity.BoardHashtag;
 import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -57,11 +50,11 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public List<GetBoardListDto> getBoardList(Pageable pageable, String[] hashtags) {
+    public GetBoardListResponseDto getBoardList(Pageable pageable, String[] hashtags) {
 
         List<Board> boards = boardServiceSupport.getBoardList(pageable, hashtags);
 
-        return boardServiceSupport.createGetBoardListDtos(boards);
+        return GetBoardListResponseDto.of(boards);
     }
 
 
@@ -74,47 +67,13 @@ public class BoardService {
         //조회수 증가
         boardServiceSupport.increaseViewIfNotViewedBefore(board, user, httpSession);
 
-        //작성자의 커리어
-        List<CareerDto> careerDtos = careerServiceSupport.getCareerDtoList(user);
-
         //내가 북마크 해뒀는지 여부
         boolean isBookmarked = bookmarkServiceSupport.checkExistsBookmarkByBoardAndUser(board, user);
 
-        //게시글 해시태그
-        List<String> hashtagNames = board.getHashtags().stream()
-                .map(hashtag -> hashtag.getId().getHashtagName())
-                .collect(Collectors.toList());
-
         //댓글
-        List<Comment> commentList = commentServiceSupport.getCommentsWithUserInfoByBoardId(board.getId());
+        List<Comment> comments = commentServiceSupport.getCommentsWithUserInfoByBoardId(board.getId());
 
-        List<CommentDto> comments = commentList.stream()
-                .map(comment -> CommentDto.builder()
-                        .commentId(comment.getId())
-                        .commentContent(comment.getContent())
-                        .createdAt(comment.getCreatedAt())
-                        .modifiedAt(comment.getModifiedAt())
-                        .userId(comment.getUser().getId())
-                        .username(comment.getUser().getUsername())
-                        .build())
-                .collect(Collectors.toList());
-
-
-        return GetBoardResponseDto.builder()
-                .boardId(board.getId())
-                .title(board.getTitle())
-                .content(board.getContent())
-                .createdAt(board.getCreatedAt())
-                .modifiedAt(board.getModifiedAt())
-                .view(board.getView())
-                .bookmarkCount(board.getBookmarkCount())
-                .userId(user.getId())
-                .username(user.getUsername())
-                .arr(careerDtos)
-                .bookmark(isBookmarked)
-                .hashtags(hashtagNames)
-                .comments(comments)
-                .build();
+        return GetBoardResponseDto.of(board, comments, isBookmarked);
     }
 
 
@@ -147,14 +106,13 @@ public class BoardService {
         List<BoardHashtag> deleteHashtags = boardServiceSupport.getDeleteHashtags(board.getHashtags(), modifyBoardDto.getHashtags());
         //삭제할 해시태그들
 
-
         boardServiceSupport.deleteHashtags(deleteHashtags);
         boardServiceSupport.saveHashtags(boardId, addHashtags);
     }
 
 
     @Transactional(readOnly = true)
-    public List<GetBoardListDto> searchBoards(Pageable pageable, String keywords) {
+    public GetBoardListResponseDto searchBoards(Pageable pageable, String keywords) {
 
         //키워드로 검색한 게시글들의 id
         List<Long> boardIds = boardServiceSupport.searchBoardByKeyword(pageable, keywords);
@@ -162,33 +120,34 @@ public class BoardService {
         //id로 게시글 검색
         List<Board> boards = boardServiceSupport.findBoardsWhereInBoardIds(boardIds);
 
-        return boardServiceSupport.createGetBoardListDtos(boards);
-    }
-
-    @Transactional(readOnly = true)
-    public List<MyBoardDto> getMyBoardList(User user, Pageable pageable) {
-
-        List<Board> myBoards = boardServiceSupport.getMyBoardList(user, pageable);
-
-        return boardServiceSupport.entityToMyBoardDtos(myBoards);
+        return GetBoardListResponseDto.of(boards);
     }
 
 
     @Transactional(readOnly = true)
-    public List<MyBookmarkBoardDto> getMyBookmarkBoardList(User user, Pageable pageable) {
+    public GetMyBoardListResponseDto getMyBoardList(User user, Pageable pageable) {
+
+        List<Board> boards = boardServiceSupport.getMyBoardList(user, pageable);
+
+        return GetMyBoardListResponseDto.of(boards);
+    }
+
+
+    @Transactional(readOnly = true)
+    public MyBookmarkBoardListResponseDto getMyBookmarkBoardList(User user, Pageable pageable) {
 
         List<Board> boards = boardServiceSupport.getMyBookmarkBoardList(user, pageable);
 
-        return boardServiceSupport.entityToMyBookmarkBoardDtos(boards);
+        return MyBookmarkBoardListResponseDto.of(boards);
     }
 
 
     @Transactional(readOnly = true)
-    public List<GetBoardListDto> getMyCommentBoardList(User user, Pageable pageable) {
+    public GetBoardListResponseDto getMyCommentBoardList(User user, Pageable pageable) {
 
         List<Board> boards = boardServiceSupport.getMyCommentBoardList(user, pageable);
 
-        return boardServiceSupport.createGetBoardListDtos(boards);
+        return GetBoardListResponseDto.of(boards);
     }
 
 

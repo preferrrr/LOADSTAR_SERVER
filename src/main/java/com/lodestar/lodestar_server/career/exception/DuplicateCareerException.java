@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.exception;
+package com.lodestar.lodestar_server.career.exception;
 
 import lombok.Getter;
 
@@ -6,8 +6,7 @@ public class DuplicateCareerException extends RuntimeException{
     @Getter
     private final String NAME;
 
-    public DuplicateCareerException(String msg) {
-        super(msg);
+    public DuplicateCareerException() {
         NAME = "DuplicateCareerException";
     }
 }

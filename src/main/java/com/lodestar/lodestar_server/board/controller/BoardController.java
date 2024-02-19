@@ -155,7 +155,7 @@ public class BoardController {
     @Operation(summary = "북마크한 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBookmarkBoardListResponseDto.class)))})
-    public ResponseEntity<List<MyBookmarkBoardListResponseDto>> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<MyBookmarkBoardListResponseDto> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
                                             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                                                                        @AuthenticationPrincipal User user) {

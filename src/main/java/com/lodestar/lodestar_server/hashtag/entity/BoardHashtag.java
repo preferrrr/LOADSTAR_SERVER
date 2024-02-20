@@ -21,7 +21,7 @@ public class BoardHashtag {
     private Board board;
 
     @Builder
-    public BoardHashtag(Board board, String hashtagName) {
+    private BoardHashtag(Board board, String hashtagName) {
         BoardHashtagId id = BoardHashtagId.builder()
                 .boardId(board.getId())
                 .hashtagName(hashtagName)
@@ -29,5 +29,12 @@ public class BoardHashtag {
 
         this.id = id;
         this.board = board;
+    }
+
+    public static BoardHashtag create(Board board, String hashtagName) {
+        return BoardHashtag.builder()
+                .board(board)
+                .hashtagName(hashtagName)
+                .build();
     }
 }

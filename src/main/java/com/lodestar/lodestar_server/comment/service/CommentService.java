@@ -1,94 +1,65 @@
 package com.lodestar.lodestar_server.comment.service;
 
 
+import com.lodestar.lodestar_server.board.service.BoardServiceSupport;
 import com.lodestar.lodestar_server.comment.dto.request.CreateCommentDto;
 import com.lodestar.lodestar_server.comment.dto.request.ModifyCommentDto;
-import com.lodestar.lodestar_server.comment.dto.response.MyCommentDto;
+import com.lodestar.lodestar_server.comment.dto.response.MyCommentResponseDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.comment.entity.Comment;
 import com.lodestar.lodestar_server.user.entity.User;
-import com.lodestar.lodestar_server.exception.AuthFailException;
-import com.lodestar.lodestar_server.exception.NotFoundException;
-import com.lodestar.lodestar_server.board.repository.BoardRepository;
-import com.lodestar.lodestar_server.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Slf4j
 public class CommentService {
 
-    private final BoardRepository boardRepository;
-    private final CommentRepository commentRepository;
+    private final CommentServiceSupport commentServiceSupport;
+    private final BoardServiceSupport boardServiceSupport;
 
-
+    @Transactional(readOnly = false)
     public void createComment(User user, CreateCommentDto createCommentDto) {
 
-        Board board= boardRepository.getReferenceById(createCommentDto.getBoardId());
+        Board board = boardServiceSupport.getBoardById(createCommentDto.getBoardId());
 
-        Comment comment = Comment.builder()
-                .user(user)
-                .board(board)
-                .content(createCommentDto.getContent())
-                .build();
+        Comment comment = Comment.create(user, board, createCommentDto.getContent());
 
-        commentRepository.save(comment);
+        commentServiceSupport.saveComment(comment);
     }
 
+    @Transactional(readOnly = false)
     public void deleteComment(User user, Long commentId) {
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("[delete comment] commentId: " + commentId));
+        Comment comment = commentServiceSupport.findCommentById(commentId);
 
-        if(!comment.getUser().getId().equals(user.getId()))
-            throw new AuthFailException("delete comment : " + commentId);
+        commentServiceSupport.checkIsCommentWriterForDelete(comment, user);
 
-        commentRepository.deleteById(commentId);
+
+        commentServiceSupport.deleteComment(comment);
 
     }
 
+    @Transactional(readOnly = false)
     public void modifyComment(User user, Long commentId, ModifyCommentDto modifyCommentDto) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("[modify comment] commentId: " + commentId));
 
-        if(!comment.getUser().getId().equals(user.getId()))
-            throw new AuthFailException("modify Comment Id: " + commentId);
+        Comment comment = commentServiceSupport.findCommentById(commentId);
+
+        commentServiceSupport.checkIsCommentWriterForModify(comment, user);
 
         comment.modifyContent(modifyCommentDto.getContent());
 
-
     }
 
-    @Transactional(readOnly = true)
-    public List<MyCommentDto> getMyComments(User user, Pageable pageable) {
+    public MyCommentResponseDto getMyComments(User user, Pageable pageable) {
 
-        List<Comment> comments = commentRepository.getMyComments(user, pageable);
+        List<Comment> comments = commentServiceSupport.getMyComments(user, pageable);
 
-        List<MyCommentDto> result = new ArrayList<>();
-
-        for (Comment comment : comments) {
-
-            Board board = comment.getBoard();
-
-            MyCommentDto dto = MyCommentDto.builder()
-                    .commentContent(comment.getContent())
-                    .commentCreatedAt(comment.getCreatedAt())
-                    .commentModifiedAt(comment.getModifiedAt())
-                    .boardId(board.getId())
-                    .boardTitle(board.getTitle())
-                    .bookmarkCount(board.getBookmarkCount())
-                    .view(board.getView())
-                    .build();
-
-            result.add(dto);
-        }
-
-        return result;
+        return MyCommentResponseDto.of(comments);
     }
 }

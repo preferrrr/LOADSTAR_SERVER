@@ -3,7 +3,18 @@ package com.lodestar.lodestar_server.user.dto.response;
 import lombok.*;
 
 @Getter
-@Builder
 public class FindIdResponseDto {
-    private String message;
+
+    private String username;
+
+    @Builder
+    private FindIdResponseDto(String username) {
+        this.username = username;
+    }
+
+    public static FindIdResponseDto of(String username) {
+        return FindIdResponseDto.builder()
+                .username(username)
+                .build();
+    }
 }

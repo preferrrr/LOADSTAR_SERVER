@@ -3,7 +3,6 @@ package com.lodestar.lodestar_server.user.controller;
 import com.lodestar.lodestar_server.user.dto.request.ModifyPasswordRequestDto;
 import com.lodestar.lodestar_server.user.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.user.dto.request.SignUpRequestDto;
-import com.lodestar.lodestar_server.user.dto.response.LoginResponseDto;
 import com.lodestar.lodestar_server.user.dto.response.FindIdResponseDto;
 
 import com.lodestar.lodestar_server.user.entity.User;
@@ -37,14 +36,14 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "400", description = "아이디 혹은 비밀번호 틀림")
     })
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto,
+    public ResponseEntity<HttpStatus> login(@RequestBody LoginRequestDto loginRequestDto,
                                                   HttpSession httpSession) {
 
         loginRequestDto.validateFieldsNotNull();
 
-        ResponseEntity response = userService.login(httpSession, loginRequestDto);
+        userService.login(httpSession, loginRequestDto);
 
-        return response;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**회원가입
@@ -59,7 +58,7 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "중복된 이메일이나 아이디 존재")
 
     })
-    public ResponseEntity signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<HttpStatus> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
 
         signUpRequestDto.validateFieldsNotNull();
 
@@ -79,9 +78,9 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "중복되는 아이디 존재")
 
     })
-    public ResponseEntity checkUsername(@Schema(name = "아이디") @RequestParam("username") String username) {
+    public ResponseEntity<HttpStatus> checkUsername(@Schema(name = "아이디") @RequestParam("username") String username) {
 
-        userService.dupCheckUsername(username);
+        userService.checkExistsUsername(username);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -99,9 +98,7 @@ public class UserController {
     })
     public ResponseEntity<FindIdResponseDto> findId(@RequestParam("email") String email) {
 
-        FindIdResponseDto responseDto = userService.findId(email);
-
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(userService.findId(email), HttpStatus.OK);
     }
 
     /**
@@ -114,7 +111,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "현재 비밀번호 틀림.")
     })
-    public ResponseEntity modifyPassword(@AuthenticationPrincipal User user, @RequestBody ModifyPasswordRequestDto requestDto) {
+    public ResponseEntity<HttpStatus> modifyPassword(@AuthenticationPrincipal User user, @RequestBody ModifyPasswordRequestDto requestDto) {
 
         requestDto.validateFieldsNotNull();
 
@@ -125,7 +122,7 @@ public class UserController {
 
 
     @GetMapping("/logout")
-    public ResponseEntity logout(HttpSession httpSession) {
+    public ResponseEntity<HttpStatus> logout(HttpSession httpSession) {
 
         userService.logout(httpSession);
 

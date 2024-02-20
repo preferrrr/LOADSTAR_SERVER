@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.exception;
+package com.lodestar.lodestar_server.user.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -10,8 +10,7 @@ public class DuplicateUsernameException extends RuntimeException {
     @Getter
     private final String NAME;
 
-    public DuplicateUsernameException(String msg) {
-        super(msg);
+    public DuplicateUsernameException() {
         NAME = "DuplicateUsernameException";
     }
 }

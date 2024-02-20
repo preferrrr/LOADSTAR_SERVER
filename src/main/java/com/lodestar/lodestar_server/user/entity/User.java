@@ -45,11 +45,20 @@ public class User extends BaseEntity implements UserDetails, Persistable<Long> {
     private List<String> roles = new ArrayList<>();
 
     @Builder
-    public User(String username, String password, String email, List<String> roles) {
+    private User(String username, String password, String email, List<String> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.roles = roles;
+    }
+
+    public static User create(String username, String password, String email, List<String> roles) {
+        return User.builder()
+                .username(username)
+                .password(password)
+                .email(email)
+                .roles(roles)
+                .build();
     }
 
     public void modifyPassword(String password) {

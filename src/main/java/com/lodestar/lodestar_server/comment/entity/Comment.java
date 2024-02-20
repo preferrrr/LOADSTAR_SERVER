@@ -36,7 +36,7 @@ public class Comment extends BaseEntity {
     String content;
 
     @Builder
-    public Comment(Board board, User user, String content) {
+    private Comment(Board board, User user, String content) {
         this.board = board;
         this.user = user;
         this.content = content;
@@ -46,4 +46,11 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
+    public static Comment create(User user, Board board, String content) {
+        return Comment.builder()
+                .user(user)
+                .board(board)
+                .content(content)
+                .build();
+    }
 }

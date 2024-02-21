@@ -11,6 +11,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +90,7 @@ public class MailServiceSupport {
         return key.toString();
     }
 
+    @Async
     public void sendMail(MimeMessage message) {
         emailSender.send(message);
     }

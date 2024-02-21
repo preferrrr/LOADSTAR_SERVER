@@ -38,8 +38,15 @@ public class Mail implements Persistable<Long> {
     }
 
     @Builder
-    public Mail(String email, String authKey) {
+    private Mail(String email, String authKey) {
         this.email = email;
         this.authKey = authKey;
+    }
+
+    public static Mail create(String email, String authKey) {
+        return Mail.builder()
+                .email(email)
+                .authKey(authKey)
+                .build();
     }
 }

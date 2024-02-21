@@ -2,7 +2,7 @@ package com.lodestar.lodestar_server.email.controller;
 
 import com.lodestar.lodestar_server.email.dto.request.EmailRequestDto;
 import com.lodestar.lodestar_server.email.dto.request.FindPwdRequestDto;
-import com.lodestar.lodestar_server.email.service.EmailService;
+import com.lodestar.lodestar_server.email.service.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/emails")
 @AllArgsConstructor
-public class EmailController {
+public class MailController {
 
-    private final EmailService emailService;
+    private final MailService mailService;
 
     /**
      * 이메일 인증코드 전송, 중간에 중복체크도 함
@@ -31,11 +31,11 @@ public class EmailController {
             @ApiResponse(responseCode = "409", description = "해당 메일로 가입한 유저 존재"),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity checkEmail(@RequestBody EmailRequestDto emailRequestDto) throws Exception {
+    public ResponseEntity<HttpStatus> checkEmail(@RequestBody EmailRequestDto emailRequestDto) throws Exception {
 
         emailRequestDto.validateFieldsNotNull();
 
-        emailService.checkEmail(emailRequestDto.getEmail());
+        mailService.checkEmail(emailRequestDto.getEmail());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -51,14 +51,12 @@ public class EmailController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "인증 실패")
     })
-    public ResponseEntity checkKey(@Schema(name = "이메일") @RequestParam("email") String email,
-                                      @Schema(name = "인증코드") @RequestParam("key") String key) {
+    public ResponseEntity<HttpStatus> checkAuthenticationKey(@Schema(name = "이메일") @RequestParam("email") String email,
+                                                             @Schema(name = "인증코드") @RequestParam("key") String key) {
 
-        if (emailService.checkKey(email, key)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        mailService.checkAuthenticationKey(email, key);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**
@@ -74,11 +72,11 @@ public class EmailController {
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 아이디 없음."),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity findPwdSendEmail(@RequestBody FindPwdRequestDto requestDto) throws Exception {
+    public ResponseEntity<HttpStatus> sendMailToFindPassword(@RequestBody FindPwdRequestDto requestDto) throws Exception {
 
         requestDto.validateFieldsNotNull();
 
-        emailService.findPwdSendEmail(requestDto.getEmail(), requestDto.getUsername());
+        mailService.sendMailToFindPassword(requestDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
 

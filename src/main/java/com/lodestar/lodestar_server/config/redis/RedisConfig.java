@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config;
+package com.lodestar.lodestar_server.config.redis;
 
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,18 +28,17 @@ public class RedisConfig {
 
     //레디스와 연결
     @Bean
-    public RedisConnectionFactory redisConnectionFactory () {
+    public RedisConnectionFactory sessionRedisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
-        //redisStandaloneConfiguration.setPassword(redisPassword);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> sessionRedisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setConnectionFactory(sessionRedisConnectionFactory());
 
         redisTemplate.setKeySerializer(new StringRedisSerializer());
 
@@ -47,7 +46,6 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(jsonSerializer);
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(jsonSerializer);
-
 
         return redisTemplate;
     }

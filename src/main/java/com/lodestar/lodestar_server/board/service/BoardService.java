@@ -47,6 +47,7 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "boardList", key = "#hashtags", condition = "#hashtags.length > 0")
     public GetBoardListResponseDto getBoardList(Pageable pageable, String[] hashtags) {
 
         List<Board> boards = boardServiceSupport.getBoardList(pageable, hashtags);

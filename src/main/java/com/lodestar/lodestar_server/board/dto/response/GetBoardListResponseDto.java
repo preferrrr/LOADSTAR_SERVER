@@ -9,13 +9,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
 @Schema(description = "메인 페이지 게시글 목록")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class GetBoardListResponseDto {
 
     private List<BoardListDto> boards;
 
-
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @Getter
     static class BoardListDto {
         @Schema(description = "게시글 인덱스", example = "1")
         private Long boardId;

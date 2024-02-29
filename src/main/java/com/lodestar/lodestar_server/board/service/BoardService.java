@@ -5,18 +5,14 @@ import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetMyBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardListResponseDto;
 import com.lodestar.lodestar_server.board.entity.Board;
-import com.lodestar.lodestar_server.bookmark.service.BookmarkServiceSupport;
-import com.lodestar.lodestar_server.career.dto.response.CareerDto;
-import com.lodestar.lodestar_server.career.service.CareerServiceSupport;
 import com.lodestar.lodestar_server.comment.entity.Comment;
 import com.lodestar.lodestar_server.board.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.board.dto.request.ModifyBoardDto;
-import com.lodestar.lodestar_server.comment.service.CommentServiceSupport;
 import com.lodestar.lodestar_server.hashtag.entity.BoardHashtag;
 import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -76,6 +72,7 @@ public class BoardService {
     }
 
 
+    @CacheEvict(value = "board", key = "#boardId")
     public void deleteBoard(User user, Long boardId) {
 
         //삭제할 게시글
@@ -88,6 +85,7 @@ public class BoardService {
         boardServiceSupport.deleteBoardById(boardId);
     }
 
+    @CacheEvict(value = "board", key = "#boardId")
     public void modifyBoard(User user, Long boardId, ModifyBoardDto modifyBoardDto) {
 
         //수정할 게시글

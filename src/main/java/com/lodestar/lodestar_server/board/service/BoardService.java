@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,10 @@ public class BoardService {
     private final BoardServiceSupport boardServiceSupport;
 
     @Transactional(readOnly = false)
+    @Caching(evict = {
+            @CacheEvict(value = "boardList", allEntries = true),
+            @CacheEvict(value = "keyword", allEntries = true)
+    })
     public void saveBoard(User user, CreateBoardDto createBoardDto) {
 
         //Board 엔티티 생성
@@ -109,6 +114,7 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "keyword", key = "#keywords", condition = "#keywords.length() != 0")
     public GetBoardListResponseDto searchBoards(Pageable pageable, String keywords) {
 
         //키워드로 검색한 게시글들의 id

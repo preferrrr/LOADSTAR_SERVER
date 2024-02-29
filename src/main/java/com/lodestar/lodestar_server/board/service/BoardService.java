@@ -17,6 +17,7 @@ import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +56,7 @@ public class BoardService {
 
 
     @Transactional(readOnly = false)
+    @Cacheable(value = "board", key = "#boardId", condition = "#boardId != null", cacheManager = "cacheManager")
     public GetBoardResponseDto getBoard(HttpSession httpSession, User user, Long boardId) {
 
         //조회할 게시글

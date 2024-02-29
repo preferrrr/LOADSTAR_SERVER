@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Schema(name = "그래프 요소들")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CareerListDto {
 
     @Schema(description = "각 요소들 리스트")

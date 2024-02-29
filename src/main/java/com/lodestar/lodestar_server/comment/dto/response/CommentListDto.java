@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 
 @Getter
 @Schema(description = "댓글 응답 값들")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentListDto {
 
     private List<CommentDto> commentDtoList;
 
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static class CommentDto {
         @Schema(description = "댓글 인덱스", example = "1")
         private Long commentId;

@@ -9,6 +9,7 @@ import java.util.List;
 
 @Getter
 @Schema(description = "사용자 경력")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CareerDto {
 
     @Schema(example = "알고리즘")

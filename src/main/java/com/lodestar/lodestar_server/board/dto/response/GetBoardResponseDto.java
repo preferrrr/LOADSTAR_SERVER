@@ -1,5 +1,10 @@
 package com.lodestar.lodestar_server.board.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.career.dto.response.CareerListDto;
 import com.lodestar.lodestar_server.comment.dto.response.CommentListDto;
@@ -13,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Schema(description = "게시글 조회 응답")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetBoardResponseDto {
 
     @Schema(description = "게시글 인덱스", example = "1")

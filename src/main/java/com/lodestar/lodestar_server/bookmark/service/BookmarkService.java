@@ -5,7 +5,6 @@ import com.lodestar.lodestar_server.bookmark.dto.request.SaveBookmarkDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.bookmark.entity.Bookmark;
 import com.lodestar.lodestar_server.user.entity.User;
-import com.lodestar.lodestar_server.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

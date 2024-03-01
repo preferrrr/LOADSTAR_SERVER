@@ -64,7 +64,7 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 
 
 ## :link: 아키텍쳐 구조
-![아키텍쳐2](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/b424e61b-ad27-4be8-8267-6d183c1e1df3)
+![아키텍쳐 2](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/58e88b38-af9e-4938-b195-0f7ce2ad122d)
 </br>
 
 ## :link: 배포하면서...

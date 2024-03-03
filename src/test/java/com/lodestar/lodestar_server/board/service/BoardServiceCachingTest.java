@@ -1,5 +1,6 @@
 package com.lodestar.lodestar_server.board.service;
 
+import com.lodestar.lodestar_server.board.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.board.dto.request.ModifyBoardDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
@@ -21,19 +22,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
@@ -255,6 +252,40 @@ class BoardServiceCachingTest {
 
         /** redis에 캐싱되어 있어야 함 */
         assertThat(cacheManager.getCache("boardList").get(hashtags)).isNotNull();
+
+    }
+
+    @DisplayName("게시글을 저장하면 boardList와 keyword 캐시가 지워진다.")
+    @Test
+    void saveBoardCachingTest() {
+
+        /** given */
+        Pageable pageable = PageRequest.of(0, 10);
+        String[] hashtags = {"hashtag1", "hashtag2"};
+        String keyword = "content";
+
+        //캐싱해두기 위한 조회
+        boardService.getBoardList(pageable, hashtags);
+        boardService.searchBoards(pageable, keyword);
+
+        willDoNothing().given(boardServiceSupport).saveBoard(any(Board.class));
+        willDoNothing().given(boardServiceSupport).saveHashtags(anyLong(), anyList());
+
+        CreateBoardDto createBoardDto = mock(CreateBoardDto.class);
+
+        /** when */
+
+        //게시글 저장
+        boardService.saveBoard(user, createBoardDto);
+
+        /** then */
+
+        verify(boardServiceSupport, times(1)).saveBoard(any(Board.class));
+        verify(boardServiceSupport, times(1)).saveHashtags(any(), anyList());
+
+        //캐시가 flush 된다.
+        assertThat(cacheManager.getCache("keyword").get(keyword)).isNull();
+        assertThat(cacheManager.getCache("boardList").get(hashtags)).isNull();
 
     }
 

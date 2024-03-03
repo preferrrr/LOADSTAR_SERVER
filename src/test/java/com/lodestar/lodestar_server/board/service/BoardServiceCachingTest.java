@@ -1,6 +1,7 @@
 package com.lodestar.lodestar_server.board.service;
 
 import com.lodestar.lodestar_server.board.dto.request.ModifyBoardDto;
+import com.lodestar.lodestar_server.board.dto.response.GetBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.board.repository.BoardRepository;
@@ -15,13 +16,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
 
@@ -181,5 +182,37 @@ class BoardServiceCachingTest {
 
     }
 
+    @DisplayName("keyword로 검색된 적이 있으면, 캐시에 저장된 게시글 리스트를 반환한다.")
+    @Test
+    void searchBoardsCachingTest() {
+
+        /** given */
+        Board board2 = Board.create(user, "title2","content2");
+        List<BoardHashtag> hashtagList = List.of(
+                BoardHashtag.create(board2, "hashtag3"),
+                BoardHashtag.create(board2, "hashtag4"));
+        boardRepository.save(board2);
+        hashtagRepository.saveAll(hashtagList);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        String keyword = "title";
+
+        //키워드로 검색된 게시글 리스트가 캐시에 저장된다.
+        GetBoardListResponseDto dto = boardService.searchBoards(pageable, keyword);
+
+        /** when */
+
+        //DB를 조회하지 않고 캐시에서 조회해야 한다.
+        GetBoardListResponseDto cache = boardService.searchBoards(pageable, keyword);
+
+        /** then */
+
+        //키워드로 저장된 캐시가 있다.
+        assertThat(cacheManager.getCache("keyword").get(keyword)).isNotNull();
+
+        assertThat(dto.getBoards().size()).isEqualTo(2);
+        assertThat(dto.getBoards().size()).isEqualTo(cache.getBoards().size());
+
+    }
 
 }

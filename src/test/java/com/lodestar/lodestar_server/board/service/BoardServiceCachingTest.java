@@ -1,5 +1,6 @@
 package com.lodestar.lodestar_server.board.service;
 
+import com.lodestar.lodestar_server.board.dto.request.ModifyBoardDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.board.repository.BoardRepository;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 
@@ -135,6 +139,44 @@ class BoardServiceCachingTest {
         verify(boardServiceSupport, times(1)).deleteBoardById(anyLong());
 
         /** 캐시에 데이터가 없어야 함 */
+        assertThat(cacheManager.getCache("board").get(board.getId())).isNull();
+
+    }
+
+
+    @Test
+    @DisplayName("게시글을 수정하면, 캐시에 저장되어 있던 게시글 조회 데이터가 삭제 된다.")
+    void modifyBoardCachingTest() {
+
+        /** given */
+        willDoNothing().given(boardServiceSupport).increaseViewIfNotViewedBefore(any(Board.class), any(User.class), any(HttpSession.class));
+
+        //캐시에 저장하기 위한 조회
+        boardService.getBoard(session, user, board.getId());
+
+        ModifyBoardDto modifyBoardDto = mock(ModifyBoardDto.class);
+
+        willReturn(board).given(boardServiceSupport).getBoardWithHashtagsById(anyLong());
+        willDoNothing().given(boardServiceSupport).checkIsBoardWriterForModify(any(Board.class), any(User.class));
+        willReturn(mock(List.class)).given(boardServiceSupport).getAddHashtags(anyList(), anyList());
+        willReturn(mock(List.class)).given(boardServiceSupport).getDeleteHashtags(anyList(), anyList());
+        willDoNothing().given(boardServiceSupport).deleteHashtags(anyList());
+        willDoNothing().given(boardServiceSupport).saveHashtags(anyLong(), anyList());
+
+        /** when */
+
+        boardService.modifyBoard(user, board.getId(), modifyBoardDto);
+
+        /** then */
+
+        verify(boardServiceSupport, times(1)).getBoardWithHashtagsById(anyLong());
+        verify(boardServiceSupport, times(1)).checkIsBoardWriterForModify(any(Board.class), any(User.class));
+        verify(boardServiceSupport, times(1)).getAddHashtags(anyList(), anyList());
+        verify(boardServiceSupport, times(1)).getDeleteHashtags(anyList(), anyList());
+        verify(boardServiceSupport, times(1)).deleteHashtags(anyList());
+        verify(boardServiceSupport, times(1)).saveHashtags(anyLong(), anyList());
+
+        //캐시에 데이터가 없어야 함
         assertThat(cacheManager.getCache("board").get(board.getId())).isNull();
 
     }

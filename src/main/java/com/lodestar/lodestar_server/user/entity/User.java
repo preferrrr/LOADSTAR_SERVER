@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User extends BaseEntity implements UserDetails, Persistable<Long> {
 
     @Id

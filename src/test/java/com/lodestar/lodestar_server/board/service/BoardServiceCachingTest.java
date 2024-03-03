@@ -21,11 +21,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -187,7 +190,7 @@ class BoardServiceCachingTest {
     void searchBoardsCachingTest() {
 
         /** given */
-        Board board2 = Board.create(user, "title2","content2");
+        Board board2 = Board.create(user, "title2", "content2");
         List<BoardHashtag> hashtagList = List.of(
                 BoardHashtag.create(board2, "hashtag3"),
                 BoardHashtag.create(board2, "hashtag4"));
@@ -214,5 +217,46 @@ class BoardServiceCachingTest {
         assertThat(dto.getBoards().size()).isEqualTo(cache.getBoards().size());
 
     }
+
+    @DisplayName("해시태그를 포함한 게시글 리스트를 캐시에 저장하고, 같은 해시태그라면 캐싱되어 있는 값을 반환한다..")
+    @Test
+    void getBoardListCachingTest() {
+
+        /** given */
+        Board board2 = Board.create(user, "title2", "content2");
+        Board board3 = Board.create(user, "title3", "content3");
+        List<BoardHashtag> hashtagList = List.of(
+                BoardHashtag.create(board2, "hashtag2"),
+                BoardHashtag.create(board2, "hashtag3"),
+                BoardHashtag.create(board3, "hashtag3"),
+                BoardHashtag.create(board3, "hashtag4"));
+
+        boardRepository.saveAll(List.of(board2, board3));
+        hashtagRepository.saveAll(hashtagList);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        String[] hashtags = {"hashtag2", "hashtag3"};
+
+        /** 캐시에 저장하기 위해 조회*/
+        GetBoardListResponseDto dto = boardService.getBoardList(pageable, hashtags);
+
+        /** when */
+
+        /** 캐시에서 조회한다. */
+        GetBoardListResponseDto cache = boardService.getBoardList(pageable, hashtags);
+
+        /** then */
+
+        //캐시에서 조회하기 때문에, 캐시에 저장할 때 한 번만 호출
+        verify(boardServiceSupport, times(1)).getBoardList(any(Pageable.class), any(String[].class));
+
+        assertThat(dto.getBoards().size()).isEqualTo(3);
+        assertThat(cache.getBoards().size()).isEqualTo(3);
+
+        /** redis에 캐싱되어 있어야 함 */
+        assertThat(cacheManager.getCache("boardList").get(hashtags)).isNotNull();
+
+    }
+
 
 }

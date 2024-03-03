@@ -114,5 +114,30 @@ class BoardServiceCachingTest {
 
     }
 
+    @Test
+    @DisplayName("게시글을 삭제하면, 캐시에 저장되어 있던 게시글 조회 데이터가 삭제 된다.")
+    void deleteBoardCachingTest() {
+        //given
+
+        doNothing().when(boardServiceSupport).increaseViewIfNotViewedBefore(any(Board.class), any(User.class), any(HttpSession.class));
+
+        //캐시에 저장하기 위한 조회
+        boardService.getBoard(session, user, board.getId());
+
+        //when
+
+        /** 캐시도 같이 삭제되어야 함 */
+        boardService.deleteBoard(user, board.getId());
+
+        //then
+        verify(boardServiceSupport, times(1)).getBoardById(anyLong());
+        verify(boardServiceSupport, times(1)).checkIsBoardWriterForDelete(any(Board.class), any(User.class));
+        verify(boardServiceSupport, times(1)).deleteBoardById(anyLong());
+
+        /** 캐시에 데이터가 없어야 함 */
+        assertThat(cacheManager.getCache("board").get(board.getId())).isNull();
+
+    }
+
 
 }

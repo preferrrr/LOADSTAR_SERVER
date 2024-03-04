@@ -37,3 +37,6 @@ jobs:
 
     - name: docker Hub push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-lodestar
+
+    - name: Run chmod to make gradlew executable
+      run: chmod +x ./gradlew

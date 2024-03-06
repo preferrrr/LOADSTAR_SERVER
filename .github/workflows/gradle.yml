@@ -1,17 +1,14 @@
-name: Java CI with Gradle
+name: CI/CD github Actions & Docker
 
-# 동작 조건 설정 : main 브랜치에 push 혹은 pull request가 발생할 경우 동작한다.
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
 permissions:
   contents: read
 
 jobs:
-  build-docker-image:
+  CI-CD:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -19,24 +16,66 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
-        distribution: 'temurin'
-
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        distribution: 'corretto'
+        
+    - name: Gradle Caching
+      uses: actions/cache@v3
       with:
-        arguments: clean bootJar
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
 
-    - name: docker image build
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-lodestar .
+    # 환경별 yml 파일 생성(2) - prod
+    - name: make application-secret.properties
+      if: contains(github.ref, 'main')
+      run: |
+        cd ./src/main/resources
+        touch ./application-secret.properties
+        echo "${{ secrets.PROPERTIES }}" > ./application-secret.properties
+      shell: bash
 
-    - name: docker login
+    # gradle chmod
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # gradle build
+    - name: Build with Gradle
+      run: ./gradlew clean build -x test
+
+      # docker login
+    - name: Docker Hub Login
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-lodestar
+    # docker build & push to production
+    - name: Docker build & push to prod
+      if: contains(github.ref, 'main')
+      run: |
+        docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/lodestar .
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/lodestar
+        
+    ## deploy to production
+    - name: Deploy to prod
+      uses: appleboy/ssh-action@master
+      id: deploy-prod
+      if: contains(github.ref, 'main')
+      with:
+        host: ${{ secrets.HOST_PROD }}
+        username: ubuntu
+        key: ${{ secrets.PRIVATE_KEY }}
+        envs: GITHUB_SHA
+        script: |
+          sudo docker stop lodestar
 
-    - name: Run chmod to make gradlew executable
-      run: chmod +x ./gradlew
+          sudo docker rm lodestar
+
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/lodestar
+
+          sudo docker run -d -p 8080:8080 --name lodestar --network lodestar ${{ secrets.DOCKERHUB_USERNAME }}/lodestar
+
+          sudo docker image prune -f

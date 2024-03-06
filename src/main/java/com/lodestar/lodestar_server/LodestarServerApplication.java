@@ -11,6 +11,7 @@ public class LodestarServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LodestarServerApplication.class, args);
+		//github_actions_test
 	}
 
 }

@@ -75,6 +75,10 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 * [insert와 select의 인덱스에 따른 성능 차이 테스트](https://prefercoding.tistory.com/40)
 </br>
 
+## :link: 세션 저장소와 캐시 저장소의 분리
+* [스프링 Redis 캐시, 세션 저장소와 분리](https://prefercoding.tistory.com/47)
+</br>
+
 
 ## 🔗Team
 <div align="center" >

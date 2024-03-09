@@ -1,5 +1,7 @@
 package com.lodestar.lodestar_server.bookmark.exception;
 
+import com.lodestar.lodestar_server.exception.ExceptionCode;
+import com.lodestar.lodestar_server.exception.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,18 +13,26 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class BookmarkExceptionHandler {
 
     @ExceptionHandler(DuplicateBookmarkException.class)
-    public ResponseEntity<?> handleDuplicateBookmarkException(final DuplicateBookmarkException e) {
+    public ResponseEntity<ExceptionResponse> handleDuplicateBookmarkException(final DuplicateBookmarkException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[duplicate bookmark exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 
     @ExceptionHandler(NotExistsBookmarkException.class)
-    public ResponseEntity<?> handleNotExistBookmarkException(final NotExistsBookmarkException e) {
+    public ResponseEntity<ExceptionResponse> handleNotExistBookmarkException(final NotExistsBookmarkException e) {
 
+        ExceptionCode exceptionCode = e.getExceptionCode();
         log.error("{}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 }

@@ -35,7 +35,7 @@ public class BoardExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedModifyException.class)
-    public ResponseEntity<?> handleUnauthorizedModifyException(final UnauthorizedModifyException e) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedModifyException(final UnauthorizedModifyException e) {
 
         ExceptionCode exceptionCode = e.getExceptionCode();
         log.error("[unauthorized modify exception] {}", e.getMessage());

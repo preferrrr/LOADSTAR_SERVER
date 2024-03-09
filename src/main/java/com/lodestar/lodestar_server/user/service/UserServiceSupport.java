@@ -40,7 +40,7 @@ public class UserServiceSupport {
     }
 
     public void checkPasswordForLogin(String realPassword, String requestPassword) {
-        if (passwordEncoder.matches(requestPassword, realPassword))
+        if (!passwordEncoder.matches(requestPassword, realPassword))
             throw new NotMatchPasswordException();
 
     }

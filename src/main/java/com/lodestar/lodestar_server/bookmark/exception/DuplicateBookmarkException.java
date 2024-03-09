@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.bookmark.exception;
 
-import com.lodestar.lodestar_server.exception.ExceptionCode;
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
 import lombok.Getter;
 
 import static com.lodestar.lodestar_server.bookmark.exception.BookmarkExceptionCode.DUPLICATE_BOOKMARK;

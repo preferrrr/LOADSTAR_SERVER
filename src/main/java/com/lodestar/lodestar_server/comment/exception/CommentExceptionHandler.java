@@ -1,7 +1,7 @@
 package com.lodestar.lodestar_server.comment.exception;
 
-import com.lodestar.lodestar_server.exception.ExceptionCode;
-import com.lodestar.lodestar_server.exception.ExceptionResponse;
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
+import com.lodestar.lodestar_server.common.exception.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

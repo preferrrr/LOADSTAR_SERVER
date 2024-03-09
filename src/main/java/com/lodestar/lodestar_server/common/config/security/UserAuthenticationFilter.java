@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config;
+package com.lodestar.lodestar_server.common.config.security;
 
 import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.servlet.FilterChain;

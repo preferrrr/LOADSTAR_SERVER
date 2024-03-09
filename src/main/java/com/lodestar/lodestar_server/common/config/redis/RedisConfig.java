@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config.redis;
+package com.lodestar.lodestar_server.common.config.redis;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

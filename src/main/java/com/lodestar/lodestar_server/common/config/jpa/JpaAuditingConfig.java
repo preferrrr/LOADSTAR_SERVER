@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config.jpa;
+package com.lodestar.lodestar_server.common.config.jpa;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

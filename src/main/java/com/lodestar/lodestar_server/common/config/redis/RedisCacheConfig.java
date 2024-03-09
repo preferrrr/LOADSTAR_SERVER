@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config.redis;
+package com.lodestar.lodestar_server.common.config.redis;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

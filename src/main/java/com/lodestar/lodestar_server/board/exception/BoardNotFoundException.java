@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.board.exception;
 
-import com.lodestar.lodestar_server.exception.ExceptionCode;
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
 import lombok.Getter;
 
 import static com.lodestar.lodestar_server.board.exception.BoardExceptionCode.BOARD_NOT_FOUND;

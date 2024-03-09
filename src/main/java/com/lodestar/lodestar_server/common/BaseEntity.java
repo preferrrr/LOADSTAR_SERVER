@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config;
+package com.lodestar.lodestar_server.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

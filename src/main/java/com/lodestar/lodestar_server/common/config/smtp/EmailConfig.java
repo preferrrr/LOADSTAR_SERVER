@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config;
+package com.lodestar.lodestar_server.common.config.smtp;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,9 +1,8 @@
 package com.lodestar.lodestar_server.email.exception;
 
-import com.lodestar.lodestar_server.exception.ExceptionCode;
-import com.lodestar.lodestar_server.exception.ExceptionResponse;
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
+import com.lodestar.lodestar_server.common.exception.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

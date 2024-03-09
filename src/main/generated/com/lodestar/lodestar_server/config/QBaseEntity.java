@@ -2,6 +2,7 @@ package com.lodestar.lodestar_server.config;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.lodestar.lodestar_server.common.BaseEntity;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;

@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.user.exception;
 
-import com.lodestar.lodestar_server.exception.ExceptionCode;
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

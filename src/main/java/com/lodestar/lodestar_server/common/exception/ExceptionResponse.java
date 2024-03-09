@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.exception;
+package com.lodestar.lodestar_server.common.exception;
 
 import lombok.AccessLevel;
 import lombok.Builder;

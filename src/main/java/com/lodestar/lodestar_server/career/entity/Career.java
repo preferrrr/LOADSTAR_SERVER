@@ -1,6 +1,6 @@
 package com.lodestar.lodestar_server.career.entity;
 
-import com.lodestar.lodestar_server.config.BaseEntity;
+import com.lodestar.lodestar_server.common.BaseEntity;
 import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;

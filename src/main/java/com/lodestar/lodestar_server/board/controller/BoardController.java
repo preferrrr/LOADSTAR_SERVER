@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -66,9 +67,8 @@ public class BoardController {
             @ApiResponse(responseCode = "401", description = "세션 만료")
     })
     public ResponseEntity<HttpStatus> saveBoard(@AuthenticationPrincipal User user,
-                                       @RequestBody CreateBoardDto createBoardDto) {
+                                       @RequestBody @Valid CreateBoardDto createBoardDto) {
 
-        createBoardDto.validateFieldsNotNull();
         boardService.saveBoard(user, createBoardDto);
 
         return new ResponseEntity<>(HttpStatus.CREATED);

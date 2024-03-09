@@ -1,12 +1,16 @@
 package com.lodestar.lodestar_server.career.exception;
 
+import com.lodestar.lodestar_server.exception.ExceptionCode;
 import lombok.Getter;
+
+import static com.lodestar.lodestar_server.career.exception.CareerExceptionCode.*;
 
 public class UnauthorizedDeleteCareerException extends RuntimeException {
     @Getter
-    private final String NAME;
+    private final ExceptionCode exceptionCode;
 
     public UnauthorizedDeleteCareerException() {
-        NAME = "UnauthorizedDeleteCareerException";
+        super(UNAUTHORIZED_MODIFY_CAREER.getMessage());
+        this.exceptionCode = UNAUTHORIZED_MODIFY_CAREER;
     }
 }

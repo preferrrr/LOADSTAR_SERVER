@@ -1,12 +1,16 @@
 package com.lodestar.lodestar_server.career.exception;
 
+import com.lodestar.lodestar_server.exception.ExceptionCode;
 import lombok.Getter;
+
+import static com.lodestar.lodestar_server.career.exception.CareerExceptionCode.*;
 
 public class DuplicateCareerException extends RuntimeException{
     @Getter
-    private final String NAME;
+    private final ExceptionCode exceptionCode;
 
     public DuplicateCareerException() {
-        NAME = "DuplicateCareerException";
+        super(DUPLICATE_CAREER.getMessage());
+        this.exceptionCode = DUPLICATE_CAREER;
     }
 }

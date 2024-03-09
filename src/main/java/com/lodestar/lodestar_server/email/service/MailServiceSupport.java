@@ -1,7 +1,7 @@
 package com.lodestar.lodestar_server.email.service;
 
 import com.lodestar.lodestar_server.email.entity.Mail;
-import com.lodestar.lodestar_server.email.exception.NotInvalidAuthenticationTime;
+import com.lodestar.lodestar_server.email.exception.InvalidAuthenticationTime;
 import com.lodestar.lodestar_server.email.exception.NotMatchedAuthenticationKey;
 import com.lodestar.lodestar_server.email.exception.NotMatchedUsernameException;
 import com.lodestar.lodestar_server.email.repository.MailRepository;
@@ -111,7 +111,7 @@ public class MailServiceSupport {
 
     public void checkIsValidAuthTime(LocalDateTime createdAt, LocalDateTime now) {
         if (now.isAfter(createdAt.plusMinutes(3)) && now.isBefore(createdAt))
-            throw new NotInvalidAuthenticationTime();
+            throw new InvalidAuthenticationTime();
     }
 
     public void checkIsMatchedUsername(String requestUsername, String username) {

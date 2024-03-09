@@ -1,8 +1,8 @@
 package com.lodestar.lodestar_server.comment.exception;
 
-import com.lodestar.lodestar_server.career.exception.DuplicateCareerException;
+import com.lodestar.lodestar_server.exception.ExceptionCode;
+import com.lodestar.lodestar_server.exception.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,26 +12,38 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CommentExceptionHandler {
 
     @ExceptionHandler(CommentNotFoundException.class)
-    public ResponseEntity<?> handleCommentNotFoundException(final CommentNotFoundException e) {
+    public ResponseEntity<ExceptionResponse> handleCommentNotFoundException(final CommentNotFoundException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[comment not found exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 
     @ExceptionHandler(UnauthorizedDeleteCommentException.class)
-    public ResponseEntity<?> handleUnauthorizedDeleteCommentException(final UnauthorizedDeleteCommentException e) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedDeleteCommentException(final UnauthorizedDeleteCommentException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[unauthorized delete comment exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 
     @ExceptionHandler(UnauthorizedModifyCommentException.class)
-    public ResponseEntity<?> handleUnauthorizedModifyCommentException(final UnauthorizedModifyCommentException e) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedModifyCommentException(final UnauthorizedModifyCommentException e) {
 
+        ExceptionCode exceptionCode = e.getExceptionCode();
         log.error("{}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 }

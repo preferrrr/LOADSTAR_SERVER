@@ -1,36 +1,47 @@
 package com.lodestar.lodestar_server.board.exception;
 
+import com.lodestar.lodestar_server.exception.ExceptionCode;
+import com.lodestar.lodestar_server.exception.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 
 @RestControllerAdvice
 @Slf4j
 public class BoardExceptionHandler {
 
     @ExceptionHandler(BoardNotFoundException.class)
-    public ResponseEntity<?> handleBoardNotFoundException(final BoardNotFoundException e) {
+    public ResponseEntity<ExceptionResponse> handleBoardNotFoundException(final BoardNotFoundException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[board not found exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus());
     }
 
     @ExceptionHandler(UnauthorizedDeleteException.class)
-    public ResponseEntity<?> handleUnauthorizedDeleteException(final UnauthorizedDeleteException e) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedDeleteException(final UnauthorizedDeleteException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[unauthorized delete exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus());
     }
 
     @ExceptionHandler(UnauthorizedModifyException.class)
     public ResponseEntity<?> handleUnauthorizedModifyException(final UnauthorizedModifyException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[unauthorized modify exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus());
     }
 }

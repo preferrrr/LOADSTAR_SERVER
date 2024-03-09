@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,7 @@ public class BookmarkController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<HttpStatus> saveBookmark(@AuthenticationPrincipal User user, @RequestBody SaveBookmarkDto saveBookmarkDto) {
-        saveBookmarkDto.validateFieldsNotNull();
+    public ResponseEntity<HttpStatus> saveBookmark(@AuthenticationPrincipal User user, @RequestBody @Valid SaveBookmarkDto saveBookmarkDto) {
         bookmarkService.saveBookmark(user, saveBookmarkDto);
 
         return new ResponseEntity<>(HttpStatus.OK);

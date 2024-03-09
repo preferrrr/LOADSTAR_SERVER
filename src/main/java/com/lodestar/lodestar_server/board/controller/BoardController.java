@@ -7,7 +7,6 @@ import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetMyBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardListResponseDto;
 import com.lodestar.lodestar_server.user.entity.User;
-import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import com.lodestar.lodestar_server.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -26,8 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/boards")
@@ -123,9 +120,8 @@ public class BoardController {
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
     public ResponseEntity<HttpStatus> modifyBoard(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId,
-                                         @RequestBody ModifyBoardDto modifyBoardDto) {
+                                         @RequestBody @Valid ModifyBoardDto modifyBoardDto) {
 
-        modifyBoardDto.validateFieldsNotNull();
         boardService.modifyBoard(user, boardId, modifyBoardDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -194,9 +190,6 @@ public class BoardController {
     public ResponseEntity<GetBoardListResponseDto> searchBoards(@PageableDefault(size = 9, sort = "created_at", direction = Sort.Direction.DESC)
                                           @Schema(description = "페이지 번호", example = "0") Pageable pageable,
                                                                       @Schema(description = "검색 키워드", example = "스프링 부트") @RequestParam("keywords") String keywords) {
-
-        if (keywords.length() == 0 || keywords.isEmpty() || keywords.isBlank())
-            throw new InvalidRequestParameterException("invalid keywords"); // 검색어가 없을 때 204 NO CONTENT 반환.
 
         return new ResponseEntity<>(boardService.searchBoards(pageable, keywords), HttpStatus.OK);
     }

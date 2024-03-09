@@ -7,20 +7,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.lodestar.lodestar_server.exception.GlobalExceptionCode.INVALID_REQUEST_PARAMETER;
-import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler({InvalidRequestParameterException.class})
-    public ResponseEntity<?> handleInvalidRequestParameterException(final InvalidRequestParameterException e) {
-
-        String msg = e.getNAME() + ": [" + e.getMessage() + "]";
-        log.error(msg);
-
-        return new ResponseEntity<>(NO_CONTENT); /**204*/
-    }
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity handleBindException(final BindException e) {

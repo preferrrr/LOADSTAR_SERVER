@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,9 +41,8 @@ public class CommentController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
     public ResponseEntity saveComment(@AuthenticationPrincipal User user,
-                                      @RequestBody CreateCommentDto createCommentDto) {
+                                      @RequestBody @Valid CreateCommentDto createCommentDto) {
 
-        createCommentDto.validateFieldsNotNull();
 
         commentService.createComment(user, createCommentDto);
 
@@ -81,9 +81,8 @@ public class CommentController {
     })
     public ResponseEntity modifyComment(@AuthenticationPrincipal User user,
                                         @Schema(name = "댓글 id") @PathVariable("commentId") Long commentId,
-                                        @RequestBody ModifyCommentDto modifyCommentDto) {
+                                        @RequestBody @Valid ModifyCommentDto modifyCommentDto) {
 
-        modifyCommentDto.validateFieldsNotNull();
 
         commentService.modifyComment(user, commentId, modifyCommentDto);
 

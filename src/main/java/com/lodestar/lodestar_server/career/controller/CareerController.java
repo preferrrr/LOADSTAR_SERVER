@@ -9,6 +9,7 @@ import com.lodestar.lodestar_server.career.service.CareerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class CareerController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
     public ResponseEntity<HttpStatus> saveCareer(@AuthenticationPrincipal User user,
-                                                 @RequestBody SaveCareerRequestDto saveCareerRequestDto) {
+                                                 @RequestBody @Valid SaveCareerRequestDto saveCareerRequestDto) {
 
         careerService.saveCareer(user, saveCareerRequestDto);
 

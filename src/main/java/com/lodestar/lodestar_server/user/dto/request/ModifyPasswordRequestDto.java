@@ -1,20 +1,17 @@
 package com.lodestar.lodestar_server.user.dto.request;
 
-import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 public class ModifyPasswordRequestDto {
+
+    @NotBlank(message = "현재 비밀번호는 null 또는 공백일 수 없습니다.")
     private String currentPassword;
+
+    @Size(min = 8, max = 20, message = "비밀번호는 최소 8자리여야 합니다.")
     private String modifyPassword;
 
-    public void validateFieldsNotNull() {
-        if(currentPassword == null || currentPassword.isEmpty() || currentPassword.isBlank())
-            throw new InvalidRequestParameterException("Invalid currentPassword");
-        if(modifyPassword == null || modifyPassword.isEmpty() || modifyPassword.isBlank())
-            throw new InvalidRequestParameterException("Invalid modifyPassword");
-    }
 }

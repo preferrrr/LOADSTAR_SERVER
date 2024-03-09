@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,8 @@ public class MailController {
             @ApiResponse(responseCode = "409", description = "해당 메일로 가입한 유저 존재"),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity<HttpStatus> checkEmail(@RequestBody EmailRequestDto emailRequestDto) throws Exception {
+    public ResponseEntity<HttpStatus> checkEmail(@RequestBody @Valid EmailRequestDto emailRequestDto) throws Exception {
 
-        emailRequestDto.validateFieldsNotNull();
 
         mailService.checkEmail(emailRequestDto.getEmail());
 
@@ -72,9 +72,8 @@ public class MailController {
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 아이디 없음."),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity<HttpStatus> sendMailToFindPassword(@RequestBody FindPwdRequestDto requestDto) throws Exception {
+    public ResponseEntity<HttpStatus> sendMailToFindPassword(@RequestBody @Valid FindPwdRequestDto requestDto) throws Exception {
 
-        requestDto.validateFieldsNotNull();
 
         mailService.sendMailToFindPassword(requestDto);
 

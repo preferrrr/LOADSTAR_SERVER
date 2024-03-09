@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +37,8 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "400", description = "아이디 혹은 비밀번호 틀림")
     })
-    public ResponseEntity<HttpStatus> login(@RequestBody LoginRequestDto loginRequestDto,
+    public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto,
                                                   HttpSession httpSession) {
-
-        loginRequestDto.validateFieldsNotNull();
 
         userService.login(httpSession, loginRequestDto);
 
@@ -58,9 +57,7 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "중복된 이메일이나 아이디 존재")
 
     })
-    public ResponseEntity<HttpStatus> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
-
-        signUpRequestDto.validateFieldsNotNull();
+    public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
 
         userService.signUp(signUpRequestDto);
 
@@ -111,9 +108,8 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "현재 비밀번호 틀림.")
     })
-    public ResponseEntity<HttpStatus> modifyPassword(@AuthenticationPrincipal User user, @RequestBody ModifyPasswordRequestDto requestDto) {
+    public ResponseEntity<HttpStatus> modifyPassword(@AuthenticationPrincipal User user, @RequestBody @Valid ModifyPasswordRequestDto requestDto) {
 
-        requestDto.validateFieldsNotNull();
 
         userService.modifyPassword(user, requestDto);
 

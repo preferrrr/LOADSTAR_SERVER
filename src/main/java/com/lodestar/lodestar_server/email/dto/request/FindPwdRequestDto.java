@@ -1,26 +1,21 @@
 package com.lodestar.lodestar_server.email.dto.request;
 
-import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Schema(name = "비밀번호 찾기 요청 body")
 public class FindPwdRequestDto {
     
     @Schema(name = "아이디")
+    @NotBlank(message = "아이디는 null 또는 공백일 수 없습니다.")
     private String username;
+
     @Schema(name = "이메일")
+    @Email(message = "이메일 형식이 아닙니다.")
     private String email;
-    
-    public void validateFieldsNotNull() {
-        if(username == null || username.isEmpty() || username.isBlank())
-            throw new InvalidRequestParameterException("Invalid username");
-        if(email == null || email.isEmpty() || email.isBlank())
-            throw new InvalidRequestParameterException("Invalid email");
-    }
+
     
 }

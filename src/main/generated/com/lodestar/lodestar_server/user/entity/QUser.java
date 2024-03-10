@@ -20,7 +20,7 @@ public class QUser extends EntityPathBase<User> {
 
     public static final QUser user = new QUser("user");
 
-    public final com.lodestar.lodestar_server.config.QBaseEntity _super = new com.lodestar.lodestar_server.config.QBaseEntity(this);
+    public final com.lodestar.lodestar_server.common.QBaseEntity _super = new com.lodestar.lodestar_server.common.QBaseEntity(this);
 
     public final ListPath<com.lodestar.lodestar_server.board.entity.Board, com.lodestar.lodestar_server.board.entity.QBoard> boards = this.<com.lodestar.lodestar_server.board.entity.Board, com.lodestar.lodestar_server.board.entity.QBoard>createList("boards", com.lodestar.lodestar_server.board.entity.Board.class, com.lodestar.lodestar_server.board.entity.QBoard.class, PathInits.DIRECT2);
 

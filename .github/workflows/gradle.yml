@@ -43,7 +43,7 @@ jobs:
 
     # gradle build
     - name: Build with Gradle
-      run: ./gradlew clean build -x test
+      run: ./gradlew clean build -x test -Dspring.profiles.active=secret
 
       # docker login
     - name: Docker Hub Login

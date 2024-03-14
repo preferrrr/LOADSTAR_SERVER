@@ -6,6 +6,8 @@ import com.lodestar.lodestar_server.board.dto.response.GetBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetMyBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardListResponseDto;
+import com.lodestar.lodestar_server.common.response.BaseResponse;
+import com.lodestar.lodestar_server.common.response.DataResponse;
 import com.lodestar.lodestar_server.user.entity.User;
 import com.lodestar.lodestar_server.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,12 +45,14 @@ public class BoardController {
     @Operation(summary = "메인 페이지 게시글 목록 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = GetBoardListResponseDto.class)))})
-    public ResponseEntity<GetBoardListResponseDto> getBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<DataResponse<GetBoardListResponseDto>> getBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                          @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                      @Schema(description = "적용할 해시태그들",example = "알고리즘, 운영체제") @RequestParam(value = "hashtags", required = false) String[] hashtags) {
+                                                                              @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                              @Schema(description = "적용할 해시태그들", example = "알고리즘, 운영체제") @RequestParam(value = "hashtags", required = false) String[] hashtags) {
 
-        return new ResponseEntity<>(boardService.getBoardList(pageable, hashtags), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, boardService.getBoardList(pageable, hashtags))
+        );
     }
 
 
@@ -63,12 +67,15 @@ public class BoardController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "401", description = "세션 만료")
     })
-    public ResponseEntity<HttpStatus> saveBoard(@AuthenticationPrincipal User user,
-                                       @RequestBody @Valid CreateBoardDto createBoardDto) {
+    public ResponseEntity<BaseResponse> saveBoard(@AuthenticationPrincipal User user,
+                                                  @RequestBody @Valid CreateBoardDto createBoardDto) {
 
         boardService.saveBoard(user, createBoardDto);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                BaseResponse.of(HttpStatus.CREATED),
+                HttpStatus.CREATED
+        );
     }
 
 
@@ -82,11 +89,13 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = @Content(schema = @Schema(implementation = GetBoardResponseDto.class)))
     })
-    public ResponseEntity<GetBoardResponseDto> getBoard(HttpSession httpSession,
-                                      @AuthenticationPrincipal User user,
-                                      @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
+    public ResponseEntity<DataResponse<GetBoardResponseDto>> getBoard(HttpSession httpSession,
+                                                                      @AuthenticationPrincipal User user,
+                                                                      @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
-        return new ResponseEntity<>(boardService.getBoard(httpSession, user, boardId), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, boardService.getBoard(httpSession, user, boardId))
+        );
     }
 
 
@@ -100,12 +109,14 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<HttpStatus> deleteBoard(@AuthenticationPrincipal User user,
-                                         @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
+    public ResponseEntity<BaseResponse> deleteBoard(@AuthenticationPrincipal User user,
+                                                    @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
         boardService.deleteBoard(user, boardId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
     /**
@@ -119,12 +130,14 @@ public class BoardController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<HttpStatus> modifyBoard(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId,
-                                         @RequestBody @Valid ModifyBoardDto modifyBoardDto) {
+    public ResponseEntity<BaseResponse> modifyBoard(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId,
+                                                    @RequestBody @Valid ModifyBoardDto modifyBoardDto) {
 
         boardService.modifyBoard(user, boardId, modifyBoardDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
     /**
@@ -135,12 +148,14 @@ public class BoardController {
     @Operation(summary = "내가 쓴 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = GetMyBoardListResponseDto.class)))})
-    public ResponseEntity<GetMyBoardListResponseDto> getMyBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<DataResponse<GetMyBoardListResponseDto>> getMyBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                          @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                          @AuthenticationPrincipal User user) {
+                                                                                  @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                                  @AuthenticationPrincipal User user) {
 
-        return new ResponseEntity<>(boardService.getMyBoardList(user, pageable), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, boardService.getMyBoardList(user, pageable))
+        );
     }
 
     /**
@@ -151,12 +166,14 @@ public class BoardController {
     @Operation(summary = "북마크한 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBookmarkBoardListResponseDto.class)))})
-    public ResponseEntity<MyBookmarkBoardListResponseDto> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<DataResponse<MyBookmarkBoardListResponseDto>> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                                       @AuthenticationPrincipal User user) {
+                                                                                               @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                                               @AuthenticationPrincipal User user) {
 
-        return new ResponseEntity<>(boardService.getMyBookmarkBoardList(user, pageable), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, boardService.getMyBookmarkBoardList(user, pageable))
+        );
     }
 
     /**
@@ -167,12 +184,14 @@ public class BoardController {
     @Operation(summary = "댓글 작성한 게시글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = GetBoardListResponseDto.class)))})
-    public ResponseEntity<GetBoardListResponseDto> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
+    public ResponseEntity<DataResponse<GetBoardListResponseDto>> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                                    @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                               @AuthenticationPrincipal User user) {
+                                                                                       @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                                       @AuthenticationPrincipal User user) {
 
-        return new ResponseEntity<>(boardService.getMyCommentBoardList(user, pageable), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, boardService.getMyCommentBoardList(user, pageable))
+        );
     }
 
 
@@ -187,11 +206,13 @@ public class BoardController {
                     content = {@Content(array = @ArraySchema(schema = @Schema(implementation = GetBoardListResponseDto.class)))}),
             @ApiResponse(responseCode = "204", description = "body null 존재")
     })
-    public ResponseEntity<GetBoardListResponseDto> searchBoards(@PageableDefault(size = 9, sort = "created_at", direction = Sort.Direction.DESC)
-                                          @Schema(description = "페이지 번호", example = "0") Pageable pageable,
-                                                                      @Schema(description = "검색 키워드", example = "스프링 부트") @RequestParam("keywords") String keywords) {
+    public ResponseEntity<DataResponse<GetBoardListResponseDto>> searchBoards(@PageableDefault(size = 9, sort = "created_at", direction = Sort.Direction.DESC)
+                                                                              @Schema(description = "페이지 번호", example = "0") Pageable pageable,
+                                                                              @Schema(description = "검색 키워드", example = "스프링 부트") @RequestParam("keywords") String keywords) {
 
-        return new ResponseEntity<>(boardService.searchBoards(pageable, keywords), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, boardService.searchBoards(pageable, keywords))
+        );
     }
 
 

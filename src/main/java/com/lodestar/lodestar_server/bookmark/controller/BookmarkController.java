@@ -1,6 +1,8 @@
 package com.lodestar.lodestar_server.bookmark.controller;
 
 import com.lodestar.lodestar_server.bookmark.dto.request.SaveBookmarkDto;
+import com.lodestar.lodestar_server.common.BaseEntity;
+import com.lodestar.lodestar_server.common.response.BaseResponse;
 import com.lodestar.lodestar_server.user.entity.User;
 import com.lodestar.lodestar_server.bookmark.service.BookmarkService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,35 +23,36 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    /**북마크 등록
+    /**
+     * 북마크 등록
      * /bookmarks
-     * */
+     */
     @PostMapping("")
     @Operation(summary = "북마크 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<HttpStatus> saveBookmark(@AuthenticationPrincipal User user, @RequestBody @Valid SaveBookmarkDto saveBookmarkDto) {
+    public ResponseEntity<BaseResponse> saveBookmark(@AuthenticationPrincipal User user, @RequestBody @Valid SaveBookmarkDto saveBookmarkDto) {
         bookmarkService.saveBookmark(user, saveBookmarkDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(BaseResponse.of(HttpStatus.OK));
     }
 
     /**
      * 북마크 삭제
      * /bookmarks
-     * */
+     */
     @DeleteMapping("/{boardId}")
     @Operation(summary = "북마크 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    public ResponseEntity<HttpStatus> deleteBookmark(@AuthenticationPrincipal User user,
-                                            @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
+    public ResponseEntity<BaseResponse> deleteBookmark(@AuthenticationPrincipal User user,
+                                                       @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
         bookmarkService.deleteBookmark(user, boardId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(BaseResponse.of(HttpStatus.OK));
     }
 }

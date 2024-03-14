@@ -1,27 +1,20 @@
 package com.lodestar.lodestar_server.user.dto.request;
 
 
-import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Schema(name = "아이디, 비밀번호")
 public class LoginRequestDto {
 
     @Schema(name = "아이디")
+    @NotBlank(message = "아이디는 null 또는 공백일 수 없습니다.")
     private String username;
+
     @Schema(name = "비밀번호")
+    @NotBlank(message = "비밀번호는 null 또는 공백일 수 없습니다.")
     private String password;
 
-
-    public void validateFieldsNotNull() {
-        if(username == null || username.isEmpty() || username.isBlank())
-            throw new InvalidRequestParameterException("Invalid userId");
-        if(password == null || password.isEmpty() || username.isBlank())
-            throw new InvalidRequestParameterException("Invalid password");
-    }
 }

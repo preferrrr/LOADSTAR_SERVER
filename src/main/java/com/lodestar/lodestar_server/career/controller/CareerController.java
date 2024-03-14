@@ -4,11 +4,14 @@ import com.lodestar.lodestar_server.career.dto.request.ModifyCareerRequestDto;
 import com.lodestar.lodestar_server.career.dto.request.SaveCareerRequestDto;
 import com.lodestar.lodestar_server.career.dto.response.CareerListDto;
 import com.lodestar.lodestar_server.career.dto.response.GetMyCareersResponseDto;
+import com.lodestar.lodestar_server.common.response.BaseResponse;
+import com.lodestar.lodestar_server.common.response.DataResponse;
 import com.lodestar.lodestar_server.user.entity.User;
 import com.lodestar.lodestar_server.career.service.CareerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +35,14 @@ public class CareerController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<HttpStatus> saveCareer(@AuthenticationPrincipal User user,
-                                                 @RequestBody SaveCareerRequestDto saveCareerRequestDto) {
+    public ResponseEntity<BaseResponse> saveCareer(@AuthenticationPrincipal User user,
+                                                   @RequestBody @Valid SaveCareerRequestDto saveCareerRequestDto) {
 
         careerService.saveCareer(user, saveCareerRequestDto);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                BaseResponse.of(HttpStatus.CREATED),
+                HttpStatus.CREATED);
     }
 
     /**
@@ -49,9 +54,11 @@ public class CareerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    public ResponseEntity<GetMyCareersResponseDto> getMyCareers(@AuthenticationPrincipal User user) {
+    public ResponseEntity<DataResponse<GetMyCareersResponseDto>> getMyCareers(@AuthenticationPrincipal User user) {
 
-        return new ResponseEntity<>(careerService.getMyCareers(user), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, careerService.getMyCareers(user))
+        );
     }
 
     /**
@@ -64,11 +71,13 @@ public class CareerController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<HttpStatus> modifyCareer(@AuthenticationPrincipal User user,
-                                                   @RequestBody ModifyCareerRequestDto modifyCareerRequestDto) {
+    public ResponseEntity<BaseResponse> modifyCareer(@AuthenticationPrincipal User user,
+                                                     @RequestBody ModifyCareerRequestDto modifyCareerRequestDto) {
 
         careerService.modifyCareer(user, modifyCareerRequestDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 }

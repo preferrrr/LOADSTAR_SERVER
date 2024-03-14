@@ -4,7 +4,7 @@ import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.bookmark.entity.Bookmark;
 import com.lodestar.lodestar_server.career.entity.Career;
 import com.lodestar.lodestar_server.comment.entity.Comment;
-import com.lodestar.lodestar_server.config.BaseEntity;
+import com.lodestar.lodestar_server.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

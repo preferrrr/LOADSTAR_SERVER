@@ -1,7 +1,8 @@
 package com.lodestar.lodestar_server.email.exception;
 
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
+import com.lodestar.lodestar_server.common.exception.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,27 +12,39 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class MailExceptionHandler {
 
     @ExceptionHandler(NotMatchedAuthenticationKey.class)
-    public ResponseEntity<HttpStatus> handleNotInvalidAuthenticationKey(final NotMatchedAuthenticationKey e) {
+    public ResponseEntity<ExceptionResponse> handleNotInvalidAuthenticationKey(final NotMatchedAuthenticationKey e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[not matched authentication key exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 
-    @ExceptionHandler(NotInvalidAuthenticationTime.class)
-    public ResponseEntity<HttpStatus> handleNotInvalidAuthenticationTime(final NotInvalidAuthenticationTime e) {
+    @ExceptionHandler(InvalidAuthenticationTime.class)
+    public ResponseEntity<ExceptionResponse> handleNotInvalidAuthenticationTime(final InvalidAuthenticationTime e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[invalid authentication time] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 
 
     @ExceptionHandler(NotMatchedUsernameException.class)
-    public ResponseEntity<HttpStatus> handleNotMatchedUsernameException(final NotMatchedUsernameException e) {
+    public ResponseEntity<ExceptionResponse> handleNotMatchedUsernameException(final NotMatchedUsernameException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[not matched username exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 }

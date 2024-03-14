@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config;
+package com.lodestar.lodestar_server.common.config.jpa;
 
 import com.querydsl.core.annotations.Config;
 import com.querydsl.jpa.impl.JPAQueryFactory;

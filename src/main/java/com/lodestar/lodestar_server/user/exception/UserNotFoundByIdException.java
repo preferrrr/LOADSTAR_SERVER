@@ -1,12 +1,16 @@
 package com.lodestar.lodestar_server.user.exception;
 
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
 import lombok.Getter;
 
-public class UserNotFoundByIdException extends RuntimeException{
+import static com.lodestar.lodestar_server.user.exception.UserExceptionCode.*;
+
+public class UserNotFoundByIdException extends RuntimeException {
     @Getter
-    private final String NAME;
+    private final ExceptionCode exceptionCode;
 
     public UserNotFoundByIdException() {
-        NAME = "UserNotFoundByIdException";
+        super(USER_NOT_FOUND_BY_ID.getMessage());
+        this.exceptionCode = USER_NOT_FOUND_BY_ID;
     }
 }

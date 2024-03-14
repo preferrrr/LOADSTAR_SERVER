@@ -22,7 +22,7 @@ public class QCareer extends EntityPathBase<Career> {
 
     public static final QCareer career = new QCareer("career");
 
-    public final com.lodestar.lodestar_server.config.QBaseEntity _super = new com.lodestar.lodestar_server.config.QBaseEntity(this);
+    public final com.lodestar.lodestar_server.common.QBaseEntity _super = new com.lodestar.lodestar_server.common.QBaseEntity(this);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;

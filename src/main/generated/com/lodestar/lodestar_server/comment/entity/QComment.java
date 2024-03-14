@@ -22,7 +22,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public static final QComment comment = new QComment("comment");
 
-    public final com.lodestar.lodestar_server.config.QBaseEntity _super = new com.lodestar.lodestar_server.config.QBaseEntity(this);
+    public final com.lodestar.lodestar_server.common.QBaseEntity _super = new com.lodestar.lodestar_server.common.QBaseEntity(this);
 
     public final com.lodestar.lodestar_server.board.entity.QBoard board;
 

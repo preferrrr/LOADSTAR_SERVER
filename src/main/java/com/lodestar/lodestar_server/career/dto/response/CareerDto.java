@@ -1,7 +1,6 @@
 package com.lodestar.lodestar_server.career.dto.response;
 
 import com.lodestar.lodestar_server.career.entity.Career;
-import com.lodestar.lodestar_server.exception.InvalidRequestParameterException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -32,15 +31,6 @@ public class CareerDto {
                 .y(List.of(career.getY1(), career.getY2()))
                 .rangeName(career.getRangeName())
                 .build();
-    }
-
-    public void validateFieldsNotNull() {
-        if(x == null || x.isEmpty() || x.isBlank())
-            throw new InvalidRequestParameterException("Invalid x");
-        if(y.size() != 2 || y.isEmpty())
-            throw new InvalidRequestParameterException("Invalid y");
-        if(rangeName == null || rangeName.isEmpty() || rangeName.isBlank())
-            throw new InvalidRequestParameterException("Invalid rangeName");
     }
 
 }

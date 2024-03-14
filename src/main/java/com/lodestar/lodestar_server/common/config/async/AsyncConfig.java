@@ -1,4 +1,4 @@
-package com.lodestar.lodestar_server.config.async;
+package com.lodestar.lodestar_server.common.config.async;
 
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;

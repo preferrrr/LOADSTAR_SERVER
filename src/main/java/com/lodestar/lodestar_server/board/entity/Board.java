@@ -2,7 +2,7 @@ package com.lodestar.lodestar_server.board.entity;
 
 import com.lodestar.lodestar_server.bookmark.entity.Bookmark;
 import com.lodestar.lodestar_server.comment.entity.Comment;
-import com.lodestar.lodestar_server.config.BaseEntity;
+import com.lodestar.lodestar_server.common.BaseEntity;
 import com.lodestar.lodestar_server.hashtag.entity.BoardHashtag;
 import com.lodestar.lodestar_server.user.entity.User;
 import jakarta.persistence.*;

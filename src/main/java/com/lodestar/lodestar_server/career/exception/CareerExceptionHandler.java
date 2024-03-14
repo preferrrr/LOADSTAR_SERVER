@@ -1,8 +1,8 @@
 package com.lodestar.lodestar_server.career.exception;
 
-import com.lodestar.lodestar_server.bookmark.exception.DuplicateBookmarkException;
+import com.lodestar.lodestar_server.common.exception.ExceptionCode;
+import com.lodestar.lodestar_server.common.exception.ExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,18 +12,26 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CareerExceptionHandler {
 
     @ExceptionHandler(DuplicateCareerException.class)
-    public ResponseEntity<?> handleDuplicateCareerException(final DuplicateCareerException e) {
+    public ResponseEntity<ExceptionResponse> handleDuplicateCareerException(final DuplicateCareerException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[duplicate career exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 
     @ExceptionHandler(UnauthorizedDeleteCareerException.class)
-    public ResponseEntity<?> handleUnauthorizedDeleteCareerException(final UnauthorizedDeleteCareerException e) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedDeleteCareerException(final UnauthorizedDeleteCareerException e) {
 
-        log.error("{}", e.getMessage());
+        ExceptionCode exceptionCode = e.getExceptionCode();
+        log.error("[unauthorized delete career exception] {}", e.getMessage());
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(
+                ExceptionResponse.of(exceptionCode),
+                exceptionCode.getHttpStatus()
+        );
     }
 }

@@ -15,12 +15,6 @@ public class CareerListDto {
     @Schema(description = "각 요소들 리스트")
     private List<CareerDto> careerDtoList;
 
-    public void validateFieldsNotNull() {
-        for(CareerDto dto : careerDtoList) {
-            dto.validateFieldsNotNull();
-        }
-    }
-
     @Builder
     private CareerListDto(List<CareerDto> careerDtoList) {
         this.careerDtoList = careerDtoList;

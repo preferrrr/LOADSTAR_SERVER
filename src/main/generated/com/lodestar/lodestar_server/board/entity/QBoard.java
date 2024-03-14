@@ -22,7 +22,7 @@ public class QBoard extends EntityPathBase<Board> {
 
     public static final QBoard board = new QBoard("board");
 
-    public final com.lodestar.lodestar_server.config.QBaseEntity _super = new com.lodestar.lodestar_server.config.QBaseEntity(this);
+    public final com.lodestar.lodestar_server.common.QBaseEntity _super = new com.lodestar.lodestar_server.common.QBaseEntity(this);
 
     public final NumberPath<Integer> bookmarkCount = createNumber("bookmarkCount", Integer.class);
 

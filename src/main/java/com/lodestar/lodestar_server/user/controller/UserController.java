@@ -1,5 +1,7 @@
 package com.lodestar.lodestar_server.user.controller;
 
+import com.lodestar.lodestar_server.common.response.BaseResponse;
+import com.lodestar.lodestar_server.common.response.DataResponse;
 import com.lodestar.lodestar_server.user.dto.request.ModifyPasswordRequestDto;
 import com.lodestar.lodestar_server.user.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.user.dto.request.SignUpRequestDto;
@@ -27,9 +29,10 @@ public class UserController {
     private final UserService userService;
 
 
-    /**로그인
+    /**
+     * 로그인
      * /users/login
-     * */
+     */
     @PostMapping("/login")
     @Operation(summary = "로그인")
     @ApiResponses(value = {
@@ -37,17 +40,20 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "400", description = "아이디 혹은 비밀번호 틀림")
     })
-    public ResponseEntity<HttpStatus> login(@RequestBody @Valid LoginRequestDto loginRequestDto,
-                                                  HttpSession httpSession) {
+    public ResponseEntity<BaseResponse> login(@RequestBody @Valid LoginRequestDto loginRequestDto,
+                                              HttpSession httpSession) {
 
         userService.login(httpSession, loginRequestDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
-    /**회원가입
+    /**
+     * 회원가입
      * /users/signup
-     * */
+     */
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
@@ -57,11 +63,14 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "중복된 이메일이나 아이디 존재")
 
     })
-    public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
+    public ResponseEntity<BaseResponse> signUp(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
 
         userService.signUp(signUpRequestDto);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                BaseResponse.of(HttpStatus.CREATED),
+                HttpStatus.CREATED
+        );
     }
 
     /**
@@ -75,56 +84,63 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "중복되는 아이디 존재")
 
     })
-    public ResponseEntity<HttpStatus> checkUsername(@Schema(name = "아이디") @RequestParam("username") String username) {
+    public ResponseEntity<BaseResponse> checkUsername(@Schema(name = "아이디") @RequestParam("username") String username) {
 
         userService.checkExistsUsername(username);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
 
     /**
      * 아이디 찾기
      * /users/find-id
-     * */
+     */
     @GetMapping("/find-id")
     @Operation(summary = "아이디 찾기")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 유저 없음")
     })
-    public ResponseEntity<FindIdResponseDto> findId(@RequestParam("email") String email) {
+    public ResponseEntity<DataResponse<FindIdResponseDto>> findId(@RequestParam("email") String email) {
 
-        return new ResponseEntity<>(userService.findId(email), HttpStatus.OK);
+        return ResponseEntity.ok(
+                DataResponse.of(HttpStatus.OK, userService.findId(email))
+        );
     }
 
     /**
      * 비밀번호 변경
      * /users/password
-     * */
+     */
     @PatchMapping("/password")
     @Operation(summary = "비밀번호 변경")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "현재 비밀번호 틀림.")
     })
-    public ResponseEntity<HttpStatus> modifyPassword(@AuthenticationPrincipal User user, @RequestBody @Valid ModifyPasswordRequestDto requestDto) {
+    public ResponseEntity<BaseResponse> modifyPassword(@AuthenticationPrincipal User user, @RequestBody @Valid ModifyPasswordRequestDto requestDto) {
 
 
         userService.modifyPassword(user, requestDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
 
     @GetMapping("/logout")
-    public ResponseEntity<HttpStatus> logout(HttpSession httpSession) {
+    public ResponseEntity<BaseResponse> logout(HttpSession httpSession) {
 
         userService.logout(httpSession);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
-
 
 
 }

@@ -67,11 +67,7 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 ![아키텍처_github_actions](https://github.com/preferrrr/LOADSTAR_SERVER/assets/99793526/6997bda7-3bca-471b-8827-c91de05952c6)
 </br>
 
-## :link: 배포하면서...
-* [1차 배포 - nginx, reverse proxy, Mixed Content](https://prefercoding.tistory.com/39)
-</br>
-
-## :link: 무심코 적용한 auto_increment index
+## :link: auto_increment 인덱스 꼭 필요한가?
 * [insert와 select의 인덱스에 따른 성능 차이 테스트](https://prefercoding.tistory.com/40)
 </br>
 
@@ -79,6 +75,9 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 * [스프링 Redis 캐시, 세션 저장소와 분리](https://prefercoding.tistory.com/47)
 </br>
 
+## :link: 비동기 처리로 응답 속도 개선
+* [스프링 비동기 메일 전송, Sync vs Async, Blocking vs Non-Blocking](https://prefercoding.tistory.com/43)
+</br>
 
 ## 🔗Team
 <div align="center" >

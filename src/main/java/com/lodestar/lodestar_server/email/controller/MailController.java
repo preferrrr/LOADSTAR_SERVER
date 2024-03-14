@@ -1,5 +1,6 @@
 package com.lodestar.lodestar_server.email.controller;
 
+import com.lodestar.lodestar_server.common.response.BaseResponse;
 import com.lodestar.lodestar_server.email.dto.request.EmailRequestDto;
 import com.lodestar.lodestar_server.email.dto.request.FindPwdRequestDto;
 import com.lodestar.lodestar_server.email.service.MailService;
@@ -32,12 +33,14 @@ public class MailController {
             @ApiResponse(responseCode = "409", description = "해당 메일로 가입한 유저 존재"),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity<HttpStatus> checkEmail(@RequestBody @Valid EmailRequestDto emailRequestDto) throws Exception {
+    public ResponseEntity<BaseResponse> checkEmail(@RequestBody @Valid EmailRequestDto emailRequestDto) throws Exception {
 
 
         mailService.checkEmail(emailRequestDto.getEmail());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
 
@@ -51,12 +54,14 @@ public class MailController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "인증 실패")
     })
-    public ResponseEntity<HttpStatus> checkAuthenticationKey(@Schema(name = "이메일") @RequestParam("email") String email,
-                                                             @Schema(name = "인증코드") @RequestParam("key") String key) {
+    public ResponseEntity<BaseResponse> checkAuthenticationKey(@Schema(name = "이메일") @RequestParam("email") String email,
+                                                               @Schema(name = "인증코드") @RequestParam("key") String key) {
 
         mailService.checkAuthenticationKey(email, key);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
     /**
@@ -72,13 +77,14 @@ public class MailController {
             @ApiResponse(responseCode = "400", description = "해당 이메일로 가입한 아이디 없음."),
             @ApiResponse(responseCode = "500", description = "메일 전송 실패")
     })
-    public ResponseEntity<HttpStatus> sendMailToFindPassword(@RequestBody @Valid FindPwdRequestDto requestDto) throws Exception {
+    public ResponseEntity<BaseResponse> sendMailToFindPassword(@RequestBody @Valid FindPwdRequestDto requestDto) throws Exception {
 
 
         mailService.sendMailToFindPassword(requestDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
-
+        return ResponseEntity.ok(
+                BaseResponse.of(HttpStatus.OK)
+        );
     }
 
 

@@ -59,6 +59,8 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 - CI/CD를 적용합니다.
 - AWS 배포 후 도메인과 https를 적용합니다.
 
+</br>
+
 ## Challenge
 - JavaMailSender를 사용하여 메일로 인증번호를 전송
   - 메일 전송 작업는 완료까지 2~3초 처리 시간이 필요
@@ -82,6 +84,8 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
   - https://prefercoding.tistory.com/47
 - 가비아에서 도메인 구입 후 AWS Route 53으로 도메인 적용
   - nginx와 certbot을 사용하여 https 적용
+
+</br>
 
 ## API 명세서
 * [LOADSTAR API 문서](https://docs.google.com/spreadsheets/d/1WdqjxqWwwNCfYBz0yHv42CSH6WzfixzCcjpVz03uOec/edit#gid=0)

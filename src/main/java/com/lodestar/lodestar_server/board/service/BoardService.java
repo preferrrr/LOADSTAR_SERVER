@@ -67,13 +67,10 @@ public class BoardService {
         //조회수 증가
         boardServiceSupport.increaseViewIfNotViewedBefore(board, user, httpSession);
 
-        //내가 북마크 해뒀는지 여부
-        boolean isBookmarked = boardServiceSupport.checkExistsBookmarkByBoardAndUser(board, user);
-
         //댓글
         List<Comment> comments = boardServiceSupport.getCommentsWithUserInfoByBoardId(board.getId());
 
-        return GetBoardResponseDto.of(board, comments, isBookmarked);
+        return GetBoardResponseDto.of(board, comments);
     }
 
 

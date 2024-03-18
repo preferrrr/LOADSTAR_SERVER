@@ -31,8 +31,6 @@ public class GetBoardResponseDto {
     private String title;
     @Schema(description = "게시글 내용", example = "이 다음으로 어떤 공부를 하면 좋을까요 ?")
     private String content;
-    @Schema(description = "게시글 조회한 유저가 이 글을 북마크로 등록했는지 여부", example = "true")
-    private Boolean isBookmarked;
 
     @Schema(description = "북마크 갯수")
     private Integer bookmarkCount;
@@ -55,13 +53,12 @@ public class GetBoardResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    private GetBoardResponseDto(Long boardId, Long userId, String username, String title, String content, boolean isBookmarked, Integer bookmarkCount, Integer view, CareerListDto careers, List<String> hashtags, CommentListDto comments, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    private GetBoardResponseDto(Long boardId, Long userId, String username, String title, String content, Integer bookmarkCount, Integer view, CareerListDto careers, List<String> hashtags, CommentListDto comments, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.boardId = boardId;
         this.userId = userId;
         this.username = username;
         this.title = title;
         this.content = content;
-        this.isBookmarked = isBookmarked;
         this.bookmarkCount = bookmarkCount;
         this.view = view;
         this.careers = careers;
@@ -71,7 +68,7 @@ public class GetBoardResponseDto {
         this.modifiedAt = modifiedAt;
     }
 
-    public static GetBoardResponseDto of(Board board, List<Comment> comments, boolean isBookmarked) {
+    public static GetBoardResponseDto of(Board board, List<Comment> comments) {
         return GetBoardResponseDto.builder()
                 .boardId(board.getId())
                 .title(board.getTitle())
@@ -83,7 +80,6 @@ public class GetBoardResponseDto {
                 .userId(board.getUser().getId())
                 .username(board.getUser().getUsername())
                 .careers(CareerListDto.of(board.getUser().getCareers()))
-                .isBookmarked(isBookmarked)
                 .hashtags(board.getHashtags().stream()
                         .map(hashtag -> hashtag.getId().getHashtagName())
                         .collect(Collectors.toList()))

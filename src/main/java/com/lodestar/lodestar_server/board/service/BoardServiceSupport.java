@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,13 +62,13 @@ public class BoardServiceSupport {
 
     @Transactional(readOnly = false)
     public void increaseViewIfNotViewedBefore(Board board, User user, HttpSession httpSession) {
-        List<Long> list = (List<Long>) httpSession.getAttribute("boards");
+        HashSet<Long> ids = (HashSet<Long>) httpSession.getAttribute("boards");
 
-        if ((!list.contains(board.getId())) && (!board.getUser().getId().equals(user.getId()))) {
+        if ((!ids.contains(board.getId())) && (!board.getUser().getId().equals(user.getId()))) {
             //이미 조회한 게시글이 아니고 작성자도 아니어야해.
             board.addView();
-            list.add(board.getId());
-            httpSession.setAttribute("boards", list);
+            ids.add(board.getId());
+            httpSession.setAttribute("boards", ids);
         }
     }
 

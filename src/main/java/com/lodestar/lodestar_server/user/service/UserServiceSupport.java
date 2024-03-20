@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 @Transactional(readOnly = true)
 @Service
@@ -52,7 +52,7 @@ public class UserServiceSupport {
     @Transactional(readOnly = false)
     public void setSessionAttribute(HttpSession httpSession, User user) {
         httpSession.setAttribute("user", user);
-        httpSession.setAttribute("boards", new ArrayList<Long>());
+        httpSession.setAttribute("boards", new HashSet<Long>());
 
     }
 

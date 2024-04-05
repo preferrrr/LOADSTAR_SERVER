@@ -4,6 +4,7 @@ import com.lodestar.lodestar_server.board.service.BoardServiceSupport;
 import com.lodestar.lodestar_server.bookmark.dto.request.SaveBookmarkDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.bookmark.entity.Bookmark;
+import com.lodestar.lodestar_server.common.util.CurrentUserGetter;
 import com.lodestar.lodestar_server.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,12 @@ public class BookmarkService {
 
     private final BookmarkServiceSupport bookmarkServiceSupport;
     private final BoardServiceSupport boardServiceSupport;
+    private final CurrentUserGetter currentUserGetter;
 
     @Transactional(readOnly = false)
-    public void saveBookmark(User user, SaveBookmarkDto saveBookmarkDto) {
+    public void saveBookmark(SaveBookmarkDto saveBookmarkDto) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         Board board = boardServiceSupport.getBoardById(saveBookmarkDto.getBoardId());
 
@@ -32,7 +36,9 @@ public class BookmarkService {
     }
 
     @Transactional(readOnly = false)
-    public void deleteBookmark(User user, Long boardId) {
+    public void deleteBookmark(Long boardId) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         Board board = boardServiceSupport.getBoardById(boardId);
 

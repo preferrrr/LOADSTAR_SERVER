@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.HashSet;
 
@@ -50,7 +52,8 @@ public class UserServiceSupport {
     }
 
     @Transactional(readOnly = false)
-    public void setSessionAttribute(HttpSession httpSession, User user) {
+    public void setSessionAttribute(User user) {
+        HttpSession httpSession = getCurrentSession();
         httpSession.setAttribute("user", user);
         httpSession.setAttribute("boards", new HashSet<Long>());
 
@@ -63,4 +66,15 @@ public class UserServiceSupport {
     public User getUserById(Long id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundByIdException::new);
     }
+
+    public void logout() {
+        getCurrentSession().invalidate();
+    }
+
+    private HttpSession getCurrentSession() {
+        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest()
+                .getSession(false);
+    }
+
 }

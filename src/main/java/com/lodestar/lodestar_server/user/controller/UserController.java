@@ -40,10 +40,9 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "400", description = "아이디 혹은 비밀번호 틀림")
     })
-    public ResponseEntity<BaseResponse> login(@RequestBody @Valid LoginRequestDto loginRequestDto,
-                                              HttpSession httpSession) {
+    public ResponseEntity<BaseResponse> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
 
-        userService.login(httpSession, loginRequestDto);
+        userService.login(loginRequestDto);
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)
@@ -121,10 +120,10 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "현재 비밀번호 틀림.")
     })
-    public ResponseEntity<BaseResponse> modifyPassword(@AuthenticationPrincipal User user, @RequestBody @Valid ModifyPasswordRequestDto requestDto) {
+    public ResponseEntity<BaseResponse> modifyPassword(@RequestBody @Valid ModifyPasswordRequestDto requestDto) {
 
 
-        userService.modifyPassword(user, requestDto);
+        userService.modifyPassword(requestDto);
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)
@@ -133,9 +132,9 @@ public class UserController {
 
 
     @GetMapping("/logout")
-    public ResponseEntity<BaseResponse> logout(HttpSession httpSession) {
+    public ResponseEntity<BaseResponse> logout() {
 
-        userService.logout(httpSession);
+        userService.logout();
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)

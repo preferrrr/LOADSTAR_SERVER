@@ -33,8 +33,8 @@ public class BookmarkController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<BaseResponse> saveBookmark(@AuthenticationPrincipal User user, @RequestBody @Valid SaveBookmarkDto saveBookmarkDto) {
-        bookmarkService.saveBookmark(user, saveBookmarkDto);
+    public ResponseEntity<BaseResponse> saveBookmark(@RequestBody @Valid SaveBookmarkDto saveBookmarkDto) {
+        bookmarkService.saveBookmark(saveBookmarkDto);
 
         return ResponseEntity.ok(BaseResponse.of(HttpStatus.OK));
     }
@@ -48,10 +48,9 @@ public class BookmarkController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    public ResponseEntity<BaseResponse> deleteBookmark(@AuthenticationPrincipal User user,
-                                                       @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
+    public ResponseEntity<BaseResponse> deleteBookmark(@Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
-        bookmarkService.deleteBookmark(user, boardId);
+        bookmarkService.deleteBookmark(boardId);
 
         return ResponseEntity.ok(BaseResponse.of(HttpStatus.OK));
     }

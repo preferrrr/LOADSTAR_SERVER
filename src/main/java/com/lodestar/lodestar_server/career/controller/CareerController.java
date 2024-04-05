@@ -35,10 +35,9 @@ public class CareerController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<BaseResponse> saveCareer(@AuthenticationPrincipal User user,
-                                                   @RequestBody @Valid SaveCareerRequestDto saveCareerRequestDto) {
+    public ResponseEntity<BaseResponse> saveCareer(@RequestBody @Valid SaveCareerRequestDto saveCareerRequestDto) {
 
-        careerService.saveCareer(user, saveCareerRequestDto);
+        careerService.saveCareer(saveCareerRequestDto);
 
         return new ResponseEntity<>(
                 BaseResponse.of(HttpStatus.CREATED),
@@ -54,10 +53,10 @@ public class CareerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
     })
-    public ResponseEntity<DataResponse<GetMyCareersResponseDto>> getMyCareers(@AuthenticationPrincipal User user) {
+    public ResponseEntity<DataResponse<GetMyCareersResponseDto>> getMyCareers() {
 
         return ResponseEntity.ok(
-                DataResponse.of(HttpStatus.OK, careerService.getMyCareers(user))
+                DataResponse.of(HttpStatus.OK, careerService.getMyCareers())
         );
     }
 
@@ -71,10 +70,9 @@ public class CareerController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<BaseResponse> modifyCareer(@AuthenticationPrincipal User user,
-                                                     @RequestBody ModifyCareerRequestDto modifyCareerRequestDto) {
+    public ResponseEntity<BaseResponse> modifyCareer(@RequestBody ModifyCareerRequestDto modifyCareerRequestDto) {
 
-        careerService.modifyCareer(user, modifyCareerRequestDto);
+        careerService.modifyCareer(modifyCareerRequestDto);
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)

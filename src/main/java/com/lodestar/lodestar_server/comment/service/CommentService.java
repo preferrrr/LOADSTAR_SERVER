@@ -7,6 +7,7 @@ import com.lodestar.lodestar_server.comment.dto.request.ModifyCommentDto;
 import com.lodestar.lodestar_server.comment.dto.response.MyCommentResponseDto;
 import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.comment.entity.Comment;
+import com.lodestar.lodestar_server.common.util.CurrentUserGetter;
 import com.lodestar.lodestar_server.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +23,12 @@ public class CommentService {
 
     private final CommentServiceSupport commentServiceSupport;
     private final BoardServiceSupport boardServiceSupport;
+    private final CurrentUserGetter currentUserGetter;
 
     @Transactional(readOnly = false)
-    public void createComment(User user, CreateCommentDto createCommentDto) {
+    public void createComment(CreateCommentDto createCommentDto) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         Board board = boardServiceSupport.getBoardById(createCommentDto.getBoardId());
 
@@ -34,7 +38,9 @@ public class CommentService {
     }
 
     @Transactional(readOnly = false)
-    public void deleteComment(User user, Long commentId) {
+    public void deleteComment(Long commentId) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         Comment comment = commentServiceSupport.findCommentById(commentId);
 
@@ -46,7 +52,9 @@ public class CommentService {
     }
 
     @Transactional(readOnly = false)
-    public void modifyComment(User user, Long commentId, ModifyCommentDto modifyCommentDto) {
+    public void modifyComment(Long commentId, ModifyCommentDto modifyCommentDto) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         Comment comment = commentServiceSupport.findCommentById(commentId);
 
@@ -56,7 +64,9 @@ public class CommentService {
 
     }
 
-    public MyCommentResponseDto getMyComments(User user, Pageable pageable) {
+    public MyCommentResponseDto getMyComments(Pageable pageable) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         List<Comment> comments = commentServiceSupport.getMyComments(user, pageable);
 

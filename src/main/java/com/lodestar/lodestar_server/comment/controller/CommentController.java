@@ -42,11 +42,10 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "204", description = "body null 존재"),
     })
-    public ResponseEntity<BaseResponse> saveComment(@AuthenticationPrincipal User user,
-                                                    @RequestBody @Valid CreateCommentDto createCommentDto) {
+    public ResponseEntity<BaseResponse> saveComment(@RequestBody @Valid CreateCommentDto createCommentDto) {
 
 
-        commentService.createComment(user, createCommentDto);
+        commentService.createComment(createCommentDto);
 
         return new ResponseEntity<>(
                 BaseResponse.of(HttpStatus.CREATED),
@@ -64,10 +63,9 @@ public class CommentController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<BaseResponse> deleteComment(@AuthenticationPrincipal User user,
-                                                      @Schema(name = "댓글 id") @PathVariable("commentId") Long commentId) {
+    public ResponseEntity<BaseResponse> deleteComment(@Schema(name = "댓글 id") @PathVariable("commentId") Long commentId) {
 
-        commentService.deleteComment(user, commentId);
+        commentService.deleteComment(commentId);
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)
@@ -86,12 +84,11 @@ public class CommentController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<BaseResponse> modifyComment(@AuthenticationPrincipal User user,
-                                                      @Schema(name = "댓글 id") @PathVariable("commentId") Long commentId,
+    public ResponseEntity<BaseResponse> modifyComment(@Schema(name = "댓글 id") @PathVariable("commentId") Long commentId,
                                                       @RequestBody @Valid ModifyCommentDto modifyCommentDto) {
 
 
-        commentService.modifyComment(user, commentId, modifyCommentDto);
+        commentService.modifyComment(commentId, modifyCommentDto);
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)
@@ -106,11 +103,10 @@ public class CommentController {
     @Operation(summary = "내가 쓴 댓글 조회")
     @ApiResponse(responseCode = "200", description = "성공",
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyCommentResponseDto.class)))})
-    public ResponseEntity<DataResponse<MyCommentResponseDto>> getMyComments(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                            @AuthenticationPrincipal User user) {
+    public ResponseEntity<DataResponse<MyCommentResponseDto>> getMyComments(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return ResponseEntity.ok(
-                DataResponse.of(HttpStatus.OK, commentService.getMyComments(user, pageable))
+                DataResponse.of(HttpStatus.OK, commentService.getMyComments(pageable))
         );
     }
 }

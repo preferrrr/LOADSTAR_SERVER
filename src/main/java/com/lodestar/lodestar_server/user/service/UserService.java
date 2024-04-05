@@ -1,11 +1,11 @@
 package com.lodestar.lodestar_server.user.service;
 
+import com.lodestar.lodestar_server.common.util.CurrentUserGetter;
 import com.lodestar.lodestar_server.user.dto.request.ModifyPasswordRequestDto;
 import com.lodestar.lodestar_server.user.dto.request.LoginRequestDto;
 import com.lodestar.lodestar_server.user.dto.request.SignUpRequestDto;
 import com.lodestar.lodestar_server.user.dto.response.FindIdResponseDto;
 import com.lodestar.lodestar_server.user.entity.User;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +18,7 @@ import java.util.List;
 public class UserService {
 
     private final UserServiceSupport userServiceSupport;
+    private final CurrentUserGetter currentUserGetter;
 
     @Transactional(readOnly = false)
     public void signUp(SignUpRequestDto signUpRequestDto) {
@@ -44,13 +45,13 @@ public class UserService {
 
 
     @Transactional(readOnly = false)
-    public void login(HttpSession httpSession, LoginRequestDto loginRequestDto) {
+    public void login(LoginRequestDto loginRequestDto) {
 
         User user = userServiceSupport.getUserByUsername(loginRequestDto.getUsername());
 
         userServiceSupport.checkPasswordForLogin(user.getPassword(), loginRequestDto.getPassword());
 
-        userServiceSupport.setSessionAttribute(httpSession, user);
+        userServiceSupport.setSessionAttribute(user);
 
     }
 
@@ -69,9 +70,9 @@ public class UserService {
 
 
     @Transactional(readOnly = false)
-    public void modifyPassword(User me, ModifyPasswordRequestDto requestDto) {
+    public void modifyPassword(ModifyPasswordRequestDto requestDto) {
 
-        User user = userServiceSupport.getUserById(me.getId());
+        User user = currentUserGetter.getCurrentUser();
 
         userServiceSupport.checkPasswordForLogin(user.getPassword(), requestDto.getCurrentPassword());
 
@@ -83,7 +84,8 @@ public class UserService {
 
 
     @Transactional(readOnly = false)
-    public void logout(HttpSession httpSession) {
-        httpSession.invalidate();
+    public void logout() {
+        userServiceSupport.logout();
     }
+
 }

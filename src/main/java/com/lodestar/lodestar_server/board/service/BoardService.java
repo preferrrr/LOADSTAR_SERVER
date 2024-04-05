@@ -8,9 +8,9 @@ import com.lodestar.lodestar_server.board.entity.Board;
 import com.lodestar.lodestar_server.comment.entity.Comment;
 import com.lodestar.lodestar_server.board.dto.request.CreateBoardDto;
 import com.lodestar.lodestar_server.board.dto.request.ModifyBoardDto;
+import com.lodestar.lodestar_server.common.util.CurrentUserGetter;
 import com.lodestar.lodestar_server.hashtag.entity.BoardHashtag;
 import com.lodestar.lodestar_server.user.entity.User;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,13 +27,16 @@ import java.util.List;
 public class BoardService {
 
     private final BoardServiceSupport boardServiceSupport;
+    private final CurrentUserGetter currentUserGetter;
 
     @Transactional(readOnly = false)
     @Caching(evict = {
             @CacheEvict(value = "boardList", allEntries = true),
             @CacheEvict(value = "keyword", allEntries = true)
     })
-    public void saveBoard(User user, CreateBoardDto createBoardDto) {
+    public void saveBoard(CreateBoardDto createBoardDto) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         //Board 엔티티 생성
         Board board = Board.create(user, createBoardDto.getTitle(), createBoardDto.getContent());
@@ -58,14 +61,15 @@ public class BoardService {
 
 
     @Transactional(readOnly = false)
-    @Cacheable(value = "board", key = "#boardId", condition = "#boardId != null", cacheManager = "cacheManager")
-    public GetBoardResponseDto getBoard(HttpSession httpSession, User user, Long boardId) {
+    public GetBoardResponseDto getBoard(Long boardId) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         //조회할 게시글
         Board board = boardServiceSupport.getBoardWithHashtagsAndCommentsById(boardId);
 
         //조회수 증가
-        boardServiceSupport.increaseViewIfNotViewedBefore(board, user, httpSession);
+        boardServiceSupport.increaseViewIfNotViewedBefore(board, user);
 
         //댓글
         List<Comment> comments = boardServiceSupport.getCommentsWithUserInfoByBoardId(board.getId());
@@ -75,7 +79,9 @@ public class BoardService {
 
 
     @CacheEvict(value = "board", key = "#boardId")
-    public void deleteBoard(User user, Long boardId) {
+    public void deleteBoard(Long boardId) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         //삭제할 게시글
         Board board = boardServiceSupport.getBoardById(boardId);
@@ -88,7 +94,9 @@ public class BoardService {
     }
 
     @CacheEvict(value = "board", key = "#boardId")
-    public void modifyBoard(User user, Long boardId, ModifyBoardDto modifyBoardDto) {
+    public void modifyBoard(Long boardId, ModifyBoardDto modifyBoardDto) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         //수정할 게시글
         Board board = boardServiceSupport.getBoardWithHashtagsById(boardId);
@@ -125,7 +133,9 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public GetMyBoardListResponseDto getMyBoardList(User user, Pageable pageable) {
+    public GetMyBoardListResponseDto getMyBoardList(Pageable pageable) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         List<Board> boards = boardServiceSupport.getMyBoardList(user, pageable);
 
@@ -134,7 +144,9 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public MyBookmarkBoardListResponseDto getMyBookmarkBoardList(User user, Pageable pageable) {
+    public MyBookmarkBoardListResponseDto getMyBookmarkBoardList(Pageable pageable) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         List<Board> boards = boardServiceSupport.getMyBookmarkBoardList(user, pageable);
 
@@ -143,7 +155,9 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public GetBoardListResponseDto getMyCommentBoardList(User user, Pageable pageable) {
+    public GetBoardListResponseDto getMyCommentBoardList(Pageable pageable) {
+
+        User user = currentUserGetter.getCurrentUser();
 
         List<Board> boards = boardServiceSupport.getMyCommentBoardList(user, pageable);
 

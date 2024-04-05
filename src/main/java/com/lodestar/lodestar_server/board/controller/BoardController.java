@@ -36,7 +36,6 @@ public class BoardController {
 
     private final BoardService boardService;
 
-
     /**
      * 메인페이지 게시글 조회
      * /boards
@@ -67,10 +66,9 @@ public class BoardController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "401", description = "세션 만료")
     })
-    public ResponseEntity<BaseResponse> saveBoard(@AuthenticationPrincipal User user,
-                                                  @RequestBody @Valid CreateBoardDto createBoardDto) {
+    public ResponseEntity<BaseResponse> saveBoard(@RequestBody @Valid CreateBoardDto createBoardDto) {
 
-        boardService.saveBoard(user, createBoardDto);
+        boardService.saveBoard(createBoardDto);
 
         return new ResponseEntity<>(
                 BaseResponse.of(HttpStatus.CREATED),
@@ -89,12 +87,10 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = @Content(schema = @Schema(implementation = GetBoardResponseDto.class)))
     })
-    public ResponseEntity<DataResponse<GetBoardResponseDto>> getBoard(HttpSession httpSession,
-                                                                      @AuthenticationPrincipal User user,
-                                                                      @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
+    public ResponseEntity<DataResponse<GetBoardResponseDto>> getBoard(@Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
         return ResponseEntity.ok(
-                DataResponse.of(HttpStatus.OK, boardService.getBoard(httpSession, user, boardId))
+                DataResponse.of(HttpStatus.OK, boardService.getBoard(boardId))
         );
     }
 
@@ -109,10 +105,9 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<BaseResponse> deleteBoard(@AuthenticationPrincipal User user,
-                                                    @Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
+    public ResponseEntity<BaseResponse> deleteBoard(@Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
 
-        boardService.deleteBoard(user, boardId);
+        boardService.deleteBoard(boardId);
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)
@@ -130,10 +125,10 @@ public class BoardController {
             @ApiResponse(responseCode = "204", description = "body null 존재"),
             @ApiResponse(responseCode = "403", description = "권한 없음")
     })
-    public ResponseEntity<BaseResponse> modifyBoard(@AuthenticationPrincipal User user, @PathVariable("boardId") Long boardId,
+    public ResponseEntity<BaseResponse> modifyBoard(@PathVariable("boardId") Long boardId,
                                                     @RequestBody @Valid ModifyBoardDto modifyBoardDto) {
 
-        boardService.modifyBoard(user, boardId, modifyBoardDto);
+        boardService.modifyBoard(boardId, modifyBoardDto);
 
         return ResponseEntity.ok(
                 BaseResponse.of(HttpStatus.OK)
@@ -150,11 +145,10 @@ public class BoardController {
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = GetMyBoardListResponseDto.class)))})
     public ResponseEntity<DataResponse<GetMyBoardListResponseDto>> getMyBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                                                                  @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                                  @AuthenticationPrincipal User user) {
+                                                                                  @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return ResponseEntity.ok(
-                DataResponse.of(HttpStatus.OK, boardService.getMyBoardList(user, pageable))
+                DataResponse.of(HttpStatus.OK, boardService.getMyBoardList(pageable))
         );
     }
 
@@ -168,11 +162,10 @@ public class BoardController {
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = MyBookmarkBoardListResponseDto.class)))})
     public ResponseEntity<DataResponse<MyBookmarkBoardListResponseDto>> getMyBookmarkBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                                                                               @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                                               @AuthenticationPrincipal User user) {
+                                                                                               @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return ResponseEntity.ok(
-                DataResponse.of(HttpStatus.OK, boardService.getMyBookmarkBoardList(user, pageable))
+                DataResponse.of(HttpStatus.OK, boardService.getMyBookmarkBoardList(pageable))
         );
     }
 
@@ -186,11 +179,10 @@ public class BoardController {
             content = {@Content(array = @ArraySchema(schema = @Schema(implementation = GetBoardListResponseDto.class)))})
     public ResponseEntity<DataResponse<GetBoardListResponseDto>> getMyCommentBoardList(@Schema(description = "페이징처리. createdAt,view,bookmarkCount / desc,asc",
             example = "createdAt,desc / view,asc / bookmarkCount,desc")
-                                                                                       @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                                       @AuthenticationPrincipal User user) {
+                                                                                       @PageableDefault(size = 9, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return ResponseEntity.ok(
-                DataResponse.of(HttpStatus.OK, boardService.getMyCommentBoardList(user, pageable))
+                DataResponse.of(HttpStatus.OK, boardService.getMyCommentBoardList(pageable))
         );
     }
 

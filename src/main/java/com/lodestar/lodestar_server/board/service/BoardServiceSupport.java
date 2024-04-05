@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.HashSet;
 import java.util.List;
@@ -61,7 +63,9 @@ public class BoardServiceSupport {
     }
 
     @Transactional(readOnly = false)
-    public void increaseViewIfNotViewedBefore(Board board, User user, HttpSession httpSession) {
+    public void increaseViewIfNotViewedBefore(Board board, User user) {
+        HttpSession httpSession = getCurrentSession();
+
         HashSet<Long> ids = (HashSet<Long>) httpSession.getAttribute("boards");
 
         if ((!ids.contains(board.getId())) && (!board.getUser().getId().equals(user.getId()))) {
@@ -148,5 +152,11 @@ public class BoardServiceSupport {
 
     public List<Comment> getCommentsWithUserInfoByBoardId(Long id) {
         return commentServiceSupport.getCommentsWithUserInfoByBoardId(id);
+    }
+
+    private HttpSession getCurrentSession() {
+        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest()
+                .getSession(false);
     }
 }

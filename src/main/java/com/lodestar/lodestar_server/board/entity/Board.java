@@ -52,6 +52,9 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarks = new ArrayList<>();
 
+    @Version
+    private Long version;
+
     @Builder
     private Board(User user, String title, String content) {
         this.user = user;

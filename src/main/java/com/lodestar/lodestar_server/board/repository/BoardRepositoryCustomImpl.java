@@ -12,6 +12,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -86,7 +87,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .distinct()
                 .leftJoin(board.hashtags, hashtag).fetchJoin()
                 .leftJoin(board.comments, comment)
-                .where(board.id.eq(boardId));
+                .where(board.id.eq(boardId))
+                .setLockMode(LockModeType.OPTIMISTIC);
 
         return Optional.ofNullable(jpaQuery.fetchOne());
     }

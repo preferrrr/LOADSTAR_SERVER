@@ -49,6 +49,8 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final com.lodestar.lodestar_server.user.entity.QUser user;
 
+    public final NumberPath<Long> version = createNumber("version", Long.class);
+
     public final NumberPath<Integer> view = createNumber("view", Integer.class);
 
     public QBoard(String variable) {

@@ -6,9 +6,9 @@ import com.lodestar.lodestar_server.board.dto.response.GetBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetBoardResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.GetMyBoardListResponseDto;
 import com.lodestar.lodestar_server.board.dto.response.MyBookmarkBoardListResponseDto;
+import com.lodestar.lodestar_server.board.service.OptimisticLockBoardSupport;
 import com.lodestar.lodestar_server.common.response.BaseResponse;
 import com.lodestar.lodestar_server.common.response.DataResponse;
-import com.lodestar.lodestar_server.user.entity.User;
 import com.lodestar.lodestar_server.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardService boardService;
+    private final OptimisticLockBoardSupport optimisticLockBoardSupport;
 
     /**
      * 메인페이지 게시글 조회
@@ -87,10 +88,10 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "성공",
                     content = @Content(schema = @Schema(implementation = GetBoardResponseDto.class)))
     })
-    public ResponseEntity<DataResponse<GetBoardResponseDto>> getBoard(@Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) {
+    public ResponseEntity<DataResponse<GetBoardResponseDto>> getBoard(@Schema(description = "게시글 인덱스", example = "1") @PathVariable("boardId") Long boardId) throws InterruptedException {
 
         return ResponseEntity.ok(
-                DataResponse.of(HttpStatus.OK, boardService.getBoard(boardId))
+                DataResponse.of(HttpStatus.OK, optimisticLockBoardSupport.getBoard(boardId))
         );
     }
 

@@ -82,6 +82,8 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 - 자주 조회되는 게시글들은 캐싱하여 응답 속도 개선과 DB 부하 감소
   - 세션 저장소와 캐시 저장소 분리
   - https://prefercoding.tistory.com/47
+- 조회수 동시성 문제 해결
+  - https://prefercoding.tistory.com/64
 - 가비아에서 도메인 구입 후 AWS Route 53으로 도메인 적용
   - nginx와 certbot을 사용하여 https 적용
 

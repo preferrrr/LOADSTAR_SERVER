@@ -17,12 +17,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
 @RequiredArgsConstructor
 public class BoardService {
 

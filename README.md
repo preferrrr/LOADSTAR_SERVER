@@ -62,30 +62,18 @@ LoadStar는 개발자가 꿈인 사람들이 자신의 진로 방향을 찾기�
 </br>
 
 ## Challenge
-- JavaMailSender를 사용하여 메일로 인증번호를 전송
-  - 메일 전송 작업는 완료까지 2~3초 처리 시간이 필요
-  - 비동기 처리하여 응답 속도 개선
-  - https://prefercoding.tistory.com/43
-- 인증/인가를 위해 세션 방식을 사용하며, Redis에 세션 정보를 저장
-- 조회수 증가의 중복 방지를 위해 세션 정보와 함께, 로그인한 동안 조회한 게시글의 인덱스를 같이 저장
-  - 조회하지 않은 게시글만 조회수 증가
+- [JavaMailSender로 메일에 인증 번호를 전송, **비동기 처리**로 응답 속도 약 95% 개선](https://prefercoding.tistory.com/43) **🔗**
+- [**Redis와 Session을 활용**하여, 조회수 증가의 중복 방지](https://prefercoding.tistory.com/69) **🔗**
+- [Auto_increment index가 꼭 필요할까 ? 인덱스에 따른 성능을 테스트하여 **조회 성능 20% 개선**](https://prefercoding.tistory.com/40) **🔗**
+- **Redis 캐싱**을 사용하여 응답 속도 개선과 DB 부하 감소
+  - [Redis의 특성을 고려하여, 세션 저장소와 캐시 저장소 분리](https://prefercoding.tistory.com/47) **🔗**
+- [조회수 **동시성 문제** 해결](https://prefercoding.tistory.com/64) **🔗**
+- **QueryDSL**과 **jpa batch**을 사용하여 **N+1 문제** 해결
+- **github actions**와 **docker hub**을 사용하여 **CI/CD** 구축
 - 게시글의 제목 또는 내용으로 검색하기 위해 Mysql의 정규표현식(regexp) 사용
   - DB를 full scan하므로 성능상 문제가 생길 것
-    - elastic search 사용 고려
-- 해시태그로 게시글 검색
-  - 게시글과 해시태그는 1:N으로 저장됨
-  - 이때 해시태그 엔티티의 auto_increment 인덱스가 꼭 필요할까? 고민
-  - 결과적으로 기존 대비 성능 최대 20프로 증가
-  - https://prefercoding.tistory.com/40
-- N+1 문제를 해결하기 위해 QueryDSL과 jpa batch를 사용
-- github actions와 docker hub을 사용하여 CI/CD 구축
-- 자주 조회되는 게시글들은 캐싱하여 응답 속도 개선과 DB 부하 감소
-  - 세션 저장소와 캐시 저장소 분리
-  - https://prefercoding.tistory.com/47
-- 조회수 동시성 문제 해결
-  - https://prefercoding.tistory.com/64
-- 가비아에서 도메인 구입 후 AWS Route 53으로 도메인 적용
-  - nginx와 certbot을 사용하여 https 적용
+    - elastic search 사용 고려해야 함
+- Nginx와 certbot을 사용하여 https 적용
 
 </br>
 
